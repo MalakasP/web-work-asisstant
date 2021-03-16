@@ -3,84 +3,114 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Get created and teams projects.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $createdProjects = Auth::user()->createdProjects;
+
+        $user_teams = Auth::user()->teams;
+
+        if (!$user_teams->isEmpty()) {
+            foreach ($user_teams as $team) {
+                $teams_projects[] = Project::where('team_id', $team->id)->get();
+            }
+        }
+        
+        if ($createdProjects->isEmpty() && $teams_projects->isEmpty()) {
+            return response()->json([
+                'error' => 'No projects found!'
+            ], 404);
+        }
+
+        return response()->json([
+            'createdProjects'    => $createdProjects,
+            'createdTasks'    => $teams_projects ? $teams_projects : null
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Store a newly created project in storage.
      *
+     * @param  \App\Http\Requests\CreateProjectRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function store(CreateProjectRequest $request)
     {
-        //
+        $project = Project::create($request->validated());
+
+        return response()->json([
+            'project' => $project,
+            'message' => 'Project created successfully!'
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
+     * Display the specified project.
      *
      * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
     public function show(Project $project)
     {
-        //
+        return response()->json([
+            'project' => $project
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified project in storage.
      *
+     * @param  \App\Http\Requests\UpdateProjectRequest  $request
      * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function edit(Project $project)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        if ($project->author_id != Auth::user()->id) {
+            return response()->json([
+                'error' => 'You do not have rights to do this!'
+            ], 403);
+        }
+
+        $project->update($request->validated());
+
+        return response()->json([
+            'project' => $project,
+            'message' => 'Project updated successfully!'
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Project $project)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
+     * Remove the specified project from storage.
      *
      * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
     public function destroy(Project $project)
     {
-        //
+        if ($project->author_id != Auth::user()->id) {
+            return response()->json([
+                'error' => 'You do not have rights to do this!'
+            ], 403);
+        }
+
+        $project->delete();
+
+        return response()->json([
+            'project' => $project,
+            'message' => 'Project deleted successfully!'
+        ]);
     }
 }
