@@ -41231,7 +41231,7 @@ var staticRenderFns = [
     return _c("footer", { staticClass: "footer" }, [
       _c("div", { staticClass: "container text-center" }, [
         _c("span", { staticClass: "text-muted" }, [
-          _vm._v(" © 2020 Copyright:\n            "),
+          _vm._v(" © 2021 Copyright:\n            "),
           _c("a", [_vm._v("PM")])
         ])
       ])
