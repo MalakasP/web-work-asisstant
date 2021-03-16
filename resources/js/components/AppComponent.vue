@@ -38,7 +38,7 @@
 
     <footer class="footer">
         <div class="container text-center">
-            <span class="text-muted"> © 2020 Copyright:
+            <span class="text-muted"> © 2021 Copyright:
               <a>PM</a>
             </span>
         </div>

@@ -15,7 +15,7 @@ class CreateTeamUserTable extends Migration
     {
         Schema::create('team_user', function (Blueprint $table) {
             $table->id();
-            $table->string('role_in_team');
+            $table->boolean('is_admin');
             $table->string('name_in_team');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('team_id');

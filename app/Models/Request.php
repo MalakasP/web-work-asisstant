@@ -17,14 +17,26 @@ class Request extends Model
     protected $fillable = [
         'date_from',
         'date_to',
-        'is_confirmed'
+        'description',
+        'type',
+        'is_confirmed',
+        'requester_id',
+        'responser_id'
     ];
 
     /**
-     * Get the user that owns the request.
+     * Get the user that created the request.
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'requester_id');
+    }
+
+    /**
+     * Get the addressee of the request.
+     */
+    public function responser()
+    {
+        return $this->belongsTo(User::class, 'responser_id');
     }
 }
