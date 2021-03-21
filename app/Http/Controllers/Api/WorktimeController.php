@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateWorktimeRequest;
+use App\Http\Requests\UpdateWorktimeRequest;
 use Illuminate\Support\Facades\Auth;
+use \Illuminate\Http\Request;
 use App\Models\Worktime;
 use App\Models\Team;
-use Illuminate\Http\Request;
+use App\Models\User;
+use App\Services\WorktimeService;
+use Carbon\Carbon;
 
 class WorktimeController extends Controller
 {
@@ -42,17 +46,23 @@ class WorktimeController extends Controller
     {
         $request->validated();
 
-        if (Auth::id() != $request->validated()['user_id']) {
+        if (!User::find($request->validated()['user_id'])) {
+            return response()->json([
+                'error' => 'User not found!'
+            ], 404);
+        }
+
+        if ($request->has('team_id')) {
+            $team = Team::find($request->validated()['team_id'])->get();
+        }
+
+        if (
+            (isset($team) ?? $team->isUserAdmin(Auth::id()))
+            && Auth::id() != $request->validated()['user_id']
+        ) {
             return response()->json([
                 'error' => 'You do not have rights to do this!'
             ], 403);
-        } else if ($request->validated()['team_id'] != null) {
-            $team = Team::find($request->validated()['team_id'])->get();
-            if (!$team->isUserAdmin(Auth::id())) {
-                return response()->json([
-                    'error' => 'You do not have rights to do this!'
-                ], 403);
-            }
         }
 
         $worktime = Worktime::create($request->validated());
@@ -64,7 +74,7 @@ class WorktimeController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified worktime.
      *
      * @param  \App\Models\Worktime $worktime
      * @return \Illuminate\Http\Response
@@ -77,43 +87,78 @@ class WorktimeController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified worktime in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\UpdateWorktimeRequest  $request
      * @param  \App\Models\Worktime  $worktime
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Worktime $worktime)
+    public function update(UpdateWorktimeRequest $request, Worktime $worktime)
     {
-        if (Auth::id() != $request->validated()['user_id']) {
+        $request->validated();
+
+        if ($request->has('team_id')) {
+            $team = Team::find($request->validated()['team_id'])->get();
+        }
+
+        if (
+            (isset($team) ?? !$team->isUserAdmin(Auth::id())) &&
+            Auth::id() != $request->validated()['user_id']
+        ) {
             return response()->json([
                 'error' => 'You do not have rights to do this!'
             ], 403);
-        } else if ($request->validated()['team_id'] != null) {
-            $team = Team::find($request->validated()['team_id'])->get();
-            if (!$team->isUserAdmin(Auth::id())) {
-                return response()->json([
-                    'error' => 'You do not have rights to do this!'
-                ], 403);
-            }
         }
 
-        $worktime->update($request->validated());
+        $endTime = Carbon::parse($request->end_time)->toDateTimeString();
+
+        $duration = WorktimeService::calculateTime($worktime->created_at, $endTime);
+
+        if ($duration == 0) {
+            return response()->json([
+                'error' => 'You have worked less than 30 minutes.'
+            ], 406);
+        }
+
+        $worktime->update([
+            'duration' => $duration,
+            'end_time' => $endTime
+        ]);
 
         return response()->json([
             'worktime' => $worktime,
-            'message' => 'Worktime created successfully!'
+            'message' => 'Worktime updated successfully!'
         ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified worktime from storage.
      *
      * @param  \App\Models\Worktime  $worktime
+     * @param  \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Worktime $worktime)
+    public function destroy(Worktime $worktime, Request $request)
     {
-        //
+        if ($request->has('team_id')) {
+            $team = Team::find($request->validated()['team_id'])->get();
+        }
+
+        if (
+            !Auth::user()->usersInTeam($worktime->user_id) ||
+            (isset($team) ?? !$team->isUserAdmin(Auth::id())) &&
+            Auth::id() != $worktime->user_id
+        ) {
+            return response()->json([
+                'error' => 'You do not have the rights to do this!'
+            ], 403);
+        }
+
+        $worktime->delete();
+
+        return response()->json([
+            'worktime' => $worktime,
+            'message' => 'Worktime deleted successfully!'
+        ]);
     }
 }

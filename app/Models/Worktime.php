@@ -10,6 +10,16 @@ class Worktime extends Model
     use HasFactory;
 
     /**
+     * Constant for maximum amount of hours for one worktime.
+     */
+    public const  MAX_HOURS = 5;
+
+    /**
+     * Constant for minimum amount of minutes for one worktime.
+     */
+    public const MIN_MINUTES = 30;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
