@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 
-class AuthenticationController extends Controller
+class UserController extends Controller
 {
     /**
      * Gets authenticated user information
      * 
      */
-    public function user()
+    public function index()
     {
         return auth()->user();
     }

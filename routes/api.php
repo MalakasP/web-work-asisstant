@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\UserController;
 // use App\Http\Controllers\Api\TaskController;
 // use App\Http\Controllers\Api\ProjectController;
 // use App\Http\Controllers\Api\WorktimeController;
@@ -36,7 +37,7 @@ Route::group(['as' => 'api.'], function () {
 
         // Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
-        // Route::get('user', [AuthenticationController::class, 'user'])->name('user');
+        Route::get('users', [UserController::class, 'index'])->name('user');
 
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
