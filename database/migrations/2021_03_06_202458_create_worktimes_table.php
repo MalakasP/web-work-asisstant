@@ -15,8 +15,8 @@ class CreateWorktimesTable extends Migration
     {
         Schema::create('worktimes', function (Blueprint $table) {
             $table->id();
-            $table->time('duration');
-            $table->timestamp('end_time');
+            $table->time('duration')->default('00:00:00');
+            $table->timestamp('end_time')->useCurrent();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });

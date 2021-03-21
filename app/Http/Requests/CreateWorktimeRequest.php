@@ -24,10 +24,9 @@ class CreateWorktimeRequest extends FormRequest
     public function rules()
     {
         return [
-            'end_time' => ['date_format:H:i'],
             'duration' => ['date_format:H:i'],
             'user_id' => ['required', 'integer', 'numeric'],
-            'team_id' => ['required', 'integer', 'nullable', 'numeric']
+            'team_id' => ['nullable', 'integer', 'numeric']
         ];
     }
 }
