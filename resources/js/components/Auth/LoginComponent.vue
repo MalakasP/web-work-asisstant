@@ -62,9 +62,12 @@ export default {
     this.$store.commit("setErrors", {});
   },
   methods: {
-    ...mapActions("auth", ["sendLoginRequest"]),
+    ...mapActions("auth", ["sendLoginRequest", "handler"]),
     login: function() {
+      // document.addEventListener('beforeunload', this.handler());
+
       this.sendLoginRequest(this.details).then(() => {
+        this.$parent.startTimer();
         this.$router.push({ name: "Home" });
       });
     }

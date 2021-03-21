@@ -41,7 +41,8 @@ const app = new Vue({
         AppComponent
     },
     router,
-    store
+    store,
+    
 });
 
 

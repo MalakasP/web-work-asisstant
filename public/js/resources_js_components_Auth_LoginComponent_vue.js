@@ -78,11 +78,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   mounted: function mounted() {
     this.$store.commit("setErrors", {});
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)("auth", ["sendLoginRequest"])), {}, {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)("auth", ["sendLoginRequest", "handler"])), {}, {
     login: function login() {
       var _this = this;
 
+      // document.addEventListener('beforeunload', this.handler());
       this.sendLoginRequest(this.details).then(function () {
+        _this.$parent.startTimer();
+
         _this.$router.push({
           name: "Home"
         });
