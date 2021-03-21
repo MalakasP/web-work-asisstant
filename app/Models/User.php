@@ -114,11 +114,14 @@ class User extends Authenticatable
     public function usersInTeam($user_id)
     {
         $teams = $this->teams;
-        foreach ($teams as $team) {
-            if ($team->pivot->where('user_id', '=', $user_id)) {
-                return true;
+        if ($teams) {
+            foreach ($teams as $team) {
+                if ($team->pivot->where('user_id', '=', $user_id)) {
+                    return true;
+                }
             }
         }
+       
         return false;
     }
 }
