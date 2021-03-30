@@ -34,13 +34,37 @@
               <router-link class="nav-link" to="/login">Login</router-link>
             </li>
             <li class="nav-item" v-show="!isAuthenticated">
-              <router-link class="nav-link" to="/register">Register</router-link>
+              <router-link class="nav-link" to="/register"
+                >Register</router-link
+              >
             </li>
-            <li class="nav-item timer" v-show="isAuthenticated">
-                <strong>{{ activeTimerString }}</strong>
+            <li
+              class="nav-item timer"
+              v-show="isAuthenticated"
+              v-if="loadingStatus"
+            >
+              <strong>{{ activeTimerString }}</strong>
             </li>
-            <button type="button" class="btn btn-light" @click="stopTimer" v-show="isAuthenticated">Stop</button>
-            <li class="nav-item" v-show="isAuthenticated">
+            <li class="nav-item timer" v-show="isAuthenticated" v-else>
+              <div class="loader"></div>
+            </li>
+            <button
+              type="button"
+              class="btn btn-light"
+              @click="stopTimer"
+              v-show="isAuthenticated && !isTimerStopped"
+            >
+              Stop
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              @click="startTimer"
+              v-show="isAuthenticated && isTimerStopped"
+            >
+              Start
+            </button>
+            <li class="nav-item" v-show="isAuthenticated && isTimerStopped">
               <a class="nav-link" href="#" @click="logout">Logout</a>
             </li>
           </ul>
@@ -53,42 +77,79 @@
     </main>
 
     <footer class="footer">
-        <div class="container text-center">
-            <span class="text-muted"> © 2021 Copyright:
-              <a>PM</a>
-            </span>
-        </div>
+      <div class="container text-center">
+        <span class="text-muted">
+          © 2021 Copyright:
+          <a>PM</a>
+        </span>
+      </div>
     </footer>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import moment from 'moment';
+import moment from "moment";
 
 export default {
   data() {
     return {
-       activeTimerString: "00:00",
-       counter: { seconds: 0, timer: null },
-    }
+      loadingStatus: false,
+      activeTimerString: "00:00",
+      counter: { seconds: 0, timer: null },
+    };
   },
 
   computed: {
-    ...mapGetters("auth", ["isAuthenticated"])
+    ...mapGetters("auth", ["isAuthenticated", "user"]),
+    ...mapGetters("worktime", ["duration", "isTimerStopped", "worktime"]),
   },
 
-  mounted() {
+  created() {
     if (localStorage.getItem("authToken")) {
-      this.getUserData();
+      //check if there is today's timer started for this user and assign it if it's not over 8 hours
+      // this.counter.timer = timer;
+      if (!this.isTimerStopped) {
+        if (localStorage.getItem("counter")) {
+          this.counter.seconds = localStorage.getItem("counter");
+        } else if (this.duration >= 0) {
+          this.counter.seconds = this.duration;
+        }
+
+        this.counter.ticker = setInterval(() => {
+          const time = this._readableTimeFromSeconds(++this.counter.seconds);
+          // console.log(this.counter.seconds);
+          // check if 8 hours is reached
+          this.activeTimerString = `${time.hours}:${time.minutes}`;
+          localStorage.setItem("counter", this.counter.seconds);
+          this.loadingStatus = true;
+        }, 1000);
+      }
     }
   },
 
+  mounted() {},
+
   methods: {
     ...mapActions("auth", ["sendLogoutRequest", "getUserData"]),
+    ...mapActions("worktime", ["createWorktime", "setTimerStopped", "setDuration"]),
+    /**
+     * Logout user.
+     */
     logout() {
       this.sendLogoutRequest();
-      this.$router.push("/");
+      this.setTimerStopped(false);
+      this.setDuration(null);
+      // this.$router.push("/home");
+    },
+
+    /**
+     *
+     */
+    onRefresh() {
+      if (this.isAuthenticated) {
+        // this.setCounter(this.counter);
+      }
     },
 
     /**
@@ -96,83 +157,100 @@ export default {
      */
     stopTimer() {
       console.log("Timer stop");
-      // window.axios.post()
-      //   .then(response => {
-      //       // Loop through the projects and get the right project...
-      //       this.projects.forEach(project => {
-      //           if (project.id === parseInt(this.counter.timer.project.id)) {
-      //               // Loop through the timers of the project and set the `stopped_at` time
-      //               return project.timers.forEach(timer => {
-      //                   if (timer.id === parseInt(this.counter.timer.id)) {
-      //                       return timer.stopped_at = response.data.stopped_at
-      //                   }
-      //               })
-      //           }
-      //       });
-
-           
-      //   });
-         // Stop the ticker
-    clearInterval(this.counter.ticker);
-
-    // Reset the counter and timer string
-    this.counter = { seconds: 0, timer: null };
-    this.activeTimerString = "00:00";
+      this.updateWorktime();
     },
 
     /**
-     * Starts counting the timer
+     * Starts timer after it was stopped
      */
     startTimer() {
-      console.log("Timer start");
+      this.setTimerStopped(false);
+      this.createWorktime(this.user);
+    },
 
-      const started = moment();
-      console.log(started);
-      //check if there is today's timer started for this user and assign it if it's not over 8 hours
-      // this.counter.timer = timer;
-      
-      
-      this.counter.seconds = parseInt(moment.duration(moment().diff(started)).asSeconds());
-      this.counter.ticker = setInterval(() => {
+    /**
+     * End current worktime by updating its duration
+     */
+    updateWorktime() {
+      var data = {
+        user_id: this.user.id,
+        end_time: moment().format(),
+      };
+
+      axios
+        .put(process.env.MIX_API_URL + "worktimes/" + this.worktime.id, data)
+        .then((response) => {
+          console.log(response.data);
+          this.setTimerStopped(true);
+          clearInterval(this.counter.ticker);
+        })
+        .catch((error) => {
+          if (error.response) {
+            if (error.response.status === 406) {
+              this.$alert(error.response.data.error);
+            }
+          }
+        });
+    },
+
+    initiateTimerAfterLogin() {
+      console.log(!this.isTimerStopped);
+      if (localStorage.getItem("authToken") && !this.isTimerStopped) {
+        this.loadingStatus = true;
+        if (this.duration >= 0) {
+
+          this.counter.seconds = this.duration;
+        }
+
+        this.counter.ticker = setInterval(() => {
           const time = this._readableTimeFromSeconds(++this.counter.seconds);
+          // console.log(this.counter.seconds);
+          // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
-      }, 1000);
+          localStorage.setItem("counter", this.counter.seconds);
+          
+        }, 1000);
+      }
     },
 
     /**
      * Conditionally pads a number with "0"
      */
     _padNumber(number) {
-      return (number > 9) ? number : "0" + number;
-    },  
-    
+      return number > 9 ? number : "0" + number;
+    },
+
     /**
      * Splits seconds into hours, minutes, and seconds.
      */
     _readableTimeFromSeconds(seconds) {
-        const hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10)
-        return {
-            hours: this._padNumber(hours),
-            seconds: this._padNumber(seconds % 60),
-            minutes: this._padNumber(parseInt(seconds / 60, 10) % 60),
-        }
+      const hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
+      return {
+        hours: this._padNumber(hours),
+        seconds: this._padNumber(seconds % 60),
+        minutes: this._padNumber(parseInt(seconds / 60, 10) % 60),
+      };
+    },
+
+    _durationToSeconds(duration) {
+      var timeMeasures = duration.split(":");
+      var seconds =
+        +timeMeasures[0] * 3600 + +timeMeasures[1] * 60 + +timeMeasures[2];
+      return seconds;
     },
 
     /**
-     * Calculate the amount of time spent on the project using the timer object.
+     * Calculate the amount of time spent when logged in.
      */
     calculateTimeSpent(timer) {
-      if (timer.stopped_at) {
-          const started = moment(timer.started_at)
-          const stopped = moment(timer.stopped_at)
-          const time = this._readableTimeFromSeconds(
-              parseInt(moment.duration(stopped.diff(started)).asSeconds())
-          )
-          return `${time.hours} Hours | ${time.minutes} mins | ${time.seconds} seconds`
-      }
-      return ''
+      const started = moment(timer.started_at);
+      const stopped = moment(timer.stopped_at);
+      const time = this._readableTimeFromSeconds(
+        parseInt(moment.duration(stopped.diff(started)).asSeconds())
+      );
+      return `${time.hours}:${time.minutes}`;
     },
-  }
+  },
 };
 </script>
 
@@ -180,12 +258,30 @@ export default {
 body > div > div > .container {
   padding: 60px 15px 0;
 }
+
+.loader {
+  border: 8px solid white;
+  border-top: 8px solid #007bff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>
 
 <style scoped>
 .timer {
-  padding-right: .5rem;
-  padding-left: .5rem;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
   font-size: 25px;
   color: white;
 }

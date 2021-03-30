@@ -11,7 +11,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -61,8 +63,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Home",
@@ -74,21 +75,51 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     };
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)(["errors"])),
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)("auth", ["user"])),
   mounted: function mounted() {
     this.$store.commit("setErrors", {});
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)("auth", ["sendLoginRequest", "handler"])), {}, {
+  methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)("auth", ["sendLoginRequest"])), (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)("worktime", ["getWorktimesByDate", "setDuration", "createWorktime"])), {}, {
+    /**
+     * Attempt to log in user to the application.
+     */
     login: function login() {
       var _this = this;
 
-      // document.addEventListener('beforeunload', this.handler());
       this.sendLoginRequest(this.details).then(function () {
-        _this.$parent.startTimer();
+        _this.createWorktime(_this.user);
 
-        _this.$router.push({
-          name: "Home"
-        });
+        _this.getTodaysWorktimesDuration(); // this.$router.go("/home");
+
+
+        _this.$router.push("/");
+      })["catch"](function (error) {
+        if (error.response) {
+          _this.$store.commit("setErrors", error.response.data.errors);
+        }
+      });
+    },
+
+    /**
+     * Get the duration of today worked hours.
+     */
+    getTodaysWorktimesDuration: function getTodaysWorktimesDuration() {
+      var _this2 = this;
+
+      var format_to = "YYYY-MM-DD HH:mm:ss";
+      var date = moment__WEBPACK_IMPORTED_MODULE_0___default()().format(format_to);
+      axios.get("api/" + "worktimes?date=" + date).then(function (response) {
+        _this2.setDuration(response.data.worktimes.reduce(function (total, worktime) {
+          return total + _this2.$parent._durationToSeconds(worktime.duration);
+        }, 0));
+
+        _this2.$parent.initiateTimerAfterLogin();
+      })["catch"](function (error) {
+        if (error.response.status === 404) {
+          _this2.setDuration(0);
+
+          _this2.$parent.initiateTimerAfterLogin();
+        }
       });
     }
   })
@@ -186,9 +217,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "login mt-5" }, [
     _c("div", { staticClass: "card" }, [
-      _c("div", { staticClass: "card-header" }, [
-        _vm._v("\n      Login\n    ")
-      ]),
+      _c("div", { staticClass: "card-header" }, [_vm._v("Login")]),
       _vm._v(" "),
       _c("div", { staticClass: "card-body" }, [
         _c("form", [
@@ -242,7 +271,7 @@ var render = function() {
                 }
               ],
               staticClass: "form-control",
-              class: { "is-invalid": _vm.errors.password },
+              class: { "is-invalid": _vm.errors.email },
               attrs: {
                 type: "password",
                 id: "password",
@@ -259,11 +288,11 @@ var render = function() {
               }
             }),
             _vm._v(" "),
-            _vm.errors.password
+            _vm.errors.email
               ? _c("div", { staticClass: "invalid-feedback" }, [
                   _vm._v(
                     "\n            " +
-                      _vm._s(_vm.errors.password[0]) +
+                      _vm._s(_vm.errors.email[0]) +
                       "\n          "
                   )
                 ])

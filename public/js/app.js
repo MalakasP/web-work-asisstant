@@ -1918,11 +1918,37 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      loadingStatus: false,
       activeTimerString: "00:00",
       counter: {
         seconds: 0,
@@ -1930,64 +1956,112 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     };
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)("auth", ["isAuthenticated"])),
-  mounted: function mounted() {
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)("auth", ["isAuthenticated", "user"])), (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)("worktime", ["duration", "isTimerStopped", "worktime"])),
+  created: function created() {
+    var _this = this;
+
     if (localStorage.getItem("authToken")) {
-      this.getUserData();
+      //check if there is today's timer started for this user and assign it if it's not over 8 hours
+      // this.counter.timer = timer;
+      if (!this.isTimerStopped) {
+        if (localStorage.getItem("counter")) {
+          this.counter.seconds = localStorage.getItem("counter");
+        } else if (this.duration >= 0) {
+          this.counter.seconds = this.duration;
+        }
+
+        this.counter.ticker = setInterval(function () {
+          var time = _this._readableTimeFromSeconds(++_this.counter.seconds); // console.log(this.counter.seconds);
+          // check if 8 hours is reached
+
+
+          _this.activeTimerString = "".concat(time.hours, ":").concat(time.minutes);
+          localStorage.setItem("counter", _this.counter.seconds);
+          _this.loadingStatus = true;
+        }, 1000);
+      }
     }
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)("auth", ["sendLogoutRequest", "getUserData"])), {}, {
+  mounted: function mounted() {},
+  methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)("auth", ["sendLogoutRequest", "getUserData"])), (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)("worktime", ["createWorktime", "setTimerStopped", "setDuration"])), {}, {
+    /**
+     * Logout user.
+     */
     logout: function logout() {
       this.sendLogoutRequest();
-      this.$router.push("/");
+      this.setTimerStopped(false);
+      this.setDuration(null); // this.$router.push("/home");
+    },
+
+    /**
+     *
+     */
+    onRefresh: function onRefresh() {
+      if (this.isAuthenticated) {// this.setCounter(this.counter);
+      }
     },
 
     /**
      * Stops timer
      */
     stopTimer: function stopTimer() {
-      console.log("Timer stop"); // window.axios.post()
-      //   .then(response => {
-      //       // Loop through the projects and get the right project...
-      //       this.projects.forEach(project => {
-      //           if (project.id === parseInt(this.counter.timer.project.id)) {
-      //               // Loop through the timers of the project and set the `stopped_at` time
-      //               return project.timers.forEach(timer => {
-      //                   if (timer.id === parseInt(this.counter.timer.id)) {
-      //                       return timer.stopped_at = response.data.stopped_at
-      //                   }
-      //               })
-      //           }
-      //       });
-      //   });
-      // Stop the ticker
-
-      clearInterval(this.counter.ticker); // Reset the counter and timer string
-
-      this.counter = {
-        seconds: 0,
-        timer: null
-      };
-      this.activeTimerString = "00:00";
+      console.log("Timer stop");
+      this.updateWorktime();
     },
 
     /**
-     * Starts counting the timer
+     * Starts timer after it was stopped
      */
     startTimer: function startTimer() {
-      var _this = this;
+      this.setTimerStopped(false);
+      this.createWorktime(this.user);
+    },
 
-      console.log("Timer start");
-      var started = moment__WEBPACK_IMPORTED_MODULE_0___default()();
-      console.log(started); //check if there is today's timer started for this user and assign it if it's not over 8 hours
-      // this.counter.timer = timer;
+    /**
+     * End current worktime by updating its duration
+     */
+    updateWorktime: function updateWorktime() {
+      var _this2 = this;
 
-      this.counter.seconds = parseInt(moment__WEBPACK_IMPORTED_MODULE_0___default().duration(moment__WEBPACK_IMPORTED_MODULE_0___default()().diff(started)).asSeconds());
-      this.counter.ticker = setInterval(function () {
-        var time = _this._readableTimeFromSeconds(++_this.counter.seconds);
+      var data = {
+        user_id: this.user.id,
+        end_time: moment__WEBPACK_IMPORTED_MODULE_0___default()().format()
+      };
+      axios.put("api/" + "worktimes/" + this.worktime.id, data).then(function (response) {
+        console.log(response.data);
 
-        _this.activeTimerString = "".concat(time.hours, ":").concat(time.minutes);
-      }, 1000);
+        _this2.setTimerStopped(true);
+
+        clearInterval(_this2.counter.ticker);
+      })["catch"](function (error) {
+        if (error.response) {
+          if (error.response.status === 406) {
+            _this2.$alert(error.response.data.error);
+          }
+        }
+      });
+    },
+    initiateTimerAfterLogin: function initiateTimerAfterLogin() {
+      var _this3 = this;
+
+      console.log(!this.isTimerStopped);
+
+      if (localStorage.getItem("authToken") && !this.isTimerStopped) {
+        this.loadingStatus = true;
+
+        if (this.duration >= 0) {
+          this.counter.seconds = this.duration;
+        }
+
+        this.counter.ticker = setInterval(function () {
+          var time = _this3._readableTimeFromSeconds(++_this3.counter.seconds); // console.log(this.counter.seconds);
+          // check if 8 hours is reached
+
+
+          _this3.activeTimerString = "".concat(time.hours, ":").concat(time.minutes);
+          localStorage.setItem("counter", _this3.counter.seconds);
+        }, 1000);
+      }
     },
 
     /**
@@ -2008,21 +2082,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         minutes: this._padNumber(parseInt(seconds / 60, 10) % 60)
       };
     },
+    _durationToSeconds: function _durationToSeconds(duration) {
+      var timeMeasures = duration.split(":");
+      var seconds = +timeMeasures[0] * 3600 + +timeMeasures[1] * 60 + +timeMeasures[2];
+      return seconds;
+    },
 
     /**
-     * Calculate the amount of time spent on the project using the timer object.
+     * Calculate the amount of time spent when logged in.
      */
     calculateTimeSpent: function calculateTimeSpent(timer) {
-      if (timer.stopped_at) {
-        var started = moment__WEBPACK_IMPORTED_MODULE_0___default()(timer.started_at);
-        var stopped = moment__WEBPACK_IMPORTED_MODULE_0___default()(timer.stopped_at);
+      var started = moment__WEBPACK_IMPORTED_MODULE_0___default()(timer.started_at);
+      var stopped = moment__WEBPACK_IMPORTED_MODULE_0___default()(timer.stopped_at);
 
-        var time = this._readableTimeFromSeconds(parseInt(moment__WEBPACK_IMPORTED_MODULE_0___default().duration(stopped.diff(started)).asSeconds()));
+      var time = this._readableTimeFromSeconds(parseInt(moment__WEBPACK_IMPORTED_MODULE_0___default().duration(stopped.diff(started)).asSeconds()));
 
-        return "".concat(time.hours, " Hours | ").concat(time.minutes, " mins | ").concat(time.seconds, " seconds");
-      }
-
-      return '';
+      return "".concat(time.hours, ":").concat(time.minutes);
     }
   })
 });
@@ -2055,7 +2130,7 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.config.productionTip = false;
 axios.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
-  if (error.response.status === 422) {
+  if (error.response.status >= 402 && error.response.status < 500) {
     _store__WEBPACK_IMPORTED_MODULE_1__.default.commit("setErrors", error.response.data.errors);
   } else if (error.response.status === 401) {
     _store__WEBPACK_IMPORTED_MODULE_1__.default.commit("auth/setUserData", null);
@@ -2063,9 +2138,9 @@ axios.interceptors.response.use(function (response) {
     _router__WEBPACK_IMPORTED_MODULE_0__.default.push({
       name: "Login"
     });
-  } else {
-    return Promise.reject(error);
   }
+
+  return Promise.reject(error);
 });
 axios.interceptors.request.use(function (config) {
   config.headers.common = {
@@ -2152,7 +2227,7 @@ var guest = function guest(to, from, next) {
   if (!localStorage.getItem("authToken")) {
     return next();
   } else {
-    return next("/");
+    return next("/home");
   }
 };
 
@@ -2165,10 +2240,16 @@ var auth = function auth(to, from, next) {
 };
 
 var routes = [{
-  path: "/",
+  path: "/home",
   name: "Home",
   component: function component() {
     return __webpack_require__.e(/*! import() */ "resources_js_components_HomeComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/HomeComponent.vue */ "./resources/js/components/HomeComponent.vue"));
+  }
+}, {
+  path: "/",
+  name: "Landing",
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_LandingComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/LandingComponent.vue */ "./resources/js/components/LandingComponent.vue"));
   }
 }, {
   path: "/login",
@@ -2227,9 +2308,7 @@ __webpack_require__.r(__webpack_exports__);
    */
   state: {
     userData: null,
-    token: localStorage.getItem("authToken") || null // scope: localStorage.getItem('scope') || null,
-    // user_id: localStorage.getItem('user_id') || null,
-
+    token: null
   },
 
   /**
@@ -2244,16 +2323,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     isAuthenticated: function isAuthenticated(state) {
       return !!state.token;
-    } // isAdmin: (state) => state.scope == 'admin',    
-    // StateUser: (state) => state.user_id,
-    // authHeader: (state) => {
-    //     if (state.token) {
-    //         return state.token;
-    //     } else {
-    //         return {};
-    //     }
-    // }
-
+    }
   },
 
   /**
@@ -2285,9 +2355,10 @@ __webpack_require__.r(__webpack_exports__);
         root: true
       });
       return axios.post("api/" + "register", data).then(function (response) {
-        commit("setUserData", response.data.user);
-        commit("setAuthToken", response.data.token);
-        localStorage.setItem("authToken", response.data.token);
+        // commit("setUserData", response.data.user);
+        // commit("setAuthToken", response.data.token);
+        // localStorage.setItem("authToken", response.data.token);
+        console.log(response);
       });
     },
     sendLogoutRequest: function sendLogoutRequest(_ref4) {
@@ -2296,29 +2367,10 @@ __webpack_require__.r(__webpack_exports__);
         commit("setUserData", null);
         commit("setAuthToken", null);
         localStorage.removeItem("authToken");
+        localStorage.removeItem("counter");
         sessionStorage.clear();
       });
-    },
-    sendVerifyResendRequest: function sendVerifyResendRequest() {
-      return axios.get("api/" + "email/resend");
-    },
-    sendVerifyRequest: function sendVerifyRequest(_ref5, hash) {
-      var dispatch = _ref5.dispatch;
-      return axios.get("api/" + "email/verify/" + hash).then(function () {
-        dispatch("getUserData");
-      });
-    } // handler: function handler(event) {
-    //     console.log("yeah");
-    //     // this.$confirm("Are you sure?").then(() => {
-    //     // });
-    // }
-    // async LogIn({commit}, User) {
-    //     await commit('setUser', User.get('token'))
-    // },
-    // async LogOut({commit}){
-    //     commit('LogOut')
-    // }
-
+    }
   },
 
   /**
@@ -2330,29 +2382,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     setAuthToken: function setAuthToken(state, token) {
       state.token = token;
-    } // setUser(state, token){
-    //     localStorage.setItem('token', token);
-    //     state.token = token;
-    //     var base64Url = token.split('.')[1];
-    //     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    //     var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-    //         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    //     }).join(''));
-    //     jsonPayload = JSON.parse(jsonPayload);
-    //     state.scope = jsonPayload.scope;
-    //     state.user_id = jsonPayload.user_id;
-    //     localStorage.setItem('user_id', state.user_id);
-    //     localStorage.setItem('scope', state.scope);
-    // },
-    // LogOut(state){
-    //     localStorage.removeItem('token');
-    //     localStorage.removeItem('user_id');
-    //     localStorage.removeItem('scope');
-    //     state.scope = null;
-    //     state.token = null;
-    //     state.user_id = null;
-    // },
-
+    }
   }
 });
 
@@ -2369,20 +2399,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./auth */ "./resources/js/store/auth.js");
-/* harmony import */ var vuex_persistedstate__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex-persistedstate */ "./node_modules/vuex-persistedstate/dist/vuex-persistedstate.es.js");
+/* harmony import */ var _modules_worktime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/worktime */ "./resources/js/store/modules/worktime.js");
+/* harmony import */ var vuex_persistedstate__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex-persistedstate */ "./node_modules/vuex-persistedstate/dist/vuex-persistedstate.es.js");
 
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_2__.default.use(vuex__WEBPACK_IMPORTED_MODULE_3__.default);
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_3__.default.Store({
+
+vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vuex__WEBPACK_IMPORTED_MODULE_4__.default);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_4__.default.Store({
   state: {
     errors: []
   },
-  plugins: [(0,vuex_persistedstate__WEBPACK_IMPORTED_MODULE_1__.default)({
+  plugins: [(0,vuex_persistedstate__WEBPACK_IMPORTED_MODULE_2__.default)({
     storage: window.sessionStorage
   })],
   getters: {
@@ -2397,9 +2429,103 @@ vue__WEBPACK_IMPORTED_MODULE_2__.default.use(vuex__WEBPACK_IMPORTED_MODULE_3__.d
   },
   actions: {},
   modules: {
-    auth: _auth__WEBPACK_IMPORTED_MODULE_0__.default
+    auth: _auth__WEBPACK_IMPORTED_MODULE_0__.default,
+    worktime: _modules_worktime__WEBPACK_IMPORTED_MODULE_1__.default
   }
 }));
+
+/***/ }),
+
+/***/ "./resources/js/store/modules/worktime.js":
+/*!************************************************!*\
+  !*** ./resources/js/store/modules/worktime.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  namespaced: true,
+
+  /**
+   * Variables saved in Vuex state
+   */
+  state: {
+    duration: null,
+    timerStopped: false,
+    worktime: null
+  },
+
+  /**
+   * Getters for state
+   */
+  getters: {
+    duration: function duration(state) {
+      return state.duration;
+    },
+    worktime: function worktime(state) {
+      return state.worktime;
+    },
+    isTimerStopped: function isTimerStopped(state) {
+      return state.timerStopped;
+    }
+  },
+
+  /**
+   * Initiate mutations through actions
+   */
+  actions: {
+    getWorktimesByDate: function getWorktimesByDate(_ref, date) {
+      var commit = _ref.commit;
+      var format_to = 'YYYY-MM-DD HH:mm:ss';
+      date = date.format(format_to);
+      axios.get("api/" + "worktimes?date=" + date).then(function (response) {// commit("setWorktimes", response.data.worktimes);
+      });
+    },
+    setDuration: function setDuration(_ref2, duration) {
+      var commit = _ref2.commit;
+      commit("setDuration", duration);
+    },
+    setTimerStopped: function setTimerStopped(_ref3, status) {
+      var commit = _ref3.commit;
+      commit("setTimerStopped", status);
+    },
+
+    /**
+     * Create current worktime
+     */
+    createWorktime: function createWorktime(_ref4, user) {
+      var commit = _ref4.commit;
+      var data = {
+        user_id: user.id
+      };
+      axios.post("api/" + "worktimes", data).then(function (response) {
+        commit("setWorktime", response.data.worktime);
+      });
+    }
+  },
+
+  /**
+   * Change state with mutations
+   */
+  mutations: {
+    setWorktime: function setWorktime(state, worktime) {
+      state.worktime = worktime;
+    },
+    setDuration: function setDuration(state, duration) {
+      state.duration = duration;
+    },
+    setTimerStopped: function setTimerStopped(state, status) {
+      state.timerStopped = status;
+    }
+  }
+});
 
 /***/ }),
 
@@ -6861,7 +6987,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nbody > div > div > .container {\r\n  padding: 60px 15px 0;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nbody > div > div > .container {\r\n  padding: 60px 15px 0;\n}\n.loader {\r\n  border: 8px solid white;\r\n  border-top: 8px solid #007bff;\r\n  border-radius: 50%;\r\n  width: 40px;\r\n  height: 40px;\r\n  -webkit-animation: spin 2s linear infinite;\r\n          animation: spin 2s linear infinite;\n}\n@-webkit-keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n@keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -6885,7 +7011,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.timer[data-v-cd268472] {\r\n  padding-right: .5rem;\r\n  padding-left: .5rem;\r\n  font-size: 25px;\r\n  color: white;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.timer[data-v-cd268472] {\r\n  padding-right: 0.5rem;\r\n  padding-left: 0.5rem;\r\n  font-size: 25px;\r\n  color: white;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -62890,20 +63016,54 @@ var render = function() {
                   1
                 ),
                 _vm._v(" "),
+                _vm.loadingStatus
+                  ? _c(
+                      "li",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.isAuthenticated,
+                            expression: "isAuthenticated"
+                          }
+                        ],
+                        staticClass: "nav-item timer"
+                      },
+                      [_c("strong", [_vm._v(_vm._s(_vm.activeTimerString))])]
+                    )
+                  : _c(
+                      "li",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.isAuthenticated,
+                            expression: "isAuthenticated"
+                          }
+                        ],
+                        staticClass: "nav-item timer"
+                      },
+                      [_c("div", { staticClass: "loader" })]
+                    ),
+                _vm._v(" "),
                 _c(
-                  "li",
+                  "button",
                   {
                     directives: [
                       {
                         name: "show",
                         rawName: "v-show",
-                        value: _vm.isAuthenticated,
-                        expression: "isAuthenticated"
+                        value: _vm.isAuthenticated && !_vm.isTimerStopped,
+                        expression: "isAuthenticated && !isTimerStopped"
                       }
                     ],
-                    staticClass: "nav-item timer"
+                    staticClass: "btn btn-light",
+                    attrs: { type: "button" },
+                    on: { click: _vm.stopTimer }
                   },
-                  [_c("strong", [_vm._v(_vm._s(_vm.activeTimerString))])]
+                  [_vm._v("\n            Stop\n          ")]
                 ),
                 _vm._v(" "),
                 _c(
@@ -62913,15 +63073,15 @@ var render = function() {
                       {
                         name: "show",
                         rawName: "v-show",
-                        value: _vm.isAuthenticated,
-                        expression: "isAuthenticated"
+                        value: _vm.isAuthenticated && _vm.isTimerStopped,
+                        expression: "isAuthenticated && isTimerStopped"
                       }
                     ],
                     staticClass: "btn btn-light",
                     attrs: { type: "button" },
-                    on: { click: _vm.stopTimer }
+                    on: { click: _vm.startTimer }
                   },
-                  [_vm._v("Stop")]
+                  [_vm._v("\n            Start\n          ")]
                 ),
                 _vm._v(" "),
                 _c(
@@ -62931,8 +63091,8 @@ var render = function() {
                       {
                         name: "show",
                         rawName: "v-show",
-                        value: _vm.isAuthenticated,
-                        expression: "isAuthenticated"
+                        value: _vm.isAuthenticated && _vm.isTimerStopped,
+                        expression: "isAuthenticated && isTimerStopped"
                       }
                     ],
                     staticClass: "nav-item"
@@ -62995,7 +63155,7 @@ var staticRenderFns = [
     return _c("footer", { staticClass: "footer" }, [
       _c("div", { staticClass: "container text-center" }, [
         _c("span", { staticClass: "text-muted" }, [
-          _vm._v(" © 2021 Copyright:\n            "),
+          _vm._v("\n        © 2021 Copyright:\n        "),
           _c("a", [_vm._v("PM")])
         ])
       ])
@@ -79743,7 +79903,7 @@ var index = {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_Auth_VerifyComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_LandingComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_Auth_VerifyComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};
