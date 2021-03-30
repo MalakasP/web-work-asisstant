@@ -42,4 +42,17 @@ class Team extends Model
             ? $this->users()->where('user_id', '=', $user_id)->first()->pivot->is_admin
             : false;
     }
+
+     /**
+     * Check if user by given user_id is in the team.
+     * 
+     * @param Integer $user_id
+     * @return Boolean
+     */
+    public function isTeamMember($user_id)
+    {
+        return $this->users()->where('user_id', '=', $user_id)
+            ? true
+            : false;
+    }
 }

@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\UserController;
-// use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\TaskController;
 // use App\Http\Controllers\Api\ProjectController;
 // use App\Http\Controllers\Api\WorktimeController;
 // use App\Http\Controllers\Api\RequestController;
@@ -41,7 +41,19 @@ Route::group(['as' => 'api.'], function () {
 
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-        Route::resource('tasks', TaskController::class, ['except' => ['create', 'edit']]);
+        // Route::resource('tasks', TaskController::class, ['except' => ['create', 'edit']]);
+
+        Route::get('assignedTasks', [TaskController::class, 'getAssignedTasks'])->name('getAssignedTasks');
+
+        Route::get('createdTasks', [TaskController::class, 'getCreatedTasks'])->name('getCreatedTasks');
+
+        Route::get('tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
+
+        Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
+
+        Route::put('tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+
+        Route::post('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
         Route::resource('projects', ProjectController::class, ['except' => ['create', 'edit']]);
 

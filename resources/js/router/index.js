@@ -48,12 +48,11 @@ const routes = [
             import("../components/Auth/RegisterComponent.vue")
     },
     {
-        path: "/verify/:hash",
-        name: "Verify",
+        path: "/tasks",
+        name: "Tasks",
         beforeEnter: auth,
-        props: true,
         component: () =>
-          import("../components/Auth/VerifyComponent.vue")
+            import("../components/TasksComponent.vue")
     },
     { 
         path: '*',

@@ -17,7 +17,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/">Tasks</router-link>
+              <router-link class="nav-link" to="/tasks">Tasks</router-link>
             </li>
             <li class="nav-item" v-show="isAuthenticated">
               <router-link class="nav-link" to="/">Projects</router-link>
@@ -275,6 +275,15 @@ body > div > div > .container {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.bi {
+  display: inline-block;
+  vertical-align: -.125em;
+}
+
+th {
+  text-align: center;
 }
 </style>
 

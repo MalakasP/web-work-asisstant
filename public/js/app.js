@@ -2242,12 +2242,14 @@ var auth = function auth(to, from, next) {
 var routes = [{
   path: "/home",
   name: "Home",
+  beforeEnter: auth,
   component: function component() {
     return __webpack_require__.e(/*! import() */ "resources_js_components_HomeComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/HomeComponent.vue */ "./resources/js/components/HomeComponent.vue"));
   }
 }, {
   path: "/",
   name: "Landing",
+  beforeEnter: guest,
   component: function component() {
     return __webpack_require__.e(/*! import() */ "resources_js_components_LandingComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/LandingComponent.vue */ "./resources/js/components/LandingComponent.vue"));
   }
@@ -2266,12 +2268,11 @@ var routes = [{
     return __webpack_require__.e(/*! import() */ "resources_js_components_Auth_RegisterComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/Auth/RegisterComponent.vue */ "./resources/js/components/Auth/RegisterComponent.vue"));
   }
 }, {
-  path: "/verify/:hash",
-  name: "Verify",
+  path: "/tasks",
+  name: "Tasks",
   beforeEnter: auth,
-  props: true,
   component: function component() {
-    return __webpack_require__.e(/*! import() */ "resources_js_components_Auth_VerifyComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/Auth/VerifyComponent.vue */ "./resources/js/components/Auth/VerifyComponent.vue"));
+    return __webpack_require__.e(/*! import() */ "resources_js_components_TasksComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/TasksComponent.vue */ "./resources/js/components/TasksComponent.vue"));
   }
 }, {
   path: '*',
@@ -6987,7 +6988,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nbody > div > div > .container {\r\n  padding: 60px 15px 0;\n}\n.loader {\r\n  border: 8px solid white;\r\n  border-top: 8px solid #007bff;\r\n  border-radius: 50%;\r\n  width: 40px;\r\n  height: 40px;\r\n  -webkit-animation: spin 2s linear infinite;\r\n          animation: spin 2s linear infinite;\n}\n@-webkit-keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n@keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nbody > div > div > .container {\r\n  padding: 60px 15px 0;\n}\n.loader {\r\n  border: 8px solid white;\r\n  border-top: 8px solid #007bff;\r\n  border-radius: 50%;\r\n  width: 40px;\r\n  height: 40px;\r\n  -webkit-animation: spin 2s linear infinite;\r\n          animation: spin 2s linear infinite;\n}\n@-webkit-keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n@keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n.bi {\r\n  display: inline-block;\r\n  vertical-align: -.125em;\n}\nth {\r\n  text-align: center;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -62892,7 +62893,7 @@ var render = function() {
                   [
                     _c(
                       "router-link",
-                      { staticClass: "nav-link", attrs: { to: "/" } },
+                      { staticClass: "nav-link", attrs: { to: "/tasks" } },
                       [_vm._v("Tasks")]
                     )
                   ],
@@ -79903,7 +79904,7 @@ var index = {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_LandingComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_Auth_VerifyComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_LandingComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_TasksComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

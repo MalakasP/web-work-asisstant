@@ -7,30 +7,45 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
-
-use function PHPUnit\Framework\isEmpty;
+use App\Models\Project;
+use App\Models\User;
 
 class TaskController extends Controller
 {
     /**
-     * Get created and assigned tasks. 
+     * Get assigned tasks. 
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getAssignedTasks()
     {
-        $assignedTasks = Auth::user()->assignedTasks;
+        $assignedTasks = Auth::user()->assignedTasks()->paginate(7);
 
-        $createdTasks = Auth::user()->createdTasks;
-
-        if ($assignedTasks->isEmpty() && $createdTasks->isEmpty()) {
+        if ($assignedTasks->isEmpty()) {
             return response()->json([
                 'error' => 'No tasks found!'
             ], 404);
         }
 
         return response()->json([
-            'assignedTasks'    => $assignedTasks,
+            'assignedTasks'    => $assignedTasks
+        ]);
+    }
+
+    /**
+     * Get created tasks.
+     */
+    public function getCreatedTasks()
+    {
+        $createdTasks = Auth::user()->createdTasks()->paginate(7);
+
+        if ($createdTasks->isEmpty()) {
+            return response()->json([
+                'error' => 'No tasks found!'
+            ], 404);
+        }
+
+        return response()->json([
             'createdTasks'    => $createdTasks
         ]);
     }
@@ -43,15 +58,33 @@ class TaskController extends Controller
      */
     public function store(CreateTaskRequest $request)
     {
+        $request->validated();
         //check if project id is set and if the user does have right to create task in project
-        // if (!$request->input('project_id')) {
-        //     Project::find($request->input('project_id'))->team()->
-        // }
-        $task = Task::create($request->validated());
+        
+        if ($request->has('project_id')) {
+            if (Project::find($request->input('project_id'))->team()->isUserAdmin(Auth::id())) {
+                $team = Project::find($request->input('project_id'))->team;
+            } else {
+                return response()->json([
+                    'error' => "You do not have rights to add tasks to this project!"
+                ]);
+            }  
+        } 
 
-        return response()->json([
-            'task' => $task
-        ]);
+        if (
+            User::find($request->validated()['assignee_id'])
+            && !$team->isEmpty()
+            && $team->isTeamMember($request->validated()['assignee_id'])
+        ) {
+            $task = Task::create($request->validated());
+            return response()->json([
+                'task' => $task
+            ]);
+        } else {
+            return response()->json([
+                'error' => 'Selected assignee does not exist or is not in the project team!'
+            ], 404);
+        }    
     }
 
     /**
@@ -78,8 +111,10 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task)
     {
         // move to middleware 
-        if ($task->reporter_id != Auth::user()->id ||
-            !$task->project->isEmpty() && $task->project->author_id  != Auth::user()->id) {
+        if (
+            $task->reporter_id != Auth::user()->id ||
+            !$task->project->isEmpty() && $task->project->author_id  != Auth::user()->id
+        ) {
             return response()->json([
                 'error' => 'You do not have rights to do this!'
             ], 403);
@@ -102,8 +137,10 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         // move to middleware 
-        if ($task->reporter_id != Auth::user()->id ||
-            !$task->project->isEmpty() && $task->project->author_id  != Auth::user()->id) {
+        if (
+            $task->reporter_id != Auth::user()->id ||
+            !$task->project->isEmpty() && $task->project->author_id  != Auth::user()->id
+        ) {
             return response()->json([
                 'error' => 'You do not have rights to do this!'
             ], 403);
