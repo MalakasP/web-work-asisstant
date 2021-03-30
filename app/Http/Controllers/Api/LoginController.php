@@ -80,7 +80,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $this->validateLogin($request);
-
+        
         if (
             method_exists($this, 'hasTooManyLoginAttempts') &&
             $this->hasTooManyLoginAttempts($request)
@@ -89,13 +89,14 @@ class LoginController extends Controller
 
             return $this->sendLockoutResponse($request);
         }
-
+        
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }
-
+        
         $this->incrementLoginAttempts($request);
-
+        
         return $this->sendFailedLoginResponse($request);
     }
+
 }

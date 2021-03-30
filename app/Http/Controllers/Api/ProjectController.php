@@ -21,10 +21,10 @@ class ProjectController extends Controller
         $createdProjects = Auth::user()->createdProjects;
 
         $user_teams = Auth::user()->teams;
-
+        
         if (!$user_teams->isEmpty()) {
             foreach ($user_teams as $team) {
-                $teams_projects[] = Project::where('team_id', $team->id)->get();
+                $teams_projects[] = Project::where('team_id', $team->id)->first();
             }
         }
         
@@ -36,7 +36,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'createdProjects'    => $createdProjects,
-            'createdTasks'    => $teams_projects ? $teams_projects : null
+            'teamProjects'    => empty($teams_projects) ? $teams_projects : null 
         ]);
     }
 

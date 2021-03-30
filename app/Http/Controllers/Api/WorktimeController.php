@@ -6,23 +6,31 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateWorktimeRequest;
 use App\Http\Requests\UpdateWorktimeRequest;
 use Illuminate\Support\Facades\Auth;
-use \Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use App\Models\Worktime;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\WorktimeService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class WorktimeController extends Controller
 {
     /**
      * Display a listing of the worktimes.
      *
+     * @param Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $worktimes = Auth::user()->worktimes;
+        $this->validator($request->all())->validate();
+
+        if ($request->has('date')) {
+            $worktimes = Auth::user()->worktimes()->whereDate('created_at', date('Y-m-d', strtotime($request->date)))->get();
+        } else {
+            $worktimes = Auth::user()->worktimes;
+        }
 
         if ($worktimes->isEmpty()) {
             return response()->json([
@@ -110,13 +118,17 @@ class WorktimeController extends Controller
             ], 403);
         }
 
-        $endTime = Carbon::parse($request->end_time)->toDateTimeString();
+        if (!$request->has('duration')) {
+            $endTime = Carbon::parse($request->end_time)->toDateTimeString();
+            $duration = WorktimeService::calculateTime($worktime->created_at, $endTime);
+        } elseif ((isset($team) ?? !$team->isUserAdmin(Auth::id()))) {
+            $duration = $request->validated()['duration'];
+            $duration = gmdate("H:i", $duration);
+        }
 
-        $duration = WorktimeService::calculateTime($worktime->created_at, $endTime);
-
-        if ($duration == 0) {
+        if (strtotime($duration) - strtotime('TODAY') == 0) {
             return response()->json([
-                'error' => 'You have worked less than 30 minutes.'
+                'error' => 'You have worked less than 1 minute after You started working.'
             ], 406);
         }
 
@@ -159,6 +171,19 @@ class WorktimeController extends Controller
         return response()->json([
             'worktime' => $worktime,
             'message' => 'Worktime deleted successfully!'
+        ]);
+    }
+
+    /**
+     * Get a validator for an incoming index worktime request.
+     *
+     * @param  array  $data
+     * @return Illuminate\Support\Facades\Validator;
+     */
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'date' => ['date'],
         ]);
     }
 }
