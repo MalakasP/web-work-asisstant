@@ -40,10 +40,41 @@ class AdminController extends Controller
         ]);
     }
 
+
+    /**
+     * Remove the user from the team.
+     *
+     * @param \App\Models\Team;
+     * @param \App\Models\User;
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Team $team, User $user)
+    {
+        if (!$team->isUserAdmin(Auth::id())) {
+            return response()->json([
+                'error' => 'You are not the admin of this team!'
+            ], 403);
+        }
+
+        $team->users()->detach($user->id);
+
+        return response()->json([
+            'message' => 'User added to the team!'
+        ]);
+    }
+
     /**
      * Get team user worktimes
      */
     public function getUserWorktimes(User $user)
+    {
+
+    }
+
+    /**
+     * Gets users of the team
+     */
+    public function getTeamUsers(Team $team)
     {
 
     }

@@ -1,7 +1,17 @@
 <?php
 
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\UserController;
+// use App\Http\Controllers\Api\TaskController;
+// use App\Http\Controllers\Api\ProjectController;
+// use App\Http\Controllers\Api\WorktimeController;
+// use App\Http\Controllers\Api\RequestController;
+// use App\Http\Controllers\Api\TeamController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,31 +26,33 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['as' => 'api.'], function () {
 
-    Route::post('login', 'LoginController@login')->name('login');
+    Route::post('login', [LoginController::class, 'login'])->name('login');
 
-    Route::post('register', 'RegisterController@register')->name('register');
+    Route::post('register', [RegisterController::class, 'register'])->name('register');
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
 
-        Route::get('email/verify/{hash}', 'VerificationController@verify')->name('verification.verify');
+        //do I need this?
+        // Route::get('email/verify/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
 
-        Route::get('email/resend', 'VerificationController@resend')->name('verification.resend');
+        // Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
-        Route::get('user', 'AuthenticationController@user')->name('user');
+        Route::get('users', [UserController::class, 'index'])->name('user');
 
-        Route::post('logout', 'LoginController@logout')->name('logout');
+        Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-        Route::resource('tasks', 'TaskController', ['except' => ['create', 'edit']]);
+        Route::resource('tasks', TaskController::class, ['except' => ['create', 'edit']]);
 
-        Route::resource('projects', 'ProjectController', ['except' => ['create', 'edit']]);
+        Route::resource('projects', ProjectController::class, ['except' => ['create', 'edit']]);
 
-        Route::resource('worktimes', 'WorktimeController', ['except' => ['create', 'edit']]);
+        Route::resource('worktimes', WorktimeController::class, ['except' => ['create', 'edit']]);
 
-        Route::resource('requests', 'RequestController', ['except' => ['create', 'edit']]);
+        Route::resource('requests', RequestController::class, ['except' => ['create', 'edit']]);
 
-        Route::resource('teams', 'TeamController', ['except' => ['create', 'edit']]);
+        Route::resource('teams', TeamController::class, ['except' => ['create', 'edit']]);
 
-        Route::post('teams/{team}/users/{user}', 'AdminController@store')->name('admin.addTeamUser');
+        Route::post('teams/{team}/users/{user}', [AdminController::class, 'store'])->name('admin.addTeamUser');
+
         // Route::put('teams/{team}', 'TeamController@update');
     });
 });

@@ -52,7 +52,7 @@ class TeamController extends Controller
     {
         $team = Team::create($request->validated());
 
-        $team->users()->attach(Auth::user()->id, ['role_in_team' => 'admin' , 'name_in_team' => 'admin']);
+        $team->users()->attach(Auth::user()->id, ['is_admin' => 1 , 'name_in_team' => 'admin']);
 
         return response()->json([
             'team' => $team,

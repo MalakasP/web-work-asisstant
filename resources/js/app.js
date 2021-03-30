@@ -13,15 +13,14 @@ Vue.config.productionTip = false;
 axios.interceptors.response.use(
   response => response,
   error => {
-    if (error.response.status === 422) {
+    if (error.response.status >= 402 && error.response.status < 500) {
       store.commit("setErrors", error.response.data.errors);
     } else if (error.response.status === 401) {
       store.commit("auth/setUserData", null);
       localStorage.removeItem("authToken");
       router.push({ name: "Login" });
-    } else {
-      return Promise.reject(error);
     }
+    return Promise.reject(error);
   }
 );
 
@@ -41,7 +40,8 @@ const app = new Vue({
         AppComponent
     },
     router,
-    store
+    store,
+    
 });
 
 

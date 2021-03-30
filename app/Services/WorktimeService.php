@@ -32,14 +32,14 @@ class WorktimeService
 
         $hours = floor(abs($createdAt - $endedAt) / WorktimeService::HOURS_TO_SECONDS);
         $minutes = floor(abs($createdAt - $endedAt) / WorktimeService::HOURS_TO_MIN);
-
         if ($hours >= Worktime::MAX_HOURS) {
             return gmdate("H:i", Worktime::MAX_HOURS * WorktimeService::HOURS_TO_SECONDS);
-        } else if ($minutes <= Worktime::MIN_MINUTES) {
+        } else if ($minutes < Worktime::MIN_MINUTES) {
             return gmdate("H:i", 0);
         } else {
-            $minutes = $minutes - ($minutes % 15);
-            return gmdate("H:i", $minutes * WorktimeService::HOURS_TO_MIN);
+            // $minutes = $minutes - ($minutes % 15);
+            // return gmdate("H:i", $minutes * WorktimeService::HOURS_TO_MIN);
+            return gmdate("H:i", $hours * WorktimeService::HOURS_TO_SECONDS + $minutes * WorktimeService::HOURS_TO_MIN);
         }
     }
 }

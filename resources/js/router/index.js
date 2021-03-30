@@ -7,7 +7,7 @@ const guest = (to, from, next) => {
     if (!localStorage.getItem("authToken")) {
         return next();
     } else {
-        return next("/");
+        return next("/home");
     }
 };
 const auth = (to, from, next) => {
@@ -20,10 +20,18 @@ const auth = (to, from, next) => {
 
 const routes = [
     {
-        path: "/",
+        path: "/home",
         name: "Home",
+        beforeEnter: auth,
         component: () =>
             import("../components/HomeComponent.vue")
+    },
+    {
+        path: "/",
+        name: "Landing",
+        beforeEnter: guest,
+        component: () =>
+            import("../components/LandingComponent.vue")
     },
     {
         path: "/login",

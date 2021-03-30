@@ -43,7 +43,10 @@ class RequestController extends Controller
      */
     public function store(CreateRequestRequest $request)
     {
-        if (!Auth::user()->usersInTeam($request->validated()['responser_id'])) {
+        if (
+            !Auth::user()->usersInTeam($request->validated()['responser_id'])
+            && Auth::id() != $request->validated()['responser_id']
+        ) {
             return response()->json([
                 'error' => 'The addressee is not in the same team!'
             ], 403);
