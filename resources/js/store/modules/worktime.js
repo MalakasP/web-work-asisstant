@@ -2,7 +2,7 @@ import moment from 'moment';
 
 export default {
     namespaced: true,
-    
+
     /**
      * Variables saved in Vuex state
      */
@@ -39,7 +39,7 @@ export default {
         setDuration({ commit }, duration) {
             commit("setDuration", duration);
         },
-        
+
         setTimerStopped({ commit }, status) {
             commit("setTimerStopped", status);
         },
@@ -47,13 +47,27 @@ export default {
         /**
          * Create current worktime
          */
-        createWorktime({commit}, user) {
+        createWorktime({ commit }, user) {
             var data = { user_id: user.id };
             axios
-            .post(process.env.MIX_API_URL + "worktimes", data)
-            .then((response) => {
-                commit("setWorktime", response.data.worktime);
-            });
+                .post(process.env.MIX_API_URL + "worktimes", data)
+                .then((response) => {
+                    commit("setWorktime", response.data.worktime);
+                });
+        },
+
+        /**
+         * Create pagination links for data
+         */
+        makePagination(data) {
+            let pagination = {
+                current_page: data.current_page,
+                last_page: data.last_page,
+                next_page_url: data.next_page_url,
+                prev_page_url: data.prev_page_url,
+            };
+
+            return pagination;
         },
 
     },
@@ -69,7 +83,7 @@ export default {
 
         setDuration(state, duration) {
             state.duration = duration;
-        }, 
+        },
 
         setTimerStopped(state, status) {
             state.timerStopped = status;

@@ -60,7 +60,41 @@ class User extends Authenticatable
      */
     public function assignedTasks()
     {
-        return $this->hasMany(Task::class, 'assignee_id')->orderBy('created_at');
+        return $this->hasMany(Task::class, 'assignee_id')->whereNull('project_id')->orderBy('created_at');
+    }
+
+    /**
+     * Get all the projects user is envolved with.
+     */
+    public function projects()
+    {
+        $projects = Project::where('author_id', $this->id)->get();
+
+        foreach ($this->teams as $team) {
+            foreach ($team->projects as $project) {
+                if (!$projects->contains('id', $project->id)) {
+                    $projects->push($project);
+                }
+            }
+        }
+        return $projects;
+    }
+
+    /**
+     * Get all the assigned tasks that user has.
+     */
+    public function assignedTasksByProject()
+    {
+        $tasks = collect([]);
+        $tasks->push($this->assignedTasks);
+
+        foreach ($this->projects() as $project) {
+            if ($project->tasks()->where('assignee_id', $this->id)->first()) {
+                $tasks->push($project->tasks()->where('assignee_id', $this->id)->get());
+            }
+        }
+
+        return $tasks;
     }
 
     /**
@@ -121,7 +155,7 @@ class User extends Authenticatable
                 }
             }
         }
-       
+
         return false;
     }
 }

@@ -24,7 +24,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -105,64 +107,142 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
+ // <div>
+//   <h2 class="p-3 text-center">You have no tasks assigned!</h2>
+// </div>
+
+function Task(_ref) {
+  var id = _ref.id,
+      title = _ref.title,
+      description = _ref.description,
+      date_till_done = _ref.date_till_done,
+      status = _ref.status,
+      priority = _ref.priority,
+      project_id = _ref.project_id,
+      reporter_id = _ref.reporter_id,
+      assignee_id = _ref.assignee_id,
+      created_at = _ref.created_at,
+      updated_at = _ref.updated_at;
+  this.id = id;
+  this.title = title;
+  this.description = description;
+  this.date_till_done = date_till_done;
+  this.status = status;
+  this.priority = priority;
+  this.project_id = project_id;
+  this.reporter_id = reporter_id;
+  this.assignee_id = assignee_id;
+  this.created_at = created_at;
+  this.updated_at = updated_at;
+}
+
+function Project(_ref2) {
+  var id = _ref2.id,
+      title = _ref2.title,
+      description = _ref2.description,
+      author_id = _ref2.author_id,
+      team_id = _ref2.team_id,
+      created_at = _ref2.created_at,
+      updated_at = _ref2.updated_at,
+      tasks = _ref2.tasks;
+  this.id = id;
+  this.title = title;
+  this.description = description;
+  this.author_id = author_id;
+  this.team_id = team_id;
+  this.created_at = created_at;
+  this.updated_at = updated_at;
+  this.tasks = tasks;
+}
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      assignedTasks: [],
-      form: {
+      noTasks: false,
+      modal: false,
+      projects: [],
+      userProjects: [],
+      projectsWithUserTasks: [],
+      pagination: {},
+      editForm: {
         title: null,
         description: null,
         date_till_done: null,
         status: null,
         priority: null,
-        reporter: null,
-        assignee: null,
+        project_id: null,
+        reporter_id: null,
+        assignee_id: null,
         created_at: null,
         updated_at: null
       }
     };
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)(["errors"])),
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])),
   mounted: function mounted() {
     this.$store.commit("setErrors", {});
   },
   created: function created() {
-    this.read("/tasks");
+    this.read();
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)("auth", ["sendRegisterRequest"])), {}, {
-    read: function read(page_url) {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)("worktime", ["makePagination"])), {}, {
+    read: function read() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var vm;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                vm = _this;
-                page_url = page_url || "/tasks";
-                _context.next = 4;
-                return window.axios.get("api/" + "tasks/" + _this.worktime.id, data).then(function (response) {
+                _context.next = 2;
+                return window.axios.get("api/" + "users/" + _this.user.id + "/projects").then(function (response) {
                   if (response.data != null) {
-                    _this.tasks = [];
-                    response.data.assignedTasks.forEach(function (task) {
-                      return _this.assignedTasks.push(task);
+                    _this.userProjects = [];
+                    response.data.projects.forEach(function (project) {
+                      return _this.userProjects.push(new Project(project));
                     });
-                    vm.makePagination();
                   }
                 })["catch"](function (error) {
+                  console.log(error);
+
+                  if (error.response.status == 404) {
+                    _this.projects = true;
+                  }
+                });
+
+              case 2:
+                _context.next = 4;
+                return window.axios.get("api/" + "assignedTasks").then(function (response) {
+                  if (response.data != null) {
+                    _this.assignedTasks = [];
+                    response.data.assignedTasks.forEach(function (project) {
+                      if (_this.userProjects.find(function (userProject) {
+                        return userProject.id === project[0].project_id;
+                      })) {
+                        var userProject = _this.userProjects.find(function (userProject) {
+                          return userProject.id === project[0].project_id;
+                        });
+
+                        userProject.tasks = project;
+                      } else if (project[0].project_id === null) {
+                        _this.userProjects.push(new Project({
+                          id: 0,
+                          title: "No Project",
+                          description: "Tasks without project",
+                          author_id: _this.user.id,
+                          team_id: 0,
+                          created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                          updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                          tasks: project
+                        }));
+                      }
+                    });
+                    _this.userProjects = _this.userProjects.filter(_this.filterProject);
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+
                   if (error.response.status == 404) {
                     _this.noTasks = true;
                   }
@@ -175,6 +255,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }
         }, _callee);
       }))();
+    },
+    filterProject: function filterProject(project) {
+      if (typeof project.tasks != "undefined" && project.tasks.length > 0) {
+        return project;
+      }
+    },
+    startEdit: function startEdit(id) {
+      this.modal = true;
+      this.form.title = null;
+      this.form.description = null;
+      this.form.date_till_done = null;
+      this.form.status = null;
+      this.form.priority = null;
+      this.form.project_id = null;
+      this.form.reporter_id = null;
+      this.form.assignee_id = null;
+      this.form.created_at = null;
+      this.form.updated_at = null;
     }
   })
 });
@@ -1027,137 +1125,132 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Tasks")]),
-    _vm._v(" "),
-    _c("table", { staticClass: "table table-striped table-bordered" }, [
-      _c("thead", [
-        _c("tr", { staticClass: "table-primary" }, [
-          _c("th", [_vm._v("Title")]),
-          _vm._v(" "),
-          _c("th", [_vm._v("Deadline")]),
-          _vm._v(" "),
-          _c("th", [_vm._v("Status")]),
-          _vm._v(" "),
-          _c("th", [_vm._v("Priority")]),
-          _vm._v(" "),
-          _c("th", [_vm._v("Reporter")]),
-          _vm._v(" "),
-          _c("th", [_vm._v("Assignee")]),
-          _vm._v(" "),
-          _c("th", [_vm._v("Created At")]),
-          _vm._v(" "),
-          _c("th", [_vm._v("Updated At")]),
-          _vm._v(" "),
-          _c("th", [_vm._v("Edit")]),
-          _vm._v(" "),
-          _c("th", [_vm._v("Delete")]),
-          _vm._v(" "),
-          _c("th", [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                attrs: { type: "button" },
-                on: { click: _vm.openEditModal }
-              },
-              [
-                _c("span", { staticClass: "icon is-small" }, [
-                  _c(
-                    "svg",
-                    {
-                      staticClass: "bi bi-gear",
-                      attrs: {
-                        xmlns: "http://www.w3.org/2000/svg",
-                        width: "16",
-                        height: "16",
-                        fill: "currentColor",
-                        viewBox: "0 0 16 16"
-                      }
-                    },
-                    [
-                      _c("path", {
-                        attrs: {
-                          d:
-                            "M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("path", {
-                        attrs: {
-                          d:
-                            "M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
-                        }
-                      })
-                    ]
-                  )
-                ]),
-                _vm._v("\n            Edit\n          ")
-              ]
-            )
-          ])
-        ])
-      ]),
+  return _c(
+    "div",
+    { staticClass: "container" },
+    [
+      _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Tasks")]),
       _vm._v(" "),
-      _c(
-        "tbody",
-        _vm._l(_vm.tasks, function(task) {
-          return _c("tr", { key: task.id }, [
-            _c("td", [_vm._v(_vm._s(task.title))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(task.description))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(task.date_till_done))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(task.status))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(task.priority))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(task.reporter))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(task.assignee))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(task.created_at))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(task.updated_at))]),
-            _vm._v(" "),
-            _c("td", [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-primary",
-                  attrs: { type: "button" },
-                  on: { click: _vm.openEditModal }
-                },
-                [_vm._m(0, true)]
-              )
+      _vm._l(_vm.userProjects, function(project) {
+        return _c("div", { key: project.id }, [
+          _c("div", { staticClass: "card p-3" }, [
+            _c("div", { staticClass: "card" }, [
+              _c("h5", { staticClass: "p-3 text-left" }, [
+                _vm._v(_vm._s(project.title))
+              ])
             ]),
             _vm._v(" "),
-            _c("td", [
-              _c(
-                "button",
-                {
-                  staticClass: "button is-text",
-                  attrs: { type: "button" },
-                  on: { click: _vm.openEditModal }
-                },
-                [_vm._m(1, true)]
-              )
+            _c("div", { staticClass: "card" }, [
+              _c("table", { staticClass: "table-striped" }, [
+                _vm._m(0, true),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(project.tasks, function(task) {
+                    return _c("tr", { key: task.id }, [
+                      _c("td", [_vm._v(_vm._s(task.title))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(task.date_till_done))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(task.status))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(task.priority))]),
+                      _vm._v(" "),
+                      _c("td", [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.startEdit()
+                              }
+                            }
+                          },
+                          [
+                            _c("span", { staticClass: "icon is-small" }, [
+                              _c(
+                                "svg",
+                                {
+                                  staticClass: "bi bi-gear",
+                                  attrs: {
+                                    xmlns: "http://www.w3.org/2000/svg",
+                                    width: "16",
+                                    height: "16",
+                                    fill: "currentColor",
+                                    viewBox: "0 0 16 16"
+                                  }
+                                },
+                                [
+                                  _c("path", {
+                                    attrs: {
+                                      d:
+                                        "M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("path", {
+                                    attrs: {
+                                      d:
+                                        "M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
+                                    }
+                                  })
+                                ]
+                              )
+                            ]),
+                            _vm._v("\n                  Edit\n                ")
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("td", [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "button is-text",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.del(_vm.id)
+                              }
+                            }
+                          },
+                          [_vm._m(1, true)]
+                        )
+                      ])
+                    ])
+                  }),
+                  0
+                )
+              ])
             ])
           ])
-        }),
-        0
-      )
-    ])
-  ])
+        ])
+      })
+    ],
+    2
+  )
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("span", { staticClass: "icon is-small" }, [
-      _c("i", { staticClass: "bi bi-gear" })
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Title")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Deadline")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Priority")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Edit")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Delete")])
+      ])
     ])
   },
   function() {

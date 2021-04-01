@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\TaskController;
-// use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\ProjectController;
 // use App\Http\Controllers\Api\WorktimeController;
 // use App\Http\Controllers\Api\RequestController;
 // use App\Http\Controllers\Api\TeamController;
@@ -55,7 +55,19 @@ Route::group(['as' => 'api.'], function () {
 
         Route::post('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
-        Route::resource('projects', ProjectController::class, ['except' => ['create', 'edit']]);
+        Route::get('users/{user}/projects', [ProjectController::class, 'getUserProjects'])->name('getUserProjects');
+
+        Route::get('users/{user}/teamProjects', [ProjectController::class, 'getCreatedAndTeamProjects'])->name('getCreatedAndTeamProjects');
+
+        Route::get('projects/{project}', [TaskContProjectControllerroller::class, 'show'])->name('projects.show');
+
+        Route::post('projects', [ProjectController::class, 'store'])->name('projects.store');
+
+        Route::put('projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
+
+        Route::post('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+
+        // Route::resource('projects', ProjectController::class, ['except' => ['create', 'edit']]);
 
         Route::resource('worktimes', WorktimeController::class, ['except' => ['create', 'edit']]);
 

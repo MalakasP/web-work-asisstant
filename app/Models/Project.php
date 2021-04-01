@@ -26,10 +26,6 @@ class Project extends Model
      */
     public function team()
     {
-        if ($this->attributes['team_id'] === null) {
-            return null;
-        }
-
         return $this->belongsTo(Team::class, 'team_id');
     }
 

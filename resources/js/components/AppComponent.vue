@@ -140,7 +140,7 @@ export default {
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
-      // this.$router.push("/home");
+      this.$router.push("/home");
     },
 
     /**
@@ -282,9 +282,10 @@ body > div > div > .container {
   vertical-align: -.125em;
 }
 
-th {
+th, td{
   text-align: center;
 }
+
 </style>
 
 <style scoped>

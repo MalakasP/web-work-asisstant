@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use \App\Models\User;
+use \App\Models\Project;
 
 class Team extends Model
 {
@@ -19,6 +20,22 @@ class Team extends Model
         'name',
         'description'
     ];
+
+    /**
+     * Get the projects that the team is working on.
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'team_id')->orderBy('created_at');
+    }
+
+    // /**
+    //  * Get the projects that the team is working on.
+    //  */
+    // public function projectIdsAttribute()
+    // {
+    //     return $this->projects->pluck('id');
+    // }
 
     /**
      * The users that are in the team.

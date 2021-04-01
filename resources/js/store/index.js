@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import auth from "./auth";
+import auth from "./modules/auth";
 import worktime from "./modules/worktime";
 import createPersistedState from 'vuex-persistedstate'
 

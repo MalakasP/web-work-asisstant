@@ -19,7 +19,7 @@ class TaskController extends Controller
      */
     public function getAssignedTasks()
     {
-        $assignedTasks = Auth::user()->assignedTasks()->paginate(7);
+        $assignedTasks = Auth::user()->assignedTasksByProject();
 
         if ($assignedTasks->isEmpty()) {
             return response()->json([
@@ -60,20 +60,20 @@ class TaskController extends Controller
     {
         $request->validated();
         //check if project id is set and if the user does have right to create task in project
-        
-        if ($request->has('project_id')) {
-            if (Project::find($request->input('project_id'))->team()->isUserAdmin(Auth::id())) {
-                $team = Project::find($request->input('project_id'))->team;
-            } else {
-                return response()->json([
-                    'error' => "You do not have rights to add tasks to this project!"
-                ]);
-            }  
-        } 
 
+        if ($request->has('project_id')) {
+            if (
+                Project::find($request->input('project_id'))
+                && Project::find($request->input('project_id'))->first()->team != null
+            ) {
+                $team = Project::find($request->input('project_id'))->first()->team;
+            } 
+        }
+        
         if (
+            User::find($request->validated()['assignee_id'])->id == Auth::id() ||
             User::find($request->validated()['assignee_id'])
-            && !$team->isEmpty()
+            && isset($team)
             && $team->isTeamMember($request->validated()['assignee_id'])
         ) {
             $task = Task::create($request->validated());
@@ -84,7 +84,7 @@ class TaskController extends Controller
             return response()->json([
                 'error' => 'Selected assignee does not exist or is not in the project team!'
             ], 404);
-        }    
+        }
     }
 
     /**

@@ -89,10 +89,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.sendLoginRequest(this.details).then(function () {
         _this.createWorktime(_this.user);
 
-        _this.getTodaysWorktimesDuration(); // this.$router.go("/home");
+        _this.getTodaysWorktimesDuration();
 
-
-        _this.$router.push("/");
+        _this.$router.push("/tasks");
       })["catch"](function (error) {
         if (error.response) {
           _this.$store.commit("setErrors", error.response.data.errors);

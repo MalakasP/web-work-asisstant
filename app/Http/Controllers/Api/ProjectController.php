@@ -16,7 +16,7 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getCreatedAndTeamProjects()
     {
         $createdProjects = Auth::user()->createdProjects;
 
@@ -37,6 +37,23 @@ class ProjectController extends Controller
         return response()->json([
             'createdProjects'    => $createdProjects,
             'teamProjects'    => empty($teams_projects) ? $teams_projects : null 
+        ]);
+    }
+
+    /**
+     * Get all projects user is envolved with.
+     */
+    public function getUserProjects() {
+        $projects =  Auth::user()->projects();
+
+        if ($projects->isEmpty()) {
+            return response()->json([
+                'error' => 'No projects found!'
+            ], 404);
+        }
+
+        return response()->json([
+            'projects'    => $projects
         ]);
     }
 
