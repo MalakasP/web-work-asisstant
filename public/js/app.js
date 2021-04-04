@@ -1943,6 +1943,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -1988,10 +2006,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * Logout user.
      */
     logout: function logout() {
+      this.$router.push("/");
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
-      this.$router.push("/home");
     },
 
     /**
@@ -2228,7 +2246,7 @@ var guest = function guest(to, from, next) {
   if (!localStorage.getItem("authToken")) {
     return next();
   } else {
-    return next("/tasks");
+    return next("/");
   }
 };
 
@@ -2241,9 +2259,8 @@ var auth = function auth(to, from, next) {
 };
 
 var routes = [{
-  path: "/home",
+  path: "/",
   name: "Home",
-  beforeEnter: auth,
   component: function component() {
     return __webpack_require__.e(/*! import() */ "resources_js_components_HomeComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/HomeComponent.vue */ "./resources/js/components/HomeComponent.vue"));
   }
@@ -2262,11 +2279,18 @@ var routes = [{
     return __webpack_require__.e(/*! import() */ "resources_js_components_Auth_RegisterComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/Auth/RegisterComponent.vue */ "./resources/js/components/Auth/RegisterComponent.vue"));
   }
 }, {
-  path: "/tasks",
+  path: "/createdTasks",
   name: "Tasks",
   beforeEnter: auth,
   component: function component() {
-    return __webpack_require__.e(/*! import() */ "resources_js_components_TasksComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/TasksComponent.vue */ "./resources/js/components/TasksComponent.vue"));
+    return __webpack_require__.e(/*! import() */ "resources_js_components_CreatedTasksComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/CreatedTasksComponent.vue */ "./resources/js/components/CreatedTasksComponent.vue"));
+  }
+}, {
+  path: "/assignedTasks",
+  name: "Tasks",
+  beforeEnter: auth,
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_AssignedTasksComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/AssignedTasksComponent.vue */ "./resources/js/components/AssignedTasksComponent.vue"));
   }
 }, {
   path: '*',
@@ -2375,7 +2399,7 @@ __webpack_require__.r(__webpack_exports__);
   actions: {
     getUserData: function getUserData(_ref) {
       var commit = _ref.commit;
-      axios.get("api/" + "users").then(function (response) {
+      axios.get("api/" + "users/" + state.userData.id).then(function (response) {
         commit("setUserData", response.data);
       })["catch"](function () {
         localStorage.removeItem("authToken");
@@ -6995,7 +7019,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nbody > div > div > .container {\r\n  padding: 60px 15px 0;\n}\n.loader {\r\n  border: 8px solid white;\r\n  border-top: 8px solid #007bff;\r\n  border-radius: 50%;\r\n  width: 40px;\r\n  height: 40px;\r\n  -webkit-animation: spin 2s linear infinite;\r\n          animation: spin 2s linear infinite;\n}\n@-webkit-keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n@keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n.bi {\r\n  display: inline-block;\r\n  vertical-align: -.125em;\n}\nth, td{\r\n  text-align: center;\n}\r\n\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nbody > div > div > .container {\r\n  padding: 60px 15px 0;\n}\n.loader {\r\n  border: 8px solid white;\r\n  border-top: 8px solid #007bff;\r\n  border-radius: 50%;\r\n  width: 40px;\r\n  height: 40px;\r\n  -webkit-animation: spin 2s linear infinite;\r\n          animation: spin 2s linear infinite;\n}\n@-webkit-keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n@keyframes spin {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n.bi {\r\n  display: inline-block;\r\n  vertical-align: -0.125em;\n}\nth,\r\ntd {\r\n  text-align: center;\n}\ntr {\r\n  padding: 3px;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -62884,28 +62908,65 @@ var render = function() {
             },
             [
               _c("ul", { staticClass: "navbar-nav mr-auto" }, [
-                _c(
-                  "li",
-                  {
-                    directives: [
-                      {
-                        name: "show",
-                        rawName: "v-show",
-                        value: _vm.isAuthenticated,
-                        expression: "isAuthenticated"
+                _c("li", { staticClass: "nav-item dropdown" }, [
+                  _c(
+                    "div",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.isAuthenticated,
+                          expression: "isAuthenticated"
+                        }
+                      ],
+                      staticClass: "nav-link dropdown-toggle",
+                      attrs: {
+                        id: "navbarDropdown",
+                        role: "button",
+                        "data-toggle": "dropdown",
+                        "aria-haspopup": "true",
+                        "aria-expanded": "false"
                       }
-                    ],
-                    staticClass: "nav-item"
-                  },
-                  [
-                    _c(
-                      "router-link",
-                      { staticClass: "nav-link", attrs: { to: "/tasks" } },
-                      [_vm._v("Tasks")]
-                    )
-                  ],
-                  1
-                ),
+                    },
+                    [_c("a", [_vm._v("Tasks")])]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "dropdown-menu",
+                      attrs: { "aria-labelledby": "navbarDropdown" }
+                    },
+                    [
+                      _c(
+                        "a",
+                        { staticClass: "dropdown-item" },
+                        [
+                          _c(
+                            "router-link",
+                            { attrs: { to: "/assignedTasks" } },
+                            [_vm._v("Assigned Tasks")]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        { staticClass: "dropdown-item" },
+                        [
+                          _c(
+                            "router-link",
+                            { attrs: { to: "/createdTasks" } },
+                            [_vm._v("Created Tasks")]
+                          )
+                        ],
+                        1
+                      )
+                    ]
+                  )
+                ]),
                 _vm._v(" "),
                 _c(
                   "li",
@@ -63160,7 +63221,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("footer", { staticClass: "footer" }, [
+    return _c("footer", { staticClass: "mt-auto" }, [
       _c("div", { staticClass: "container text-center" }, [
         _c("span", { staticClass: "text-muted" }, [
           _vm._v("\n        © 2021 Copyright:\n        "),
@@ -79911,7 +79972,7 @@ var index = {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_TasksComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

@@ -37,7 +37,9 @@ Route::group(['as' => 'api.'], function () {
 
         // Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
-        Route::get('users', [UserController::class, 'index'])->name('user');
+        Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+
+        Route::get('users', [UserController::class, 'index'])->name('users.index');
 
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -53,7 +55,7 @@ Route::group(['as' => 'api.'], function () {
 
         Route::put('tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
 
-        Route::post('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+        Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
         Route::get('users/{user}/projects', [ProjectController::class, 'getUserProjects'])->name('getUserProjects');
 
@@ -65,7 +67,7 @@ Route::group(['as' => 'api.'], function () {
 
         Route::put('projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
 
-        Route::post('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+        Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
         // Route::resource('projects', ProjectController::class, ['except' => ['create', 'edit']]);
 

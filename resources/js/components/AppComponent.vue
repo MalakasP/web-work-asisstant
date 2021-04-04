@@ -16,8 +16,26 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/tasks">Tasks</router-link>
+            <li class="nav-item dropdown">
+              <div
+                class="nav-link dropdown-toggle"
+                id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                v-show="isAuthenticated"
+              >
+                <a>Tasks</a>
+              </div>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item"
+                  ><router-link to="/assignedTasks">Assigned Tasks</router-link></a
+                >
+                <a class="dropdown-item"
+                  ><router-link to="/createdTasks">Created Tasks</router-link></a
+                >
+              </div>
             </li>
             <li class="nav-item" v-show="isAuthenticated">
               <router-link class="nav-link" to="/">Projects</router-link>
@@ -73,10 +91,10 @@
     </header>
 
     <main role="main" class="container">
-      <router-view />
+        <router-view />
     </main>
 
-    <footer class="footer">
+    <footer class="mt-auto">
       <div class="container text-center">
         <span class="text-muted">
           © 2021 Copyright:
@@ -132,15 +150,19 @@ export default {
 
   methods: {
     ...mapActions("auth", ["sendLogoutRequest", "getUserData"]),
-    ...mapActions("worktime", ["createWorktime", "setTimerStopped", "setDuration"]),
+    ...mapActions("worktime", [
+      "createWorktime",
+      "setTimerStopped",
+      "setDuration",
+    ]),
     /**
      * Logout user.
      */
     logout() {
+      this.$router.push("/");
       this.sendLogoutRequest();
       this.setTimerStopped(false);
-      this.setDuration(null);
-      this.$router.push("/home");
+      this.setDuration(null); 
     },
 
     /**
@@ -198,7 +220,6 @@ export default {
       if (localStorage.getItem("authToken") && !this.isTimerStopped) {
         this.loadingStatus = true;
         if (this.duration >= 0) {
-
           this.counter.seconds = this.duration;
         }
 
@@ -208,7 +229,6 @@ export default {
           // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
           localStorage.setItem("counter", this.counter.seconds);
-          
         }, 1000);
       }
     },
@@ -279,13 +299,17 @@ body > div > div > .container {
 
 .bi {
   display: inline-block;
-  vertical-align: -.125em;
+  vertical-align: -0.125em;
 }
 
-th, td{
+th,
+td {
   text-align: center;
 }
 
+tr {
+  padding: 3px;
+}
 </style>
 
 <style scoped>

@@ -37,7 +37,7 @@ class TaskController extends Controller
      */
     public function getCreatedTasks()
     {
-        $createdTasks = Auth::user()->createdTasks()->paginate(7);
+        $createdTasks = Auth::user()->createdTasksByProject();
 
         if ($createdTasks->isEmpty()) {
             return response()->json([
@@ -61,28 +61,39 @@ class TaskController extends Controller
         $request->validated();
         //check if project id is set and if the user does have right to create task in project
 
-        if ($request->has('project_id')) {
-            if (
-                Project::find($request->input('project_id'))
-                && Project::find($request->input('project_id'))->first()->team != null
-            ) {
-                $team = Project::find($request->input('project_id'))->first()->team;
-            } 
+        if ($request->has('project_id') && Project::find($request->input('project_id'))) {
+            $project = Project::find($request->input('project_id'))->first();
+            if ($project->team != null) {
+                $team = $project->team;
+            } else if ($project->author_id != null) {
+                $author_id = $project->author_id;
+            }
         }
-        
+
         if (
-            User::find($request->validated()['assignee_id'])->id == Auth::id() ||
-            User::find($request->validated()['assignee_id'])
-            && isset($team)
-            && $team->isTeamMember($request->validated()['assignee_id'])
+            User::find($request->input('assignee_id'))
+            && (User::find($request->input('assignee_id'))->id == Auth::id()
+                || isset($team)
+                && $team->isTeamMember($request->input('assignee_id')))
         ) {
-            $task = Task::create($request->validated());
-            return response()->json([
-                'task' => $task
-            ]);
+            if (
+                isset($author_id)
+                && Auth::id() != $author_id
+                || isset($team)
+                && !$team->isAdmin(Auth::id())
+            ) {
+                return response()->json([
+                    'error' => 'You do not have the rights to add task to this project!'
+                ], 403);
+            } else {
+                $task = Task::create($request->validated());
+                return response()->json([
+                    'task' => $task
+                ]);
+            }
         } else {
             return response()->json([
-                'error' => 'Selected assignee does not exist or is not in the project team!'
+                'error' => 'Selected assignee does not exist or is not in the selected team!'
             ], 404);
         }
     }
@@ -110,22 +121,46 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        // move to middleware 
-        if (
-            $task->reporter_id != Auth::user()->id ||
-            !$task->project->isEmpty() && $task->project->author_id  != Auth::user()->id
-        ) {
-            return response()->json([
-                'error' => 'You do not have rights to do this!'
-            ], 403);
+        $request->validated();
+
+        if (!$task->project->isEmpty()) {
+            $project = $task->project;
+            if ($project->team != null) {
+                $team = $project->team;
+            } else if ($project->author_id != null) {
+                $author_id = $project->author_id;
+            }
         }
 
-        $task->update($request->validated());
+        if (
+            User::find($request->input('assignee_id'))
+            && (User::find($request->input('assignee_id'))->id == Auth::id()
+                || isset($team)
+                && $team->isTeamMember($request->input('assignee_id')))
+        ) {
+            if (
+                isset($author_id)
+                && Auth::id() == $author_id
+                || isset($team)
+                && $team->isAdmin(Auth::id())
+                || $task->reporter_id == Auth::user()->id
+            ) {
+                $task->update($request->validated());
 
-        return response()->json([
-            'task' => $task,
-            'message' => 'Task updated successfully!'
-        ]);
+                return response()->json([
+                    'task' => $task,
+                    'message' => 'Task updated successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'error' => 'You do not have the rights to add task to this project!'
+                ], 403);
+            }
+        } else {
+            return response()->json([
+                'error' => 'Selected assignee or reporter does not exist!'
+            ], 404);
+        }
     }
 
     /**
@@ -138,8 +173,10 @@ class TaskController extends Controller
     {
         // move to middleware 
         if (
-            $task->reporter_id != Auth::user()->id ||
-            !$task->project->isEmpty() && $task->project->author_id  != Auth::user()->id
+            $task->reporter_id != Auth::user()->id
+            || !$task->project
+            && ($task->project->author_id  != Auth::user()->id
+                || $task->project->team)
         ) {
             return response()->json([
                 'error' => 'You do not have rights to do this!'

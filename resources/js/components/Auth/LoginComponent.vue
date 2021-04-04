@@ -78,7 +78,7 @@ export default {
         .then(() => {
           this.createWorktime(this.user);
           this.getTodaysWorktimesDuration();
-          this.$router.push("/tasks");
+          this.$router.push("/assignedTasks");
         })
         .catch((error) => {
           if (error.response) {

@@ -7,7 +7,7 @@ const guest = (to, from, next) => {
     if (!localStorage.getItem("authToken")) {
         return next();
     } else {
-        return next("/tasks");
+        return next("/");
     }
 };
 const auth = (to, from, next) => {
@@ -20,9 +20,8 @@ const auth = (to, from, next) => {
 
 const routes = [
     {
-        path: "/home",
+        path: "/",
         name: "Home",
-        beforeEnter: auth,
         component: () =>
             import("../components/HomeComponent.vue")
     },
@@ -41,11 +40,18 @@ const routes = [
             import("../components/Auth/RegisterComponent.vue")
     },
     {
-        path: "/tasks",
+        path: "/createdTasks",
         name: "Tasks",
         beforeEnter: auth,
         component: () =>
-            import("../components/TasksComponent.vue")
+            import("../components/CreatedTasksComponent.vue")
+    },
+    {
+        path: "/assignedTasks",
+        name: "Tasks",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/AssignedTasksComponent.vue")
     },
     { 
         path: '*',

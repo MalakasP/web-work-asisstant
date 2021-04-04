@@ -26,7 +26,7 @@ export default {
 
         getUserData({ commit }) {
             axios
-                .get(process.env.MIX_API_URL + "users")
+                .get(process.env.MIX_API_URL + "users/" + state.userData.id)
                 .then(response => {
                     commit("setUserData", response.data);
                 })

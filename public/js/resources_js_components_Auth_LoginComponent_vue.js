@@ -91,7 +91,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _this.getTodaysWorktimesDuration();
 
-        _this.$router.push("/tasks");
+        _this.$router.push("/assignedTasks");
       })["catch"](function (error) {
         if (error.response) {
           _this.$store.commit("setErrors", error.response.data.errors);
