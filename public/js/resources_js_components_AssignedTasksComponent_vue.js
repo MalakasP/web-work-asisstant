@@ -72,12 +72,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
 
- // <div>
-//   <h2 class="p-3 text-center">You have no tasks assigned!</h2>
-// </div>
+
 
 function Task(_ref) {
   var id = _ref.id,
@@ -127,22 +123,7 @@ function Project(_ref2) {
   data: function data() {
     return {
       noTasks: false,
-      modal: false,
-      projects: [],
-      projectsWithUserTasks: [],
-      pagination: {},
-      editForm: {
-        title: null,
-        description: null,
-        date_till_done: null,
-        status: null,
-        priority: null,
-        project_id: null,
-        reporter_id: null,
-        assignee_id: null,
-        created_at: null,
-        updated_at: null
-      }
+      projects: []
     };
   },
   computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])),
@@ -152,7 +133,7 @@ function Project(_ref2) {
   created: function created() {
     this.read();
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)("worktime", ["makePagination"])), {}, {
+  methods: {
     read: function read() {
       var _this = this;
 
@@ -199,21 +180,8 @@ function Project(_ref2) {
           }
         }, _callee);
       }))();
-    },
-    startEdit: function startEdit(id) {
-      this.modal = true;
-      this.form.title = null;
-      this.form.description = null;
-      this.form.date_till_done = null;
-      this.form.status = null;
-      this.form.priority = null;
-      this.form.project_id = null;
-      this.form.reporter_id = null;
-      this.form.assignee_id = null;
-      this.form.created_at = null;
-      this.form.updated_at = null;
     }
-  })
+  }
 });
 
 /***/ }),
@@ -1067,16 +1035,14 @@ var render = function() {
   return _c("div", { staticClass: "container" }, [
     _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Assigned Tasks")]),
     _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "container" },
-      _vm._l(_vm.projects, function(project) {
-        return _c("div", { key: project.id }, [
-          _c("div", { staticClass: "card p-3 m-b-3" }, [
-            _c("div", { staticClass: "card" }, [
-              _c("h5", { staticClass: "p-1 text-left" }, [
-                _vm._v(_vm._s(project.title))
-              ])
+    _c("div", { staticClass: "container" }, [
+      _c(
+        "div",
+        { staticClass: "card p-3 m-b-3" },
+        _vm._l(_vm.projects, function(project) {
+          return _c("div", { key: project.id }, [
+            _c("h5", { staticClass: "p-1 text-left" }, [
+              _vm._v(_vm._s(project.title))
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "card p-3" }, [
@@ -1101,10 +1067,10 @@ var render = function() {
               ])
             ])
           ])
-        ])
-      }),
-      0
-    )
+        }),
+        0
+      )
+    ])
   ])
 }
 var staticRenderFns = [

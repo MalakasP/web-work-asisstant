@@ -2,11 +2,9 @@
   <div class="container">
     <h3 class="p-3 text-center">Assigned Tasks</h3>
     <div class="container">
-      <div v-for="project in projects" :key="project.id">
-        <div class="card p-3 m-b-3">
-          <div class="card">
-            <h5 class="p-1 text-left">{{ project.title }}</h5>
-          </div>
+      <div class="card p-3 m-b-3">
+        <div v-for="project in projects" :key="project.id">
+          <h5 class="p-1 text-left">{{ project.title }}</h5>
           <div class="card p-3">
             <table class="table-striped">
               <thead>
@@ -36,9 +34,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
-// <div>
-//   <h2 class="p-3 text-center">You have no tasks assigned!</h2>
-// </div>
+
 function Task({
   id,
   title,
@@ -89,22 +85,7 @@ export default {
   data: function () {
     return {
       noTasks: false,
-      modal: false,
       projects: [],
-      projectsWithUserTasks: [],
-      pagination: {},
-      editForm: {
-        title: null,
-        description: null,
-        date_till_done: null,
-        status: null,
-        priority: null,
-        project_id: null,
-        reporter_id: null,
-        assignee_id: null,
-        created_at: null,
-        updated_at: null,
-      },
     };
   },
   computed: {
@@ -118,8 +99,6 @@ export default {
     this.read();
   },
   methods: {
-    ...mapActions("worktime", ["makePagination"]),
-
     async read() {
       await window.axios
         .get(process.env.MIX_API_URL + "assignedTasks")
@@ -153,21 +132,7 @@ export default {
             this.noTasks = true;
           }
         });
-    },
-
-    startEdit(id) {
-      this.modal = true;
-      this.form.title = null;
-      this.form.description = null;
-      this.form.date_till_done = null;
-      this.form.status = null;
-      this.form.priority = null;
-      this.form.project_id = null;
-      this.form.reporter_id = null;
-      this.form.assignee_id = null;
-      this.form.created_at = null;
-      this.form.updated_at = null;
-    },
+    }
   },
 };
 </script>

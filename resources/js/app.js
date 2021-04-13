@@ -1,12 +1,14 @@
 import Vue from "vue";
-import router from "./router";
 import store from "./store";
+import router from "./router";
 import VueSimpleAlert from "vue-simple-alert";
+import Notifications from 'vue-notification'
 import AppComponent from './components/AppComponent.vue';
 
 require('./bootstrap');
 
 Vue.use(VueSimpleAlert);
+Vue.use(Notifications);
 
 Vue.config.productionTip = false;
 
@@ -17,6 +19,7 @@ axios.interceptors.response.use(
       store.commit("setErrors", error.response.data.errors);
     } else if (error.response.status === 401) {
       store.commit("auth/setUserData", null);
+      store.commit("auth/setAuthToken", null);
       localStorage.removeItem("authToken");
       router.push({ name: "Login" });
     }
@@ -26,7 +29,7 @@ axios.interceptors.response.use(
 
 axios.interceptors.request.use( function(config) {
   config.headers.common = {
-    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+    Authorization: `Bearer ${store.getters["auth/token"]}`,
     "Content-Type": "application/json",
     Accept: "application/json"
   };

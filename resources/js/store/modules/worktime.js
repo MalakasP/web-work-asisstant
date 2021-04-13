@@ -10,6 +10,7 @@ export default {
         duration: null,
         timerStopped: false,
         worktime: null,
+        timer: 0,
     },
 
     /**
@@ -19,6 +20,7 @@ export default {
         duration: state => state.duration,
         worktime: state => state.worktime,
         isTimerStopped: state => state.timerStopped,
+        timer: state => state.timer,
     },
 
     /**
@@ -44,6 +46,14 @@ export default {
             commit("setTimerStopped", status);
         },
 
+        setWorktime({ commit }, worktime) {
+            commit("setWorktime", worktime);
+        },
+
+        setTimer({commit}, timer) {
+            commit("setTimer", timer);
+        },
+
         /**
          * Create current worktime
          */
@@ -53,21 +63,9 @@ export default {
                 .post(process.env.MIX_API_URL + "worktimes", data)
                 .then((response) => {
                     commit("setWorktime", response.data.worktime);
+                    // localStorage.setObject("worktime", response.data.worktime);
+                    // localStorage.setObject("date", new Date());
                 });
-        },
-
-        /**
-         * Create pagination links for data
-         */
-        makePagination(data) {
-            let pagination = {
-                current_page: data.current_page,
-                last_page: data.last_page,
-                next_page_url: data.next_page_url,
-                prev_page_url: data.prev_page_url,
-            };
-
-            return pagination;
         },
 
     },
@@ -87,6 +85,10 @@ export default {
 
         setTimerStopped(state, status) {
             state.timerStopped = status;
+        },
+
+        setTimer(state, timer) {
+            state.timer = timer;
         }
     }
 

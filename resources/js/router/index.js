@@ -1,17 +1,18 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from "../store";
 
 Vue.use(VueRouter);
 
 const guest = (to, from, next) => {
-    if (!localStorage.getItem("authToken")) {
+    if (!store.getters["auth/token"]) {
         return next();
     } else {
         return next("/");
     }
 };
 const auth = (to, from, next) => {
-    if (localStorage.getItem("authToken")) {
+    if (store.getters["auth/token"]) {
         return next();
     } else {
         return next("/login");
@@ -40,15 +41,22 @@ const routes = [
             import("../components/Auth/RegisterComponent.vue")
     },
     {
+        path: "/projects",
+        name: "Projects",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/ProjectsComponent.vue")
+    },
+    {
         path: "/createdTasks",
-        name: "Tasks",
+        name: "CreatedTasks",
         beforeEnter: auth,
         component: () =>
             import("../components/CreatedTasksComponent.vue")
     },
     {
         path: "/assignedTasks",
-        name: "Tasks",
+        name: "AssignedTasks",
         beforeEnter: auth,
         component: () =>
             import("../components/AssignedTasksComponent.vue")

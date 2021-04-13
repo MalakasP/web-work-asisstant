@@ -1,4 +1,4 @@
-(self["webpackChunk"] = self["webpackChunk"] || []).push([["resources_js_components_CreatedTasksComponent_vue"],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([["resources_js_components_ProjectsComponent_vue"],{
 
 /***/ "./node_modules/@babel/runtime/regenerator/index.js":
 /*!**********************************************************!*\
@@ -11,10 +11,10 @@ module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=script&lang=js&":
-/*!****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=script&lang=js& ***!
-  \****************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -209,102 +209,81 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
-function Task(_ref) {
+function Team(_ref) {
   var id = _ref.id,
-      title = _ref.title,
+      name = _ref.name,
       description = _ref.description,
-      date_till_done = _ref.date_till_done,
-      status = _ref.status,
-      priority = _ref.priority,
-      project_id = _ref.project_id,
-      reporter_id = _ref.reporter_id,
-      assignee_id = _ref.assignee_id,
       created_at = _ref.created_at,
       updated_at = _ref.updated_at;
   this.id = id;
-  this.title = title;
+  this.name = name;
   this.description = description;
-  this.date_till_done = date_till_done;
-  this.status = status;
-  this.priority = priority;
-  this.project_id = project_id;
-  this.reporter_id = reporter_id;
-  this.assignee_id = assignee_id;
   this.created_at = created_at;
   this.updated_at = updated_at;
 }
 
-function Project(_ref2) {
+function User(_ref2) {
   var id = _ref2.id,
-      title = _ref2.title,
-      description = _ref2.description,
-      author_id = _ref2.author_id,
-      team_id = _ref2.team_id,
       created_at = _ref2.created_at,
       updated_at = _ref2.updated_at,
-      tasks = _ref2.tasks;
+      teams = _ref2.teams;
   this.id = id;
-  this.title = title;
-  this.description = description;
-  this.author_id = author_id;
-  this.team_id = team_id;
   this.created_at = created_at;
   this.updated_at = updated_at;
-  this.tasks = tasks;
+  this.teams = teams;
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      noTasks: false,
-      dynamicTitle: null,
       modal: false,
-      statuses: {
-        1: {
-          val: "To Do"
-        },
-        2: {
-          val: "In Progress"
-        },
-        3: {
-          val: "Done"
-        }
-      },
-      priorities: {
-        1: {
-          val: "lowest"
-        },
-        2: {
-          val: "low"
-        },
-        3: {
-          val: "medium"
-        },
-        4: {
-          val: "high"
-        },
-        5: {
-          val: "critical"
-        }
-      },
-      editTask: null,
-      taskProject: null,
-      projects: [],
+      dynamicTitle: null,
+      createdProjects: [],
+      teamProjects: [],
       projectsUsers: {},
+      projectsTeams: {},
       form: {
         title: null,
         description: null,
-        date_till_done: null,
-        status: null,
-        priority: null,
-        project_id: null,
-        reporter_id: null,
-        assignee_id: null,
-        created_at: null,
-        updated_at: null
+        author_id: null,
+        team_id: null
       }
     };
   },
@@ -315,14 +294,7 @@ function Project(_ref2) {
   created: function created() {
     this.read();
   },
-  filters: {
-    monthDay: function monthDay(value) {
-      if (!value) return "";
-      value = value.toString();
-      return value.substring(5);
-    }
-  },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)("worktime", [])), {}, {
+  methods: {
     read: function read() {
       var _this = this;
 
@@ -347,35 +319,50 @@ function Project(_ref2) {
 
               case 2:
                 _context.next = 4;
-                return window.axios.get("api/" + "createdTasks").then(function (response) {
+                return window.axios.get("api/" + "teams").then(function (response) {
                   if (response.data != null) {
-                    _this.projects = [];
-                    response.data.createdTasks.forEach(function (project) {
-                      if (project.hasOwnProperty("id")) {
-                        _this.projects.push(new Project(project));
-                      } else if (project[0].project_id === null) {
-                        _this.projects.push(new Project({
-                          id: 0,
-                          title: "No Project",
-                          description: "Tasks without project",
-                          author_id: _this.user.id,
-                          team_id: 0,
-                          created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                          updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                          tasks: project
-                        }));
+                    _this.projectsTeams = {};
+                    response.data.teams.forEach(function (team) {
+                      if (team != null) {
+                        _this.projectsTeams[team.id] = new Team(team);
                       }
+                    });
+                    _this.projectsTeams[0] = new Team({
+                      id: 0,
+                      name: "No Team",
+                      description: "",
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()()
                     });
                   }
                 })["catch"](function (error) {
                   console.log(error);
-
-                  if (error.response.status == 404) {
-                    _this.noTasks = true;
-                  }
                 });
 
               case 4:
+                _context.next = 6;
+                return window.axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
+                  if (response.data != null) {
+                    _this.createdProjects = [];
+                    _this.teamProjects = [];
+
+                    if (response.data.createdProjects != null) {
+                      response.data.createdProjects.forEach(function (project) {
+                        _this.createdProjects.push(project);
+                      });
+                    }
+
+                    if (response.data.teamProjects != null) {
+                      response.data.teamProjects.forEach(function (project) {
+                        _this.teamProjects.push(project);
+                      });
+                    }
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 6:
               case "end":
                 return _context.stop();
             }
@@ -383,157 +370,35 @@ function Project(_ref2) {
         }, _callee);
       }))();
     },
-    update: function update() {
-      var _this2 = this;
-
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                _context2.next = 2;
-                return window.axios.put("api/" + "tasks/" + _this2.editTask.id, _this2.form).then(function (response) {
-                  if (response.data != null) {
-                    _this2.modal = false;
-
-                    if (_this2.editTask.project_id != null) {
-                      _this2.projects.forEach(function (project) {
-                        if (project.id == _this2.editTask.project_id) {
-                          var taskIndex = project.tasks.findIndex(function (task) {
-                            return task.id == _this2.editTask.id;
-                          });
-                          project.tasks.splice(taskIndex, 1, response.data.task);
-                        }
-                      });
-                    } else {
-                      var taskIndex = _this2.projects[0].tasks.find(function (task) {
-                        return task.id == _this2.editTask.id;
-                      });
-
-                      _this2.projects[0].tasks.splice(taskIndex, 1, response.data.task);
-                    }
-
-                    _this2.editTask = null;
-
-                    _this2.$notify({
-                      group: "app",
-                      title: "Success!",
-                      type: "success",
-                      text: "Task was updated!"
-                    });
-                  }
-                })["catch"](function (error) {
-                  console.log(error);
-
-                  if (error.response) {
-                    if (error.response.status != 422) {
-                      _this2.modal = false;
-                      _this2.editTask = null;
-
-                      _this2.$alert(error.response.data.status, "Warning", "error");
-                    } else {
-                      _this2.$store.commit("setErrors", error.response.data.errors);
-                    }
-                  }
-                });
-
-              case 2:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2);
-      }))();
+    openProjectModal: function openProjectModal(project) {
+      console.log(project.id + " open");
     },
-    create: function create() {
-      var _this3 = this;
-
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                if (_this3.form.project_id == 0) {
-                  _this3.form.project_id = null;
-                }
-
-                _context3.next = 3;
-                return window.axios.post("api/" + "tasks", _this3.form).then(function (response) {
-                  if (response.data != null) {
-                    _this3.modal = false;
-
-                    _this3.projects.forEach(function (project) {
-                      if (project.id == _this3.form.project_id) {
-                        project.tasks.push(response.data.task);
-                      }
-                    });
-
-                    _this3.$notify({
-                      group: "app",
-                      title: "Success!",
-                      type: "success",
-                      text: "Task was added!"
-                    });
-                  }
-                })["catch"](function (error) {
-                  console.log(error);
-
-                  if (error.response) {
-                    if (error.response.status != 422) {
-                      _this3.modal = false;
-
-                      _this3.$alert(error.response.data.status, "Warning", "error");
-                    } else {
-                      _this3.$store.commit("setErrors", error.response.data.errors);
-                    }
-                  }
-                });
-
-              case 3:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3);
-      }))();
-    },
-    startCreate: function startCreate() {
+    startEdit: function startEdit(project) {
+      console.log(this.projectsTeams[0].id);
       this.modal = true;
-      this.dynamicTitle = "Create Task";
-      this.form.title = null;
-      this.form.description = null;
-      this.form.date_till_done = moment__WEBPACK_IMPORTED_MODULE_1___default()().format("YYYY-MM-DD");
-      this.form.status = this.statuses[1].val;
-      this.form.priority = this.priorities[1].val;
-      this.form.project_id = this.projects[0].id;
-      this.form.reporter_id = this.user.id;
-      this.form.assignee_id = this.projectsUsers[1].id;
+      this.edit = project.id;
+      this.dynamicTitle = "Edit Project";
+
+      if (project.team_id == null) {
+        this.form.team_id = 0;
+      } else {
+        this.form.team_id = project.team_id;
+      }
+
+      this.form.title = project.title;
+      this.form.description = project.description;
+      this.form.author = project.author_id;
     },
-    startEdit: function startEdit(task) {
-      this.modal = true;
-      this.dynamicTitle = "Edit Task";
-      this.editTask = task;
-      this.form.title = task.title;
-      this.form.description = task.description;
-      this.form.date_till_done = task.date_till_done;
-      this.form.status = task.status;
-      this.form.priority = task.priority;
-      this.form.project_id = task.project_id;
-      this.form.reporter_id = task.reporter_id;
-      this.form.assignee_id = task.assignee_id;
-    },
-    del: function del(taskId) {
-      console.log(taskId);
-    }
-  })
+    update: function update() {}
+  }
 });
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css&":
-/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css& ***!
-  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css&":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css& ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -547,7 +412,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.modal-mask[data-v-bb265d88] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-bb265d88] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-dialog[data-v-bb265d88] {\r\n  overflow-y: initial !important;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 65vh;\r\n  overflow-y: auto;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.full-width[data-v-20cb5d70] {\r\n  width: 100%;\n}\n.modal-mask[data-v-20cb5d70] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-20cb5d70] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.to-capital-first[data-v-20cb5d70] {\r\n  text-transform: capitalize;\n}\n.modal-dialog[data-v-20cb5d70] {\r\n  overflow-y: initial !important;\n}\n.modal-body[data-v-20cb5d70] {\r\n  height: 40vh;\r\n  overflow-y: auto;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1312,10 +1177,10 @@ try {
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css&":
-/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css& ***!
-  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css&":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css& ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1325,7 +1190,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CreatedTasksComponent_vue_vue_type_style_index_0_id_bb265d88_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css& */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ProjectsComponent_vue_vue_type_style_index_0_id_20cb5d70_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css& */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css&");
 
             
 
@@ -1334,18 +1199,18 @@ var options = {};
 options.insert = "head";
 options.singleton = false;
 
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CreatedTasksComponent_vue_vue_type_style_index_0_id_bb265d88_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default, options);
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ProjectsComponent_vue_vue_type_style_index_0_id_20cb5d70_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default, options);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CreatedTasksComponent_vue_vue_type_style_index_0_id_bb265d88_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ProjectsComponent_vue_vue_type_style_index_0_id_20cb5d70_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
 
 /***/ }),
 
-/***/ "./resources/js/components/CreatedTasksComponent.vue":
-/*!***********************************************************!*\
-  !*** ./resources/js/components/CreatedTasksComponent.vue ***!
-  \***********************************************************/
+/***/ "./resources/js/components/ProjectsComponent.vue":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/ProjectsComponent.vue ***!
+  \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1353,9 +1218,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _CreatedTasksComponent_vue_vue_type_template_id_bb265d88_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CreatedTasksComponent.vue?vue&type=template&id=bb265d88&scoped=true& */ "./resources/js/components/CreatedTasksComponent.vue?vue&type=template&id=bb265d88&scoped=true&");
-/* harmony import */ var _CreatedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CreatedTasksComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/CreatedTasksComponent.vue?vue&type=script&lang=js&");
-/* harmony import */ var _CreatedTasksComponent_vue_vue_type_style_index_0_id_bb265d88_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css& */ "./resources/js/components/CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css&");
+/* harmony import */ var _ProjectsComponent_vue_vue_type_template_id_20cb5d70_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProjectsComponent.vue?vue&type=template&id=20cb5d70&scoped=true& */ "./resources/js/components/ProjectsComponent.vue?vue&type=template&id=20cb5d70&scoped=true&");
+/* harmony import */ var _ProjectsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ProjectsComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/ProjectsComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _ProjectsComponent_vue_vue_type_style_index_0_id_20cb5d70_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css& */ "./resources/js/components/ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -1366,27 +1231,27 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__.default)(
-  _CreatedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
-  _CreatedTasksComponent_vue_vue_type_template_id_bb265d88_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
-  _CreatedTasksComponent_vue_vue_type_template_id_bb265d88_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  _ProjectsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _ProjectsComponent_vue_vue_type_template_id_20cb5d70_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
+  _ProjectsComponent_vue_vue_type_template_id_20cb5d70_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
   false,
   null,
-  "bb265d88",
+  "20cb5d70",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/CreatedTasksComponent.vue"
+component.options.__file = "resources/js/components/ProjectsComponent.vue"
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/CreatedTasksComponent.vue?vue&type=script&lang=js&":
-/*!************************************************************************************!*\
-  !*** ./resources/js/components/CreatedTasksComponent.vue?vue&type=script&lang=js& ***!
-  \************************************************************************************/
+/***/ "./resources/js/components/ProjectsComponent.vue?vue&type=script&lang=js&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/ProjectsComponent.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1394,45 +1259,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CreatedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CreatedTasksComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CreatedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ProjectsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ProjectsComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ProjectsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
 
 /***/ }),
 
-/***/ "./resources/js/components/CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css&":
-/*!********************************************************************************************************************!*\
-  !*** ./resources/js/components/CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css& ***!
-  \********************************************************************************************************************/
+/***/ "./resources/js/components/ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css&":
+/*!****************************************************************************************************************!*\
+  !*** ./resources/js/components/ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css& ***!
+  \****************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CreatedTasksComponent_vue_vue_type_style_index_0_id_bb265d88_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=style&index=0&id=bb265d88&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ProjectsComponent_vue_vue_type_style_index_0_id_20cb5d70_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=style&index=0&id=20cb5d70&scoped=true&lang=css&");
 
 
 /***/ }),
 
-/***/ "./resources/js/components/CreatedTasksComponent.vue?vue&type=template&id=bb265d88&scoped=true&":
-/*!******************************************************************************************************!*\
-  !*** ./resources/js/components/CreatedTasksComponent.vue?vue&type=template&id=bb265d88&scoped=true& ***!
-  \******************************************************************************************************/
+/***/ "./resources/js/components/ProjectsComponent.vue?vue&type=template&id=20cb5d70&scoped=true&":
+/*!**************************************************************************************************!*\
+  !*** ./resources/js/components/ProjectsComponent.vue?vue&type=template&id=20cb5d70&scoped=true& ***!
+  \**************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CreatedTasksComponent_vue_vue_type_template_id_bb265d88_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CreatedTasksComponent_vue_vue_type_template_id_bb265d88_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ProjectsComponent_vue_vue_type_template_id_20cb5d70_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ProjectsComponent_vue_vue_type_template_id_20cb5d70_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CreatedTasksComponent_vue_vue_type_template_id_bb265d88_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CreatedTasksComponent.vue?vue&type=template&id=bb265d88&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=template&id=bb265d88&scoped=true&");
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ProjectsComponent_vue_vue_type_template_id_20cb5d70_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ProjectsComponent.vue?vue&type=template&id=20cb5d70&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=template&id=20cb5d70&scoped=true&");
 
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=template&id=bb265d88&scoped=true&":
-/*!*********************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CreatedTasksComponent.vue?vue&type=template&id=bb265d88&scoped=true& ***!
-  \*********************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=template&id=20cb5d70&scoped=true&":
+/*!*****************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ProjectsComponent.vue?vue&type=template&id=20cb5d70&scoped=true& ***!
+  \*****************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1446,58 +1311,6 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("h3", { staticClass: "text-center p-3" }, [_vm._v("Created Tasks")]),
-    _vm._v(" "),
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-3 float-md-right" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-secondary",
-            attrs: { type: "button" },
-            on: {
-              click: function($event) {
-                return _vm.startCreate()
-              }
-            }
-          },
-          [
-            _c("span", { staticClass: "icon full-size" }, [
-              _c(
-                "svg",
-                {
-                  staticClass: "bi bi-plus-square",
-                  attrs: {
-                    xmlns: "http://www.w3.org/2000/svg",
-                    width: "16",
-                    height: "16",
-                    fill: "currentColor",
-                    viewBox: "0 0 16 16"
-                  }
-                },
-                [
-                  _c("path", {
-                    attrs: {
-                      d:
-                        "M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("path", {
-                    attrs: {
-                      d:
-                        "M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                    }
-                  })
-                ]
-              ),
-              _vm._v("\n          Add Task\n        ")
-            ])
-          ]
-        )
-      ])
-    ]),
-    _vm._v(" "),
     _vm.modal
       ? _c(
           "div",
@@ -1519,14 +1332,14 @@ var render = function() {
                             attrs: { type: "button" },
                             on: {
                               click: function($event) {
-                                _vm.editTask = null
+                                _vm.edit = null
                                 _vm.modal = false
                               }
                             }
                           },
                           [
                             _c("span", { attrs: { "aria-hidden": "true" } }, [
-                              _vm._v("×\n                                ")
+                              _vm._v("× ")
                             ])
                           ]
                         )
@@ -1562,9 +1375,9 @@ var render = function() {
                           _vm.errors.title
                             ? _c("div", { staticClass: "invalid-feedback" }, [
                                 _vm._v(
-                                  "\n                                  " +
+                                  "\n                    " +
                                     _vm._s(_vm.errors.title) +
-                                    "\n                                "
+                                    "\n                  "
                                 )
                               ])
                             : _vm._e()
@@ -1603,264 +1416,16 @@ var render = function() {
                           _vm.errors.description
                             ? _c("div", { staticClass: "invalid-feedback" }, [
                                 _vm._v(
-                                  "\n                                  " +
+                                  "\n                    " +
                                     _vm._s(_vm.errors.description) +
-                                    "\n                                "
+                                    "\n                  "
                                 )
                               ])
                             : _vm._e()
                         ]),
                         _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("div", { staticClass: "form-group col-md-6" }, [
-                            _c("label", [_vm._v("Enter Deadline")]),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.date_till_done,
-                                  expression: "form.date_till_done"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.errors.date_till_done
-                              },
-                              attrs: { type: "date" },
-                              domProps: { value: _vm.form.date_till_done },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "date_till_done",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _vm.errors.date_till_done
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                                  " +
-                                      _vm._s(_vm.errors.date_till_done) +
-                                      "\n                                "
-                                  )
-                                ])
-                              : _vm._e()
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-group col-md-6" }, [
-                            _c("label", [_vm._v("Choose Assignee")]),
-                            _vm._v(" "),
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.assignee_id,
-                                    expression: "form.assignee_id"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: { "is-invalid": _vm.errors.assignee_id },
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.form,
-                                      "assignee_id",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              _vm._l(this.projectsUsers, function(user) {
-                                return _c(
-                                  "option",
-                                  {
-                                    key: user.id,
-                                    domProps: { value: user.id }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                  " +
-                                        _vm._s(user.name) +
-                                        "\n                                  "
-                                    )
-                                  ]
-                                )
-                              }),
-                              0
-                            ),
-                            _vm._v(" "),
-                            _vm.errors.assignee_id
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                                  " +
-                                      _vm._s(_vm.errors.assignee_id) +
-                                      "\n                                "
-                                  )
-                                ])
-                              : _vm._e()
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("div", { staticClass: "form-group col-md-6" }, [
-                            _c("label", [_vm._v("Choose Status")]),
-                            _vm._v(" "),
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.status,
-                                    expression: "form.status"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: { "is-invalid": _vm.errors.status },
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.form,
-                                      "status",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              _vm._l(this.statuses, function(status) {
-                                return _c(
-                                  "option",
-                                  {
-                                    key: status.val,
-                                    domProps: { value: status.val }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                    " +
-                                        _vm._s(status.val) +
-                                        "\n                                    "
-                                    )
-                                  ]
-                                )
-                              }),
-                              0
-                            ),
-                            _vm._v(" "),
-                            _vm.errors.status
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                                    " +
-                                      _vm._s(_vm.errors.status) +
-                                      "\n                                  "
-                                  )
-                                ])
-                              : _vm._e()
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-group col-md-6" }, [
-                            _c("label", [_vm._v("Choose Priority")]),
-                            _vm._v(" "),
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.priority,
-                                    expression: "form.priority"
-                                  }
-                                ],
-                                staticClass: "form-control to-capital-first",
-                                class: { "is-invalid": _vm.errors.priority },
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.form,
-                                      "priority",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              _vm._l(this.priorities, function(priority) {
-                                return _c(
-                                  "option",
-                                  {
-                                    key: priority.val,
-                                    domProps: { value: priority.val }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                    " +
-                                        _vm._s(priority.val) +
-                                        "\n                                    "
-                                    )
-                                  ]
-                                )
-                              }),
-                              0
-                            ),
-                            _vm._v(" "),
-                            _vm.errors.priority
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                                    " +
-                                      _vm._s(_vm.errors.priority) +
-                                      "\n                                  "
-                                  )
-                                ])
-                              : _vm._e()
-                          ])
-                        ]),
-                        _vm._v(" "),
                         _c("div", { staticClass: "form-group" }, [
-                          _c("label", [_vm._v("Choose Project")]),
+                          _c("label", [_vm._v("Choose Team")]),
                           _vm._v(" "),
                           _c(
                             "select",
@@ -1869,12 +1434,12 @@ var render = function() {
                                 {
                                   name: "model",
                                   rawName: "v-model",
-                                  value: _vm.form.project_id,
-                                  expression: "form.project_id"
+                                  value: _vm.form.team_id,
+                                  expression: "form.team_id"
                                 }
                               ],
                               staticClass: "form-control",
-                              class: { "is-invalid": _vm.errors.project_id },
+                              class: { "is-invalid": _vm.errors.team_id },
                               on: {
                                 change: function($event) {
                                   var $$selectedVal = Array.prototype.filter
@@ -1888,7 +1453,7 @@ var render = function() {
                                     })
                                   _vm.$set(
                                     _vm.form,
-                                    "project_id",
+                                    "team_id",
                                     $event.target.multiple
                                       ? $$selectedVal
                                       : $$selectedVal[0]
@@ -1896,18 +1461,15 @@ var render = function() {
                                 }
                               }
                             },
-                            _vm._l(this.projects, function(project) {
+                            _vm._l(this.projectsTeams, function(team) {
                               return _c(
                                 "option",
-                                {
-                                  key: project.id,
-                                  domProps: { value: project.id }
-                                },
+                                { key: team.id, domProps: { value: team.id } },
                                 [
                                   _vm._v(
-                                    "\n                                " +
-                                      _vm._s(project.title) +
-                                      "\n                                "
+                                    "\n                      " +
+                                      _vm._s(team.name) +
+                                      "\n                    "
                                   )
                                 ]
                               )
@@ -1915,19 +1477,19 @@ var render = function() {
                             0
                           ),
                           _vm._v(" "),
-                          _vm.errors.project_id
+                          _vm.errors.team_id
                             ? _c("div", { staticClass: "invalid-feedback" }, [
                                 _vm._v(
-                                  "\n                                " +
-                                    _vm._s(_vm.errors.project_id) +
-                                    "\n                              "
+                                  "\n                    " +
+                                    _vm._s(_vm.errors.team_id) +
+                                    "\n                  "
                                 )
                               ])
                             : _vm._e()
                         ]),
                         _vm._v(" "),
                         _c("div", { attrs: { align: "center" } }, [
-                          _vm.editTask == null
+                          _vm.edit == null
                             ? _c("input", {
                                 staticClass: "btn btn-primary",
                                 attrs: { type: "button", value: "Submit" },
@@ -1950,53 +1512,49 @@ var render = function() {
         )
       : _vm._e(),
     _vm._v(" "),
-    _c("div", { staticClass: "row justify-content-center" }, [
-      _c("div", { staticClass: "col-12" }, [
-        _c(
-          "div",
-          { staticClass: "card p-3" },
-          _vm._l(_vm.projects, function(project) {
-            return _c("div", { key: project.id }, [
-              _c("h5", { staticClass: "text-left p-1" }, [
-                _vm._v(_vm._s(project.title))
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "card p-3" }, [
-                _c("table", { staticClass: "table-striped table-responsive" }, [
-                  _vm._m(0, true),
+    this.createdProjects.length > 0
+      ? _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12" }, [
+            _c("h3", { staticClass: "p-3" }, [_vm._v("Created Projects")]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card p-3" }, [
+              _c(
+                "table",
+                { staticClass: "table-striped table-responsive full-width" },
+                [
+                  _vm._m(0),
                   _vm._v(" "),
                   _c(
                     "tbody",
-                    _vm._l(project.tasks, function(task) {
-                      return _c("tr", { key: task.id }, [
-                        _c("td", { staticStyle: { width: "20%" } }, [
-                          _vm._v(_vm._s(task.title))
+                    _vm._l(_vm.createdProjects, function(project) {
+                      return _c("tr", { key: project.id }, [
+                        _c("td", { staticStyle: { width: "40%" } }, [
+                          _vm._v(_vm._s(project.title))
                         ]),
                         _vm._v(" "),
                         _c("td", { staticStyle: { width: "20%" } }, [
                           _vm._v(
-                            _vm._s(_vm._f("monthDay")(task.date_till_done))
+                            "\n                " +
+                              _vm._s(
+                                _vm.projectsUsers[project.author_id].name
+                              ) +
+                              "\n              "
                           )
                         ]),
                         _vm._v(" "),
-                        _c("td", { staticStyle: { width: "20%" } }, [
-                          _vm._v(_vm._s(task.status))
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "td",
-                          {
-                            staticClass: "to-capital-first",
-                            staticStyle: { width: "20%" }
-                          },
-                          [_vm._v(_vm._s(task.priority))]
-                        ),
-                        _vm._v(" "),
-                        _c("td", { staticStyle: { width: "10%" } }, [
-                          _vm._v(
-                            _vm._s(_vm.projectsUsers[task.assignee_id].name)
-                          )
-                        ]),
+                        project.team_id != null
+                          ? _c("td", { staticStyle: { width: "30%" } }, [
+                              _vm._v(
+                                "\n                " +
+                                  _vm._s(
+                                    _vm.projectsTeams[project.team_id].name
+                                  ) +
+                                  "\n              "
+                              )
+                            ])
+                          : _c("td", { staticStyle: { width: "30%" } }, [
+                              _vm._v("No Team")
+                            ]),
                         _vm._v(" "),
                         _c("td", { staticStyle: { width: "5%" } }, [
                           _c(
@@ -2006,7 +1564,7 @@ var render = function() {
                               attrs: { type: "button" },
                               on: {
                                 click: function($event) {
-                                  return _vm.startEdit(task)
+                                  return _vm.startEdit(project)
                                 }
                               }
                             },
@@ -2053,7 +1611,7 @@ var render = function() {
                               attrs: { type: "button" },
                               on: {
                                 click: function($event) {
-                                  return _vm.del(task.id)
+                                  return _vm.del(project)
                                 }
                               }
                             },
@@ -2096,14 +1654,56 @@ var render = function() {
                     }),
                     0
                   )
-                ])
-              ])
+                ]
+              )
             ])
-          }),
-          0
-        )
-      ])
-    ])
+          ])
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    this.teamProjects.length > 0
+      ? _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12" }, [
+            _c("h3", { staticClass: "p-3" }, [_vm._v("Team Projects")]),
+            _vm._v(" "),
+            _c("table", { staticClass: "table-striped full-width" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c(
+                "tbody",
+                _vm._l(_vm.teamProjects, function(project) {
+                  return _c("tr", { key: project.id }, [
+                    _c("td", { staticStyle: { width: "40%" } }, [
+                      _vm._v(_vm._s(project.title))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", { staticStyle: { width: "20%" } }, [
+                      _vm._v(
+                        "\n              " +
+                          _vm._s(_vm.projectsUsers[project.author_id].name) +
+                          "\n            "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    project.team_id != null
+                      ? _c("td", { staticStyle: { width: "30%" } }, [
+                          _vm._v(
+                            "\n              " +
+                              _vm._s(_vm.projectsTeams[project.team_id].name) +
+                              "\n            "
+                          )
+                        ])
+                      : _c("td", { staticStyle: { width: "30%" } }, [
+                          _vm._v("No Team")
+                        ])
+                  ])
+                }),
+                0
+              )
+            ])
+          ])
+        ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = [
@@ -2113,15 +1713,29 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Title")]),
+        _c("th", { staticStyle: { width: "40%" } }, [_vm._v("Title")]),
         _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Deadline")]),
+        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Author")]),
         _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Status")]),
+        _c("th", { staticStyle: { width: "30%" } }, [_vm._v("Team")]),
         _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Priority")]),
+        _c("th", { staticStyle: { width: "5%" } }),
         _vm._v(" "),
-        _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Assignee")]),
+        _c("th", { staticStyle: { width: "5%" } })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { staticStyle: { width: "40%" } }, [_vm._v("Title")]),
+        _vm._v(" "),
+        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Author")]),
+        _vm._v(" "),
+        _c("th", { staticStyle: { width: "30%" } }, [_vm._v("Team")]),
         _vm._v(" "),
         _c("th", { staticStyle: { width: "5%" } }),
         _vm._v(" "),

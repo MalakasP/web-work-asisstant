@@ -11,9 +11,7 @@ export default new Vuex.Store({
       errors: []
     },
 
-    plugins: [createPersistedState({
-      storage: window.sessionStorage,
-    })],
+    plugins: [createPersistedState()],
     
     getters: {
       errors: state => state.errors

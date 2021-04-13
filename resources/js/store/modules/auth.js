@@ -31,7 +31,7 @@ export default {
                     commit("setUserData", response.data);
                 })
                 .catch(() => {
-                    localStorage.removeItem("authToken");
+                    // localStorage.removeItem("authToken");
                 });
         },
 
@@ -43,6 +43,7 @@ export default {
                     commit("setUserData", response.data.user);
                     commit("setAuthToken", response.data.token);
                     localStorage.setItem("authToken", response.data.token);
+                    // localStorage.setObject("userData", response.data.token);
                 })
         },
 
@@ -62,11 +63,18 @@ export default {
             axios.post(process.env.MIX_API_URL + "logout").then(() => {
                 commit("setUserData", null);
                 commit("setAuthToken", null);
-                localStorage.removeItem("authToken");
-                localStorage.removeItem("counter");
+                // localStorage.removeItem("authToken");
+                // localStorage.removeItem("userData");
+                // localStorage.removeItem("counter");
+                // localStorage.removeItem("worktime");
+                // localStorage.removeItem("date");
                 sessionStorage.clear();
             });
         },
+
+        // setAuthToken({ commit}, token) {
+        //     commit("setAuthToken", token);
+        // }
 
     },
 

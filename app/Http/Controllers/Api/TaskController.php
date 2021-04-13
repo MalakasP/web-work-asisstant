@@ -123,7 +123,7 @@ class TaskController extends Controller
     {
         $request->validated();
 
-        if (!$task->project->isEmpty()) {
+        if (!empty($task->project)) {
             $project = $task->project;
             if ($project->team != null) {
                 $team = $project->team;
