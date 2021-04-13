@@ -1,4 +1,4 @@
-(self["webpackChunk"] = self["webpackChunk"] || []).push([["resources_js_components_AssignedTasksComponent_vue"],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([["resources_js_components_TeamsComponent_vue"],{
 
 /***/ "./node_modules/@babel/runtime/regenerator/index.js":
 /*!**********************************************************!*\
@@ -11,10 +11,10 @@ module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/TeamsComponent.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/TeamsComponent.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -80,56 +80,36 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-function Task(_ref) {
+function Team(_ref) {
   var id = _ref.id,
-      title = _ref.title,
+      name = _ref.name,
       description = _ref.description,
-      date_till_done = _ref.date_till_done,
-      status = _ref.status,
-      priority = _ref.priority,
-      project_id = _ref.project_id,
-      reporter_id = _ref.reporter_id,
-      assignee_id = _ref.assignee_id,
       created_at = _ref.created_at,
       updated_at = _ref.updated_at;
   this.id = id;
-  this.title = title;
+  this.name = name;
   this.description = description;
-  this.date_till_done = date_till_done;
-  this.status = status;
-  this.priority = priority;
-  this.project_id = project_id;
-  this.reporter_id = reporter_id;
-  this.assignee_id = assignee_id;
   this.created_at = created_at;
   this.updated_at = updated_at;
 }
 
-function Project(_ref2) {
+function User(_ref2) {
   var id = _ref2.id,
-      title = _ref2.title,
-      description = _ref2.description,
-      author_id = _ref2.author_id,
-      team_id = _ref2.team_id,
+      name = _ref2.name,
+      email = _ref2.email,
       created_at = _ref2.created_at,
-      updated_at = _ref2.updated_at,
-      tasks = _ref2.tasks;
+      updated_at = _ref2.updated_at;
   this.id = id;
-  this.title = title;
-  this.description = description;
-  this.author_id = author_id;
-  this.team_id = team_id;
+  this.name = name;
+  this.email = email;
   this.created_at = created_at;
   this.updated_at = updated_at;
-  this.tasks = tasks;
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      loaded: false,
-      noTasks: false,
-      projects: []
+      teams: {}
     };
   },
   computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])),
@@ -141,45 +121,11 @@ function Project(_ref2) {
   },
   methods: {
     read: function read() {
-      var _this = this;
-
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
-                return window.axios.get("api/" + "assignedTasks").then(function (response) {
-                  if (response.data != null) {
-                    _this.assignedTasks = [];
-                    response.data.assignedTasks.forEach(function (project) {
-                      if (project.hasOwnProperty("id")) {
-                        _this.projects.push(new Project(project));
-                      } else if (project[0].project_id === null) {
-                        _this.projects.push(new Project({
-                          id: 0,
-                          title: "No Project",
-                          description: "Tasks without project",
-                          author_id: _this.user.id,
-                          team_id: 0,
-                          created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                          updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                          tasks: project
-                        }));
-                      }
-
-                      _this.loaded = true;
-                    });
-                  }
-                })["catch"](function (error) {
-                  if (error.response.status == 404) {
-                    _this.noTasks = true;
-                    _this.loaded = true;
-                    console.log(_this.noTasks, _this.loaded);
-                  }
-                });
-
-              case 2:
               case "end":
                 return _context.stop();
             }
@@ -950,10 +896,10 @@ try {
 
 /***/ }),
 
-/***/ "./resources/js/components/AssignedTasksComponent.vue":
-/*!************************************************************!*\
-  !*** ./resources/js/components/AssignedTasksComponent.vue ***!
-  \************************************************************/
+/***/ "./resources/js/components/TeamsComponent.vue":
+/*!****************************************************!*\
+  !*** ./resources/js/components/TeamsComponent.vue ***!
+  \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -961,8 +907,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true& */ "./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true&");
-/* harmony import */ var _AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AssignedTasksComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _TeamsComponent_vue_vue_type_template_id_5b3040dc_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TeamsComponent.vue?vue&type=template&id=5b3040dc&scoped=true& */ "./resources/js/components/TeamsComponent.vue?vue&type=template&id=5b3040dc&scoped=true&");
+/* harmony import */ var _TeamsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TeamsComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/TeamsComponent.vue?vue&type=script&lang=js&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -972,27 +918,27 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 ;
 var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
-  _AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
-  _AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
-  _AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  _TeamsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _TeamsComponent_vue_vue_type_template_id_5b3040dc_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
+  _TeamsComponent_vue_vue_type_template_id_5b3040dc_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
   false,
   null,
-  "33281c28",
+  "5b3040dc",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/AssignedTasksComponent.vue"
+component.options.__file = "resources/js/components/TeamsComponent.vue"
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************!*\
-  !*** ./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************/
+/***/ "./resources/js/components/TeamsComponent.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/TeamsComponent.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1000,32 +946,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AssignedTasksComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TeamsComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/TeamsComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
 
 /***/ }),
 
-/***/ "./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true&":
-/*!*******************************************************************************************************!*\
-  !*** ./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true& ***!
-  \*******************************************************************************************************/
+/***/ "./resources/js/components/TeamsComponent.vue?vue&type=template&id=5b3040dc&scoped=true&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/components/TeamsComponent.vue?vue&type=template&id=5b3040dc&scoped=true& ***!
+  \***********************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamsComponent_vue_vue_type_template_id_5b3040dc_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamsComponent_vue_vue_type_template_id_5b3040dc_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true&");
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamsComponent_vue_vue_type_template_id_5b3040dc_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TeamsComponent.vue?vue&type=template&id=5b3040dc&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/TeamsComponent.vue?vue&type=template&id=5b3040dc&scoped=true&");
 
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true&":
-/*!**********************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true& ***!
-  \**********************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/TeamsComponent.vue?vue&type=template&id=5b3040dc&scoped=true&":
+/*!**************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/TeamsComponent.vue?vue&type=template&id=5b3040dc&scoped=true& ***!
+  \**************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1039,17 +985,18 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Assigned Tasks")]),
+    _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Teams")]),
     _vm._v(" "),
-    _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "card p-3 m-b-3" }, [
-        !this.noTasks
-          ? _c(
+    this.teams.length > 0
+      ? _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "container" }, [
+            _c(
               "div",
-              _vm._l(_vm.projects, function(project) {
-                return _c("div", { key: project.id }, [
+              { staticClass: "card p-3 m-b-3" },
+              _vm._l(_vm.teams, function(team) {
+                return _c("div", { key: team.id }, [
                   _c("h5", { staticClass: "p-1 text-left" }, [
-                    _vm._v(_vm._s(project.title))
+                    _vm._v(_vm._s(team.title))
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "card p-3" }, [
@@ -1058,7 +1005,7 @@ var render = function() {
                       _vm._v(" "),
                       _c(
                         "tbody",
-                        _vm._l(project.tasks, function(task) {
+                        _vm._l(_vm.project.tasks, function(task) {
                           return _c("tr", { key: task.id }, [
                             _c("td", [_vm._v(_vm._s(task.title))]),
                             _vm._v(" "),
@@ -1077,15 +1024,13 @@ var render = function() {
               }),
               0
             )
-          : this.loaded
-          ? _c("div", [
-              _c("h4", { staticClass: "p-3 text-center" }, [
-                _vm._v("You have no assigned tasks.")
-              ])
-            ])
-          : _vm._e()
-      ])
-    ])
+          ])
+        ])
+      : _c("div", [
+          _c("h4", { staticClass: "p-3 text-center" }, [
+            _vm._v("You are not included in any team.")
+          ])
+        ])
   ])
 }
 var staticRenderFns = [

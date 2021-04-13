@@ -28,7 +28,7 @@ class ProjectController extends Controller
             }
         }
         
-        if ($createdProjects->isEmpty() && $teams_projects->isEmpty()) {
+        if ($createdProjects->isEmpty() && (!isset($teams_projects) || empty($teams_projects))) {
             return response()->json([
                 'error' => 'No projects found!'
             ], 404);
@@ -36,7 +36,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'createdProjects'    => $createdProjects,
-            'teamProjects'    => empty($teams_projects) ? $teams_projects : null 
+            'teamProjects'    => isset($teams_projects) ? $teams_projects : null 
         ]);
     }
 

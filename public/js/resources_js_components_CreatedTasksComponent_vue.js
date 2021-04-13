@@ -209,6 +209,118 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -391,7 +503,11 @@ function Project(_ref2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
+                if (_this2.form.project_id == 0) {
+                  _this2.form.project_id = null;
+                }
+
+                _context2.next = 3;
                 return window.axios.put("api/" + "tasks/" + _this2.editTask.id, _this2.form).then(function (response) {
                   if (response.data != null) {
                     _this2.modal = false;
@@ -432,12 +548,16 @@ function Project(_ref2) {
 
                       _this2.$alert(error.response.data.status, "Warning", "error");
                     } else {
+                      if (_this2.form.project_id == null) {
+                        _this2.form.project_id = 0;
+                      }
+
                       _this2.$store.commit("setErrors", error.response.data.errors);
                     }
                   }
                 });
 
-              case 2:
+              case 3:
               case "end":
                 return _context2.stop();
             }
@@ -497,6 +617,55 @@ function Project(_ref2) {
         }, _callee3);
       }))();
     },
+    "delete": function _delete(task) {
+      var _this4 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return window.axios["delete"]("api/" + "tasks/" + task.id).then(function (response) {
+                  if (response.data.task.id != task.id) {
+                    _this4.$alert("Something went wrong.", "Warning", "error");
+                  } else {
+                    if (_this4.task.project_id != null) {
+                      _this4.projects.forEach(function (project) {
+                        if (project.id == task.project_id) {
+                          var taskIndex = project.tasks.findIndex(function (task) {
+                            return task.id == _this4.task.id;
+                          });
+                          project.tasks.splice(taskIndex, 1);
+                        }
+                      });
+                    } else {
+                      var taskIndex = _this4.projects[0].tasks.find(function (task) {
+                        return task.id == task.id;
+                      });
+
+                      _this4.projects[0].tasks.splice(taskIndex, 1);
+                    }
+
+                    _this4.$notify({
+                      group: "app",
+                      title: "Success!",
+                      type: "success",
+                      text: response.data.message
+                    });
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 2:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }))();
+    },
     startCreate: function startCreate() {
       this.modal = true;
       this.dynamicTitle = "Create Task";
@@ -518,12 +687,22 @@ function Project(_ref2) {
       this.form.date_till_done = task.date_till_done;
       this.form.status = task.status;
       this.form.priority = task.priority;
-      this.form.project_id = task.project_id;
+
+      if (task.project_id != null) {
+        this.form.project_id = task.project_id;
+      } else {
+        this.form.project_id = this.projects[0].id;
+      }
+
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;
     },
-    del: function del(taskId) {
-      console.log(taskId);
+    startDelete: function startDelete(task) {
+      var _this5 = this;
+
+      this.$confirm("Are You sure?", "Confirm Delete", "error").then(function () {
+        _this5["delete"](task);
+      });
     }
   })
 });
@@ -1526,7 +1705,7 @@ var render = function() {
                           },
                           [
                             _c("span", { attrs: { "aria-hidden": "true" } }, [
-                              _vm._v("×\n                                ")
+                              _vm._v("× ")
                             ])
                           ]
                         )
@@ -1562,9 +1741,9 @@ var render = function() {
                           _vm.errors.title
                             ? _c("div", { staticClass: "invalid-feedback" }, [
                                 _vm._v(
-                                  "\n                                  " +
+                                  "\n                    " +
                                     _vm._s(_vm.errors.title) +
-                                    "\n                                "
+                                    "\n                  "
                                 )
                               ])
                             : _vm._e()
@@ -1603,9 +1782,9 @@ var render = function() {
                           _vm.errors.description
                             ? _c("div", { staticClass: "invalid-feedback" }, [
                                 _vm._v(
-                                  "\n                                  " +
+                                  "\n                    " +
                                     _vm._s(_vm.errors.description) +
-                                    "\n                                "
+                                    "\n                  "
                                 )
                               ])
                             : _vm._e()
@@ -1647,9 +1826,9 @@ var render = function() {
                             _vm.errors.date_till_done
                               ? _c("div", { staticClass: "invalid-feedback" }, [
                                   _vm._v(
-                                    "\n                                  " +
+                                    "\n                      " +
                                       _vm._s(_vm.errors.date_till_done) +
-                                      "\n                                "
+                                      "\n                    "
                                   )
                                 ])
                               : _vm._e()
@@ -1701,9 +1880,9 @@ var render = function() {
                                   },
                                   [
                                     _vm._v(
-                                      "\n                                  " +
+                                      "\n                        " +
                                         _vm._s(user.name) +
-                                        "\n                                  "
+                                        "\n                      "
                                     )
                                   ]
                                 )
@@ -1714,9 +1893,9 @@ var render = function() {
                             _vm.errors.assignee_id
                               ? _c("div", { staticClass: "invalid-feedback" }, [
                                   _vm._v(
-                                    "\n                                  " +
+                                    "\n                      " +
                                       _vm._s(_vm.errors.assignee_id) +
-                                      "\n                                "
+                                      "\n                    "
                                   )
                                 ])
                               : _vm._e()
@@ -1770,9 +1949,9 @@ var render = function() {
                                   },
                                   [
                                     _vm._v(
-                                      "\n                                    " +
+                                      "\n                        " +
                                         _vm._s(status.val) +
-                                        "\n                                    "
+                                        "\n                      "
                                     )
                                   ]
                                 )
@@ -1783,9 +1962,9 @@ var render = function() {
                             _vm.errors.status
                               ? _c("div", { staticClass: "invalid-feedback" }, [
                                   _vm._v(
-                                    "\n                                    " +
+                                    "\n                      " +
                                       _vm._s(_vm.errors.status) +
-                                      "\n                                  "
+                                      "\n                    "
                                   )
                                 ])
                               : _vm._e()
@@ -1837,9 +2016,9 @@ var render = function() {
                                   },
                                   [
                                     _vm._v(
-                                      "\n                                    " +
+                                      "\n                        " +
                                         _vm._s(priority.val) +
-                                        "\n                                    "
+                                        "\n                      "
                                     )
                                   ]
                                 )
@@ -1850,9 +2029,9 @@ var render = function() {
                             _vm.errors.priority
                               ? _c("div", { staticClass: "invalid-feedback" }, [
                                   _vm._v(
-                                    "\n                                    " +
+                                    "\n                      " +
                                       _vm._s(_vm.errors.priority) +
-                                      "\n                                  "
+                                      "\n                    "
                                   )
                                 ])
                               : _vm._e()
@@ -1905,9 +2084,9 @@ var render = function() {
                                 },
                                 [
                                   _vm._v(
-                                    "\n                                " +
+                                    "\n                      " +
                                       _vm._s(project.title) +
-                                      "\n                                "
+                                      "\n                    "
                                   )
                                 ]
                               )
@@ -1918,9 +2097,9 @@ var render = function() {
                           _vm.errors.project_id
                             ? _c("div", { staticClass: "invalid-feedback" }, [
                                 _vm._v(
-                                  "\n                                " +
+                                  "\n                    " +
                                     _vm._s(_vm.errors.project_id) +
-                                    "\n                              "
+                                    "\n                  "
                                 )
                               ])
                             : _vm._e()
@@ -1975,7 +2154,9 @@ var render = function() {
                         _vm._v(" "),
                         _c("td", { staticStyle: { width: "20%" } }, [
                           _vm._v(
-                            _vm._s(_vm._f("monthDay")(task.date_till_done))
+                            "\n                    " +
+                              _vm._s(_vm._f("monthDay")(task.date_till_done)) +
+                              "\n                  "
                           )
                         ]),
                         _vm._v(" "),
@@ -1989,12 +2170,20 @@ var render = function() {
                             staticClass: "to-capital-first",
                             staticStyle: { width: "20%" }
                           },
-                          [_vm._v(_vm._s(task.priority))]
+                          [
+                            _vm._v(
+                              "\n                    " +
+                                _vm._s(task.priority) +
+                                "\n                  "
+                            )
+                          ]
                         ),
                         _vm._v(" "),
                         _c("td", { staticStyle: { width: "10%" } }, [
                           _vm._v(
-                            _vm._s(_vm.projectsUsers[task.assignee_id].name)
+                            "\n                    " +
+                              _vm._s(_vm.projectsUsers[task.assignee_id].name) +
+                              "\n                  "
                           )
                         ]),
                         _vm._v(" "),
@@ -2053,7 +2242,7 @@ var render = function() {
                               attrs: { type: "button" },
                               on: {
                                 click: function($event) {
-                                  return _vm.del(task.id)
+                                  return _vm.startDelete(task)
                                 }
                               }
                             },

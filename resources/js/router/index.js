@@ -48,6 +48,13 @@ const routes = [
             import("../components/ProjectsComponent.vue")
     },
     {
+        path: "/teams",
+        name: "Teams",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/TeamsComponent.vue")
+    },
+    {
         path: "/createdTasks",
         name: "CreatedTasks",
         beforeEnter: auth,

@@ -20,15 +20,22 @@ class TaskController extends Controller
     public function getAssignedTasks()
     {
         $assignedTasks = Auth::user()->assignedTasksByProject();
+        
+        $isEmpty = true;
+        foreach ($assignedTasks as $task) {
+            if ($task->count() > 0) {
+                $isEmpty = false;
+            }
+        }
 
-        if ($assignedTasks->isEmpty()) {
+        if ($isEmpty) {
             return response()->json([
                 'error' => 'No tasks found!'
             ], 404);
         }
 
         return response()->json([
-            'assignedTasks'    => $assignedTasks
+            'assignedTasks' => $assignedTasks
         ]);
     }
 
@@ -39,7 +46,14 @@ class TaskController extends Controller
     {
         $createdTasks = Auth::user()->createdTasksByProject();
 
-        if ($createdTasks->isEmpty()) {
+        $isEmpty = true;
+        foreach ($createdTasks as $task) {
+            if ($task->count() > 0) {
+                $isEmpty = false;
+            }
+        }
+
+        if ($isEmpty) {
             return response()->json([
                 'error' => 'No tasks found!'
             ], 404);
@@ -174,7 +188,7 @@ class TaskController extends Controller
         // move to middleware 
         if (
             $task->reporter_id != Auth::user()->id
-            || !$task->project
+            || $task->project_id != null 
             && ($task->project->author_id  != Auth::user()->id
                 || $task->project->team)
         ) {

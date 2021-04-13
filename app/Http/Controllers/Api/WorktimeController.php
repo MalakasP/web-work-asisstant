@@ -117,7 +117,7 @@ class WorktimeController extends Controller
                 'error' => 'You do not have rights to do this!'
             ], 403);
         }
-
+        
         if (!$request->has('duration')) {
             $endTime = Carbon::parse($request->end_time)->toDateTimeString();
             $duration = WorktimeService::calculateTime($worktime->created_at, $endTime);
@@ -125,7 +125,7 @@ class WorktimeController extends Controller
             $duration = $request->validated()['duration'];
             $duration = gmdate("H:i", $duration);
         }
-
+        // var_dump($duration);die;
         if (strtotime($duration) - strtotime('TODAY') == 0) {
             return response()->json([
                 'error' => 'You have worked less than 15 minutes after You started working.'

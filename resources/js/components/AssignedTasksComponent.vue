@@ -3,28 +3,33 @@
     <h3 class="p-3 text-center">Assigned Tasks</h3>
     <div class="container">
       <div class="card p-3 m-b-3">
-        <div v-for="project in projects" :key="project.id">
-          <h5 class="p-1 text-left">{{ project.title }}</h5>
-          <div class="card p-3">
-            <table class="table-striped">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Deadline</th>
-                  <th>Status</th>
-                  <th>Priority</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="task in project.tasks" :key="task.id">
-                  <td>{{ task.title }}</td>
-                  <td>{{ task.date_till_done }}</td>
-                  <td>{{ task.status }}</td>
-                  <td>{{ task.priority }}</td>
-                </tr>
-              </tbody>
-            </table>
+        <div v-if="!this.noTasks">
+          <div v-for="project in projects" :key="project.id">
+            <h5 class="p-1 text-left">{{ project.title }}</h5>
+            <div class="card p-3">
+              <table class="table-striped">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="task in project.tasks" :key="task.id">
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.date_till_done }}</td>
+                    <td>{{ task.status }}</td>
+                    <td>{{ task.priority }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
+        </div>
+        <div v-else-if="this.loaded">
+          <h4 class="p-3 text-center">You have no assigned tasks.</h4>
         </div>
       </div>
     </div>
@@ -84,6 +89,7 @@ function Project({
 export default {
   data: function () {
     return {
+      loaded: false,
       noTasks: false,
       projects: [],
     };
@@ -109,7 +115,6 @@ export default {
               if (project.hasOwnProperty("id")) {
                 this.projects.push(new Project(project));
               } else if (project[0].project_id === null) {
-                console.log(project);
                 this.projects.push(
                   new Project({
                     id: 0,
@@ -123,15 +128,19 @@ export default {
                   })
                 );
               }
+              this.loaded = true;
             });
           }
         })
         .catch((error) => {
-          console.log(error);
+          
           if (error.response.status == 404) {
             this.noTasks = true;
+            this.loaded = true;
+            console.log(this.noTasks, this.loaded);
           }
         });
+      
     }
   },
 };

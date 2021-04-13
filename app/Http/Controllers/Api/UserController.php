@@ -17,7 +17,7 @@ class UserController extends Controller
 
         if ($users->isEmpty()) {
             return response()->json([
-                'error' => 'Users not found!'
+                'error' => 'No users found!'
             ], 404);
         }
 
