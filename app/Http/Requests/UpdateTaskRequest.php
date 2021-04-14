@@ -24,9 +24,13 @@ class UpdateTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'date_from' => ['required', 'date', 'after:start_date'],
-            'date_to' => ['required', 'date', 'after:start_date'],
-            'is_confirmed' => ['required', 'boolean']
+            'title' => ['required', 'string', 'max:191'],
+            'description' => ['nullable', 'string', 'max:191'],
+            'date_till_done' => ['required', 'date', 'after_or_equal:today'],
+            'status' => ['required', 'string', 'max:191'],
+            'priority' => ['required', 'string', 'max:191'],
+            'reporter_id' => ['required', 'integer', 'numeric'],
+            'assignee_id' => ['required', 'integer', 'numeric']
         ];
     }
 }

@@ -35,7 +35,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        'remember_token'
     ];
 
     /**
@@ -60,7 +60,72 @@ class User extends Authenticatable
      */
     public function assignedTasks()
     {
-        return $this->hasMany(Task::class, 'assignee_id')->orderBy('created_at');
+        return $this->hasMany(Task::class, 'assignee_id')->whereNull('project_id')->orderBy('created_at');
+    }
+
+    /**
+     * Get all the projects user is envolved with.
+     */
+    public function projects()
+    {
+        $projects = Project::where('author_id', $this->id)->get();
+
+        foreach ($this->teams as $team) {
+            foreach ($team->projects as $project) {
+                if (!$projects->contains('id', $project->id)) {
+                    $projects->push($project);
+                }
+            }
+        }
+        return $projects;
+    }
+
+    /**
+     * Get all the assigned tasks that user has.
+     */
+    public function assignedTasksByProject()
+    {
+        $projects = collect([$this->assignedTasks]);
+
+        $teamsIds = $this->onlyTeams->pluck('team_id')->toArray();
+ 
+        $projectsWithTasks = Project::whereIn('team_id', $teamsIds)
+            ->orWhere('author_id', $this->id)
+            ->with(['tasks' => function ($query) {
+                $query->where('assignee_id', $this->id);
+            }])->get();
+ 
+        foreach ($projectsWithTasks as $project) {
+            if (!$project->tasks->isEmpty()) {
+                $projects->push($project);
+            }   
+        }
+
+        return $projects;
+    }
+
+    /**
+     * Get all the created tasks that user.
+     */
+    public function createdTasksByProject()
+    {
+        $projects = collect([$this->createdTasks]);
+
+        $teamsIds = $this->onlyTeams->pluck('team_id')->toArray();
+ 
+        $projectsWithTasks = Project::whereIn('team_id', $teamsIds)
+            ->orWhere('author_id', $this->id)
+            ->with(['tasks' => function ($query) {
+                $query->where('reporter_id', $this->id);
+            }])->get();
+ 
+        foreach ($projectsWithTasks as $project) {
+            if (!$project->tasks->isEmpty()) {
+                $projects->push($project);
+            }   
+        }
+
+        return $projects;
     }
 
     /**
@@ -68,7 +133,7 @@ class User extends Authenticatable
      */
     public function createdTasks()
     {
-        return $this->hasMany(Task::class, 'reporter_id')->orderBy('created_at');
+        return $this->hasMany(Task::class, 'reporter_id')->whereNull('project_id')->orderBy('created_at');
     }
 
     /**
@@ -96,13 +161,39 @@ class User extends Authenticatable
     }
 
     /**
-     * The teams that the user is in.
+     * Get the teams that the user is in with the role and name in team.
      */
     public function teams()
     {
         return $this->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')
             ->withPivot('is_admin', 'name_in_team')
             ->withTimestamps();
+    }
+
+    /**
+     * Get users of all the teams the user is in.
+     */
+    public function teamsUsers()
+    {
+        $users = collect();
+
+        foreach ($this->teams as $team) {
+            foreach($team->users as $user) {
+                if (!$users->contains('id', $user->id)) {
+                    $users->push($user);
+                }
+            }
+        }
+
+        return $users;
+    }
+
+    /**
+     * Get the teams that user is in.
+     */
+    public function onlyTeams()
+    {
+        return $this->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')->select(['team_id']);
     }
 
     /**
@@ -121,7 +212,7 @@ class User extends Authenticatable
                 }
             }
         }
-       
+
         return false;
     }
 }

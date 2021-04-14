@@ -26,7 +26,7 @@ class Task extends Model
     ];
 
     /**
-     * Get the project that the test belongs to.
+     * Get the project that the task belongs to.
      */
     public function project()
     {

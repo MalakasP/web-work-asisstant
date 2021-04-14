@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import auth from "./auth";
+import auth from "./modules/auth";
 import worktime from "./modules/worktime";
 import createPersistedState from 'vuex-persistedstate'
 
@@ -11,9 +11,7 @@ export default new Vuex.Store({
       errors: []
     },
 
-    plugins: [createPersistedState({
-      storage: window.sessionStorage,
-    })],
+    plugins: [createPersistedState()],
     
     getters: {
       errors: state => state.errors

@@ -6,8 +6,8 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\UserController;
-// use App\Http\Controllers\Api\TaskController;
-// use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\ProjectController;
 // use App\Http\Controllers\Api\WorktimeController;
 // use App\Http\Controllers\Api\RequestController;
 // use App\Http\Controllers\Api\TeamController;
@@ -37,13 +37,39 @@ Route::group(['as' => 'api.'], function () {
 
         // Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
-        Route::get('users', [UserController::class, 'index'])->name('user');
+        Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+
+        Route::get('users', [UserController::class, 'index'])->name('users.index');
 
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-        Route::resource('tasks', TaskController::class, ['except' => ['create', 'edit']]);
+        // Route::resource('tasks', TaskController::class, ['except' => ['create', 'edit']]);
 
-        Route::resource('projects', ProjectController::class, ['except' => ['create', 'edit']]);
+        Route::get('assignedTasks', [TaskController::class, 'getAssignedTasks'])->name('getAssignedTasks');
+
+        Route::get('createdTasks', [TaskController::class, 'getCreatedTasks'])->name('getCreatedTasks');
+
+        Route::get('tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
+
+        Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
+
+        Route::put('tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+
+        Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
+        Route::get('users/{user}/projects', [ProjectController::class, 'getUserProjects'])->name('getUserProjects');
+
+        Route::get('users/{user}/teamProjects', [ProjectController::class, 'getCreatedAndTeamProjects'])->name('getCreatedAndTeamProjects');
+
+        Route::get('projects/{project}', [TaskContProjectControllerroller::class, 'show'])->name('projects.show');
+
+        Route::post('projects', [ProjectController::class, 'store'])->name('projects.store');
+
+        Route::put('projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
+
+        Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+
+        // Route::resource('projects', ProjectController::class, ['except' => ['create', 'edit']]);
 
         Route::resource('worktimes', WorktimeController::class, ['except' => ['create', 'edit']]);
 

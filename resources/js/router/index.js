@@ -1,17 +1,18 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from "../store";
 
 Vue.use(VueRouter);
 
 const guest = (to, from, next) => {
-    if (!localStorage.getItem("authToken")) {
+    if (!store.getters["auth/token"]) {
         return next();
     } else {
-        return next("/home");
+        return next("/");
     }
 };
 const auth = (to, from, next) => {
-    if (localStorage.getItem("authToken")) {
+    if (store.getters["auth/token"]) {
         return next();
     } else {
         return next("/login");
@@ -20,18 +21,10 @@ const auth = (to, from, next) => {
 
 const routes = [
     {
-        path: "/home",
+        path: "/",
         name: "Home",
-        beforeEnter: auth,
         component: () =>
             import("../components/HomeComponent.vue")
-    },
-    {
-        path: "/",
-        name: "Landing",
-        beforeEnter: guest,
-        component: () =>
-            import("../components/LandingComponent.vue")
     },
     {
         path: "/login",
@@ -48,12 +41,32 @@ const routes = [
             import("../components/Auth/RegisterComponent.vue")
     },
     {
-        path: "/verify/:hash",
-        name: "Verify",
+        path: "/projects",
+        name: "Projects",
         beforeEnter: auth,
-        props: true,
         component: () =>
-          import("../components/Auth/VerifyComponent.vue")
+            import("../components/ProjectsComponent.vue")
+    },
+    {
+        path: "/teams",
+        name: "Teams",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/TeamsComponent.vue")
+    },
+    {
+        path: "/createdTasks",
+        name: "CreatedTasks",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/CreatedTasksComponent.vue")
+    },
+    {
+        path: "/assignedTasks",
+        name: "AssignedTasks",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/AssignedTasksComponent.vue")
     },
     { 
         path: '*',

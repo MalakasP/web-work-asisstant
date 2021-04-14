@@ -16,17 +16,44 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/">Tasks</router-link>
+            <li class="nav-item dropdown">
+              <div
+                class="nav-link dropdown-toggle"
+                id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                v-show="isAuthenticated"
+              >
+                <a>Tasks</a>
+              </div>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item"
+                  ><router-link to="/assignedTasks"
+                    >Assigned Tasks</router-link
+                  ></a
+                >
+                <a class="dropdown-item"
+                  ><router-link to="/createdTasks"
+                    >Created Tasks</router-link
+                  ></a
+                >
+              </div>
             </li>
             <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/">Projects</router-link>
+              <router-link class="nav-link" to="/projects"
+                >Projects</router-link
+              >
             </li>
             <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/">Teams</router-link>
+              <router-link class="nav-link" to="/teams">Teams</router-link>
             </li>
             <li class="nav-item" v-show="isAuthenticated">
               <router-link class="nav-link" to="/">Worktimes</router-link>
+            </li>
+            <li class="nav-item" v-show="isAuthenticated">
+              <router-link class="nav-link" to="/">Requests</router-link>
             </li>
           </ul>
           <ul class="navbar-nav">
@@ -50,7 +77,7 @@
             </li>
             <button
               type="button"
-              class="btn btn-light"
+              class="btn btn-light width-20"
               @click="stopTimer"
               v-show="isAuthenticated && !isTimerStopped"
             >
@@ -72,11 +99,12 @@
       </nav>
     </header>
 
+    <notifications group="app" position="bottom right" />
     <main role="main" class="container">
       <router-view />
     </main>
 
-    <footer class="footer">
+    <footer class="mt-auto">
       <div class="container text-center">
         <span class="text-muted">
           © 2021 Copyright:
@@ -101,18 +129,31 @@ export default {
   },
 
   computed: {
-    ...mapGetters("auth", ["isAuthenticated", "user"]),
-    ...mapGetters("worktime", ["duration", "isTimerStopped", "worktime"]),
+    ...mapGetters("auth", ["isAuthenticated", "user", "token"]),
+    ...mapGetters("worktime", [
+      "duration",
+      "isTimerStopped",
+      "worktime",
+      "timer",
+    ]),
   },
 
   created() {
-    if (localStorage.getItem("authToken")) {
+    if (this.isAuthenticated) {
       //check if there is today's timer started for this user and assign it if it's not over 8 hours
       // this.counter.timer = timer;
+
       if (!this.isTimerStopped) {
-        if (localStorage.getItem("counter")) {
-          this.counter.seconds = localStorage.getItem("counter");
+        let todaysDate = moment().startOf("day");
+        let savedDate = moment(this.worktime.created_at).startOf("day");
+        
+        if (
+          this.timer &&
+          (Math.abs(moment.duration(savedDate.diff(todaysDate))._data.days) <= 1)
+        ) {
+          this.counter.seconds = this.timer;
         } else if (this.duration >= 0) {
+          console.log("what")
           this.counter.seconds = this.duration;
         }
 
@@ -121,7 +162,10 @@ export default {
           // console.log(this.counter.seconds);
           // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
-          localStorage.setItem("counter", this.counter.seconds);
+          if (this.counter.seconds % 60 == 0) {
+            this.setTimer(this.counter.seconds);
+          }
+
           this.loadingStatus = true;
         }, 1000);
       }
@@ -132,7 +176,13 @@ export default {
 
   methods: {
     ...mapActions("auth", ["sendLogoutRequest", "getUserData"]),
-    ...mapActions("worktime", ["createWorktime", "setTimerStopped", "setDuration"]),
+    ...mapActions("worktime", [
+      "createWorktime",
+      "setTimerStopped",
+      "setDuration",
+      "setWorktime",
+      "setTimer",
+    ]),
     /**
      * Logout user.
      */
@@ -140,7 +190,8 @@ export default {
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
-      // this.$router.push("/home");
+      this.setTimer(0);
+      this.setWorktime(null);
     },
 
     /**
@@ -176,7 +227,7 @@ export default {
         user_id: this.user.id,
         end_time: moment().format(),
       };
-
+      console.log(data);
       axios
         .put(process.env.MIX_API_URL + "worktimes/" + this.worktime.id, data)
         .then((response) => {
@@ -195,10 +246,9 @@ export default {
 
     initiateTimerAfterLogin() {
       console.log(!this.isTimerStopped);
-      if (localStorage.getItem("authToken") && !this.isTimerStopped) {
+      if (this.isAuthenticated && !this.isTimerStopped) {
         this.loadingStatus = true;
         if (this.duration >= 0) {
-
           this.counter.seconds = this.duration;
         }
 
@@ -207,8 +257,9 @@ export default {
           // console.log(this.counter.seconds);
           // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
-          localStorage.setItem("counter", this.counter.seconds);
-          
+          if (this.counter.seconds % 60 == 0) {
+            this.setTimer(this.counter.seconds);
+          }
         }, 1000);
       }
     },
@@ -276,13 +327,32 @@ body > div > div > .container {
     transform: rotate(360deg);
   }
 }
+
+.bi {
+  display: inline-block;
+  vertical-align: -0.125em;
+}
+
+th,
+td {
+  text-align: center;
+}
+
+tr {
+  padding: 3px;
+}
 </style>
 
 <style scoped>
 .timer {
   padding-right: 0.5rem;
-  padding-left: 0.5rem;
   font-size: 25px;
   color: white;
+}
+
+@media (max-width: 768px) {
+  button.width-20 {
+    width: 20%;
+  }
 }
 </style>

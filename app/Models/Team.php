@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use \App\Models\User;
+use \App\Models\Project;
 
 class Team extends Model
 {
@@ -19,6 +20,14 @@ class Team extends Model
         'name',
         'description'
     ];
+
+    /**
+     * Get the projects that the team is working on.
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'team_id')->orderBy('created_at');
+    }
 
     /**
      * The users that are in the team.
@@ -40,6 +49,19 @@ class Team extends Model
     {
         return $this->users()->where('user_id', '=', $user_id)
             ? $this->users()->where('user_id', '=', $user_id)->first()->pivot->is_admin
+            : false;
+    }
+
+     /**
+     * Check if user by given user_id is in the team.
+     * 
+     * @param Integer $user_id
+     * @return Boolean
+     */
+    public function isTeamMember($user_id)
+    {
+        return $this->users()->where('user_id', '=', $user_id)
+            ? true
             : false;
     }
 }

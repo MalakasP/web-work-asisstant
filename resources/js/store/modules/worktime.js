@@ -2,7 +2,7 @@ import moment from 'moment';
 
 export default {
     namespaced: true,
-    
+
     /**
      * Variables saved in Vuex state
      */
@@ -10,6 +10,7 @@ export default {
         duration: null,
         timerStopped: false,
         worktime: null,
+        timer: 0,
     },
 
     /**
@@ -19,6 +20,7 @@ export default {
         duration: state => state.duration,
         worktime: state => state.worktime,
         isTimerStopped: state => state.timerStopped,
+        timer: state => state.timer,
     },
 
     /**
@@ -39,21 +41,31 @@ export default {
         setDuration({ commit }, duration) {
             commit("setDuration", duration);
         },
-        
+
         setTimerStopped({ commit }, status) {
             commit("setTimerStopped", status);
+        },
+
+        setWorktime({ commit }, worktime) {
+            commit("setWorktime", worktime);
+        },
+
+        setTimer({commit}, timer) {
+            commit("setTimer", timer);
         },
 
         /**
          * Create current worktime
          */
-        createWorktime({commit}, user) {
+        createWorktime({ commit }, user) {
             var data = { user_id: user.id };
             axios
-            .post(process.env.MIX_API_URL + "worktimes", data)
-            .then((response) => {
-                commit("setWorktime", response.data.worktime);
-            });
+                .post(process.env.MIX_API_URL + "worktimes", data)
+                .then((response) => {
+                    commit("setWorktime", response.data.worktime);
+                    // localStorage.setObject("worktime", response.data.worktime);
+                    // localStorage.setObject("date", new Date());
+                });
         },
 
     },
@@ -69,10 +81,14 @@ export default {
 
         setDuration(state, duration) {
             state.duration = duration;
-        }, 
+        },
 
         setTimerStopped(state, status) {
             state.timerStopped = status;
+        },
+
+        setTimer(state, timer) {
+            state.timer = timer;
         }
     }
 

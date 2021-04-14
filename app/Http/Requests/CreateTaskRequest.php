@@ -26,7 +26,7 @@ class CreateTaskRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:191'],
             'description' => ['nullable', 'string', 'max:191'],
-            'date_till_done' => ['required', 'date'],
+            'date_till_done' => ['required', 'date', 'after_or_equal:today'],
             'status' => ['required', 'string', 'max:191'],
             'priority' => ['required', 'string', 'max:191'],
             'project_id' => ['nullable', 'integer', 'numeric'],
