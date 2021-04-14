@@ -38,7 +38,7 @@
                       class="form-control"
                       :class="{ 'is-invalid': errors.description }"
                       v-model="form.description"
-                      rows="2"
+                      rows="3"
                     ></textarea>
                     <div class="invalid-feedback" v-if="errors.description">
                       {{ errors.description }}
@@ -52,7 +52,7 @@
                       v-model="form.team_id"
                     >
                       <option
-                        v-for="team in this.projectsTeams"
+                        v-for="team in this.teams"
                         :value="team.id"
                         :key="team.id"
                       >
@@ -91,7 +91,7 @@
       v-if="this.createdProjects.length > 0"
     >
       <div class="col-12">
-        <h3 class="p-3">Created Projects</h3>
+        <h3 class="p-3 text-center">Created Projects</h3>
         <div class="card p-3">
           <div class="table-responsive">
             <table class="table-striped w-100 d-block d-md-table">
@@ -112,7 +112,7 @@
                   </td>
                   <td style="width: 40%" v-else>-</td>
                   <td style="width: 25%" v-if="project.team_id != null">
-                    {{ projectsTeams[project.team_id].name }}
+                    {{ teams[project.team_id].name }}
                   </td>
                   <td style="width: 25%" v-else>No Team</td>
                   <td style="width: 5%">
@@ -237,7 +237,7 @@
                       v-model="form.team_id"
                     >
                       <option
-                        v-for="team in this.projectsTeams"
+                        v-for="team in this.teams"
                         :value="team.id"
                         :key="team.id"
                       >
@@ -352,7 +352,7 @@
                 {{ projectsUsers[project.author_id].name }}
               </td>
               <td style="width: 30%" v-if="project.team_id != null">
-                {{ projectsTeams[project.team_id].name }}
+                {{ teams[project.team_id].name }}
               </td>
               <td style="width: 30%" v-else>No Team</td>
             </tr>
@@ -394,7 +394,7 @@ export default {
       createdProjects: [],
       teamProjects: [],
       projectsUsers: {},
-      projectsTeams: {},
+      teams: {},
       form: {
         title: null,
         description: null,
@@ -435,13 +435,13 @@ export default {
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
           if (response.data != null) {
-            this.projectsTeams = {};
+            this.teams = {};
             response.data.teams.forEach((team) => {
               if (team != null) {
-                this.projectsTeams[team.id] = new Team(team);
+                this.teams[team.id] = new Team(team);
               }
             });
-            this.projectsTeams[0] = new Team({
+            this.teams[0] = new Team({
               id: 0,
               name: "No Team",
               description: "",
@@ -479,7 +479,6 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-        
     },
 
     async update() {
@@ -649,15 +648,15 @@ export default {
   vertical-align: middle;
 }
 
-.to-capital-first {
-  text-transform: capitalize;
-}
-
 .modal-dialog {
   overflow-y: initial !important;
 }
 .modal-body {
   height: 40vh;
   overflow-y: auto;
+}
+
+textarea {
+   resize: none;
 }
 </style>

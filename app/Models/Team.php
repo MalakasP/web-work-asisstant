@@ -29,14 +29,6 @@ class Team extends Model
         return $this->hasMany(Project::class, 'team_id')->orderBy('created_at');
     }
 
-    // /**
-    //  * Get the projects that the team is working on.
-    //  */
-    // public function projectIdsAttribute()
-    // {
-    //     return $this->projects->pluck('id');
-    // }
-
     /**
      * The users that are in the team.
      */

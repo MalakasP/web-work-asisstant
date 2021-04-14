@@ -1,30 +1,6 @@
 <template>
   <div class="container">
     <h3 class="text-center p-3">Created Tasks</h3>
-    <div class="row">
-      <div class="col-3 float-md-right">
-        <button type="button" class="btn btn-secondary" @click="startCreate()">
-          <span class="icon full-size">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-plus-square"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-              />
-              <path
-                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-              />
-            </svg>
-            Add Task
-          </span>
-        </button>
-      </div>
-    </div>
     <div v-if="modal">
       <transition name="model">
         <div class="modal-mask">
@@ -63,7 +39,7 @@
                       class="form-control"
                       :class="{ 'is-invalid': errors.description }"
                       v-model="form.description"
-                      rows="2"
+                      rows="3"
                     ></textarea>
                     <div class="invalid-feedback" v-if="errors.description">
                       {{ errors.description }}
@@ -145,25 +121,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group">
-                    <label>Choose Project</label>
-                    <select
-                      class="form-control"
-                      :class="{ 'is-invalid': errors.project_id }"
-                      v-model="form.project_id"
-                    >
-                      <option
-                        v-for="project in this.projects"
-                        :value="project.id"
-                        :key="project.id"
-                      >
-                        {{ project.title }}
-                      </option>
-                    </select>
-                    <div class="invalid-feedback" v-if="errors.project_id">
-                      {{ errors.project_id }}
-                    </div>
-                  </div>
                   <div align="center">
                     <input
                       type="button"
@@ -189,12 +146,12 @@
     </div>
     <div class="row justify-content-center">
       <div class="col-12">
-        <div class="card p-3">
+        <div class="card p-3" v-if="this.loaded">
           <div v-for="project in projects" :key="project.id">
-            <h5 class="text-left p-1">{{ project.title }}</h5>
+            <h5 class="text-left mt-3 p-1">{{ project.title }}</h5>
             <div class="card p-3">
-              <table class="table-striped table-responsive">
-                <thead>
+              <table class="table-striped w-100 d-block d-md-table">
+                <thead v-if="project.tasks && project.tasks.length > 0">
                   <tr>
                     <th style="width: 20%">Title</th>
                     <th style="width: 20%">Deadline</th>
@@ -221,6 +178,7 @@
                     <td style="width: 5%">
                       <button
                         type="button"
+                        style="margin: 1px"
                         class="btn btn-primary"
                         @click="startEdit(task)"
                       >
@@ -247,6 +205,7 @@
                       <button
                         type="button"
                         class="btn btn-danger"
+                        style="margin: 1px"
                         @click="startDelete(task)"
                       >
                         <span class="icon is-small">
@@ -270,10 +229,44 @@
                       </button>
                     </td>
                   </tr>
+                  <tr class="bg-white">
+                    <td v-if="project.tasks && project.tasks.length > 0"></td>
+                    <td v-if="project.tasks && project.tasks.length > 0"></td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        style="margin: 3px"
+                        @click="startCreate(project)"
+                      >
+                        <span class="icon full-size">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-plus-square"
+                            viewBox="0 0 16 16"
+                          >
+                            <path
+                              d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+                            />
+                            <path
+                              d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                            />
+                          </svg>
+                          Add Task
+                        </span>
+                      </button>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
+        </div>
+        <div v-else class="row justify-content-center">
+          <div class="loader"></div>
         </div>
       </div>
     </div>
@@ -333,6 +326,7 @@ function Project({
 export default {
   data: function () {
     return {
+      loaded: false,
       noTasks: false,
       dynamicTitle: null,
       modal: false,
@@ -350,7 +344,7 @@ export default {
       },
       editTask: null,
       taskProject: null,
-      projects: [],
+      projects: {},
       projectsUsers: {},
       form: {
         title: null,
@@ -403,29 +397,70 @@ export default {
           console.log(error);
         });
 
+      
+      // await window.axios
+      //   .get(process.env.MIX_API_URL + "teams")
+      //   .then((response) => {
+      //     if (response.data != null) {
+      //       this.projectsUsers = {};
+      //       response.data.users.forEach((user) => {
+      //         if (user != null) {
+      //           this.projectsUsers[user.id] = user;
+      //         }
+      //       });
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });  
+
+      await window.axios
+        .get(
+          process.env.MIX_API_URL + "users/" + this.user.id + "/teamProjects"
+        )
+        .then((response) => {
+          if (response.data != null) {
+            if (response.data.createdProjects != null) {
+              this.projects = {};
+              this.projects[0] = new Project({
+                id: 0,
+                title: "No Project",
+                description: "Tasks without project",
+                author_id: this.user.id,
+                team_id: 0,
+                created_at: moment().format(),
+                updated_at: moment().format(),
+                tasks: [],
+              });
+              response.data.createdProjects.forEach((project) => {
+                this.projects[project.id] = new Project(project);
+                this.projects[project.id].tasks = [];
+              });
+            }
+            //User might have rights to add tasks to the project if he is admin of the project
+            // if (response.data.teamProjects != null) {
+            //   response.data.teamProjects.forEach((project) => {
+            //     this.teamProjects.push(project);
+            //   });
+            // }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       await window.axios
         .get(process.env.MIX_API_URL + "createdTasks")
         .then((response) => {
           if (response.data != null) {
-            this.projects = [];
             response.data.createdTasks.forEach((project) => {
               if (project.hasOwnProperty("id")) {
-                this.projects.push(new Project(project));
+                this.projects[project.id].tasks = project.tasks;
               } else if (project[0].project_id === null) {
-                this.projects.push(
-                  new Project({
-                    id: 0,
-                    title: "No Project",
-                    description: "Tasks without project",
-                    author_id: this.user.id,
-                    team_id: 0,
-                    created_at: moment().format(),
-                    updated_at: moment().format(),
-                    tasks: project,
-                  })
-                );
+                this.projects[0].tasks = project;
               }
             });
+            this.loaded = true;
           }
         })
         .catch((error) => {
@@ -447,16 +482,16 @@ export default {
           if (response.data != null) {
             this.modal = false;
             if (this.editTask.project_id != null) {
-              this.projects.forEach((project) => {
-                if (project.id == this.editTask.project_id) {
-                  var taskIndex = project.tasks.findIndex(
-                    (task) => task.id == this.editTask.id
-                  );
-                  project.tasks.splice(taskIndex, 1, response.data.task);
-                }
-              });
+              var taskIndex = this.projects[this.editTask.project_id].tasks.findIndex(
+                (task) => task.id == this.editTask.id
+              );
+              this.projects[this.editTask.project_id].tasks.splice(
+                taskIndex,
+                1,
+                response.data.task
+              );
             } else {
-              var taskIndex = this.projects[0].tasks.find(
+              var taskIndex = this.projects[0].tasks.findIndex(
                 (task) => task.id == this.editTask.id
               );
               this.projects[0].tasks.splice(taskIndex, 1, response.data.task);
@@ -497,11 +532,14 @@ export default {
         .then((response) => {
           if (response.data != null) {
             this.modal = false;
-            this.projects.forEach((project) => {
-              if (project.id == this.form.project_id) {
-                project.tasks.push(response.data.task);
-              }
-            });
+            if (this.form.project_id != null) {
+              this.projects[this.form.project_id].tasks.push(
+                response.data.task
+              );
+            } else {
+              this.projects[0].tasks.push(response.data.task);
+            }
+
             this.$notify({
               group: "app",
               title: "Success!",
@@ -530,21 +568,20 @@ export default {
           if (response.data.task.id != task.id) {
             this.$alert("Something went wrong.", "Warning", "error");
           } else {
-            if (this.task.project_id != null) {
-              this.projects.forEach((project) => {
-                if (project.id == task.project_id) {
-                  var taskIndex = project.tasks.findIndex(
-                    (task) => task.id == this.task.id
-                  );
-                  project.tasks.splice(taskIndex, 1);
-                }
-              });
-            } else {
-              var taskIndex = this.projects[0].tasks.find(
-                (task) => task.id == task.id
+            if (task.project_id != null) {
+              this.projects[task.project_id].tasks.splice(
+                this.projects[task.project_id].tasks.indexOf(task),
+                1
               );
-              this.projects[0].tasks.splice(taskIndex, 1);
+              this.$forceUpdate();
+            } else {
+              this.projects[0].tasks.splice(
+                this.projects[0].tasks.indexOf(task),
+                1
+              );
+              this.$forceUpdate();
             }
+            console.log(this.projects);
             this.$notify({
               group: "app",
               title: "Success!",
@@ -555,10 +592,22 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          if (error.response.status == 403) {
+            this.$alert(error.response.data.error, "Forbidden", "error");
+          } else if (error.response.status == 404) {
+            this.$alert(
+              error.response.data.message,
+              "Task Not Found!",
+              "error"
+            );
+          } else {
+            this.$alert("Something went wrong", "Warning", "error");
+          }
         });
     },
 
-    startCreate() {
+    startCreate(project) {
+      this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "Create Task";
       this.form.title = null;
@@ -566,12 +615,13 @@ export default {
       this.form.date_till_done = moment().format("YYYY-MM-DD");
       this.form.status = this.statuses[1].val;
       this.form.priority = this.priorities[1].val;
-      this.form.project_id = this.projects[0].id;
+      this.form.project_id = this.projects[project.id].id;
       this.form.reporter_id = this.user.id;
       this.form.assignee_id = this.projectsUsers[1].id;
     },
 
     startEdit(task) {
+      this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "Edit Task";
       this.editTask = task;
@@ -591,15 +641,36 @@ export default {
     },
 
     startDelete(task) {
-      this.$confirm("Are You sure?", "Confirm Delete", "error").then(() => {
-        this.delete(task);
-      });
+      this.$store.commit("setErrors", {});
+      this.$confirm("Are You sure?", "Confirm Delete", "error")
+        .then(() => {
+          this.delete(task);
+        })
+        .catch();
     },
   },
 };
 </script>
 
 <style scoped>
+.loader {
+  border: 8px solid white;
+  border-top: 8px solid #007bff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .modal-mask {
   position: fixed;
   z-index: 9998;
@@ -625,7 +696,11 @@ export default {
   overflow-y: initial !important;
 }
 .modal-body {
-  height: 65vh;
+  height: 50vh;
   overflow-y: auto;
+}
+
+textarea {
+  resize: none;
 }
 </style>

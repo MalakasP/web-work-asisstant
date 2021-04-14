@@ -77,6 +77,31 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -138,6 +163,13 @@ function Project(_ref2) {
   },
   created: function created() {
     this.read();
+  },
+  filters: {
+    monthDay: function monthDay(value) {
+      if (!value) return "";
+      value = value.toString();
+      return value.substring(5);
+    }
   },
   methods: {
     read: function read() {
@@ -1048,30 +1080,99 @@ var render = function() {
               "div",
               _vm._l(_vm.projects, function(project) {
                 return _c("div", { key: project.id }, [
-                  _c("h5", { staticClass: "p-1 text-left" }, [
+                  _c("h5", { staticClass: "p-1 mt-3 text-left" }, [
                     _vm._v(_vm._s(project.title))
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "card p-3" }, [
-                    _c("table", { staticClass: "table-striped" }, [
-                      _vm._m(0, true),
-                      _vm._v(" "),
-                      _c(
-                        "tbody",
-                        _vm._l(project.tasks, function(task) {
-                          return _c("tr", { key: task.id }, [
-                            _c("td", [_vm._v(_vm._s(task.title))]),
-                            _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(task.date_till_done))]),
-                            _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(task.status))]),
-                            _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(task.priority))])
-                          ])
-                        }),
-                        0
-                      )
-                    ])
+                    _c(
+                      "table",
+                      { staticClass: "table-striped w-100 d-block d-md-table" },
+                      [
+                        _vm._m(0, true),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(project.tasks, function(task) {
+                            return _c("tr", { key: task.id }, [
+                              _c("td", { staticStyle: { width: "20%" } }, [
+                                _vm._v(_vm._s(task.title))
+                              ]),
+                              _vm._v(" "),
+                              _c("td", { staticStyle: { width: "20%" } }, [
+                                _vm._v(
+                                  _vm._s(
+                                    _vm._f("monthDay")(task.date_till_done)
+                                  )
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("td", { staticStyle: { width: "20%" } }, [
+                                _vm._v(_vm._s(task.status))
+                              ]),
+                              _vm._v(" "),
+                              _c("td", { staticStyle: { width: "20%" } }, [
+                                _vm._v(_vm._s(task.priority))
+                              ]),
+                              _vm._v(" "),
+                              _c("td", { staticStyle: { width: "10%" } }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-primary",
+                                    staticStyle: { margin: "1px" },
+                                    attrs: { type: "button" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.startEdit(task)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "span",
+                                      { staticClass: "icon is-small" },
+                                      [
+                                        _c(
+                                          "svg",
+                                          {
+                                            staticClass: "bi bi-gear",
+                                            attrs: {
+                                              xmlns:
+                                                "http://www.w3.org/2000/svg",
+                                              width: "16",
+                                              height: "16",
+                                              fill: "currentColor",
+                                              viewBox: "0 0 16 16"
+                                            }
+                                          },
+                                          [
+                                            _c("path", {
+                                              attrs: {
+                                                d:
+                                                  "M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
+                                              }
+                                            }),
+                                            _vm._v(" "),
+                                            _c("path", {
+                                              attrs: {
+                                                d:
+                                                  "M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
+                                              }
+                                            })
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              ])
+                            ])
+                          }),
+                          0
+                        )
+                      ]
+                    )
                   ])
                 ])
               }),
@@ -1095,13 +1196,15 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", [_vm._v("Title")]),
+        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Title")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Deadline")]),
+        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Deadline")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Status")]),
+        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Status")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Priority")])
+        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Priority")]),
+        _vm._v(" "),
+        _c("th", { staticStyle: { width: "10%" } })
       ])
     ])
   }

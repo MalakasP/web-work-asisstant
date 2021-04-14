@@ -7,28 +7,44 @@ use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     /**
      * Get created and teams projects.
-     *
+     * @param \App\Models\User $user
      * @return \Illuminate\Http\Response
      */
-    public function getCreatedAndTeamProjects()
+    public function getCreatedAndTeamProjects(User $user)
     {
+        if (Auth::id() != $user->id) {
+            return response()->json([
+                'error' => 'You do not have permission to access this data!'
+            ], 403);
+        }
+
         $createdProjects = Auth::user()->createdProjects;
 
         $user_teams = Auth::user()->teams;
         
         if (!$user_teams->isEmpty()) {
             foreach ($user_teams as $team) {
-                $teams_projects[] = Project::where('team_id', $team->id)->first();
+                $teams_projects[] = Project::where('team_id', $team->id)->where('author_id', '!=', Auth::id())->first();
             }
         }
-        
-        if ($createdProjects->isEmpty() && (!isset($teams_projects) || empty($teams_projects))) {
+
+        $isEmpty = true;
+        if (isset($teams_projects)) {
+            foreach ($teams_projects as $project) {
+                if (!empty($project)) {
+                    $isEmpty = false;
+                }
+            }
+        }
+
+        if ($createdProjects->isEmpty() && ($isEmpty)) {
             return response()->json([
                 'error' => 'No projects found!'
             ], 404);
@@ -36,7 +52,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'createdProjects'    => $createdProjects,
-            'teamProjects'    => isset($teams_projects) ? $teams_projects : null 
+            'teamProjects'    => $isEmpty ? null : $teams_projects 
         ]);
     }
 

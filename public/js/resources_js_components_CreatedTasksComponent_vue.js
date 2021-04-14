@@ -314,13 +314,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -371,6 +364,7 @@ function Project(_ref2) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      loaded: false,
       noTasks: false,
       dynamicTitle: null,
       modal: false,
@@ -404,7 +398,7 @@ function Project(_ref2) {
       },
       editTask: null,
       taskProject: null,
-      projects: [],
+      projects: {},
       projectsUsers: {},
       form: {
         title: null,
@@ -459,25 +453,48 @@ function Project(_ref2) {
 
               case 2:
                 _context.next = 4;
+                return window.axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
+                  if (response.data != null) {
+                    if (response.data.createdProjects != null) {
+                      _this.projects = {};
+                      _this.projects[0] = new Project({
+                        id: 0,
+                        title: "No Project",
+                        description: "Tasks without project",
+                        author_id: _this.user.id,
+                        team_id: 0,
+                        created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                        updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                        tasks: []
+                      });
+                      response.data.createdProjects.forEach(function (project) {
+                        _this.projects[project.id] = new Project(project);
+                        _this.projects[project.id].tasks = [];
+                      });
+                    } //User might have rights to add tasks to the project if he is admin of the project
+                    // if (response.data.teamProjects != null) {
+                    //   response.data.teamProjects.forEach((project) => {
+                    //     this.teamProjects.push(project);
+                    //   });
+                    // }
+
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 4:
+                _context.next = 6;
                 return window.axios.get("api/" + "createdTasks").then(function (response) {
                   if (response.data != null) {
-                    _this.projects = [];
                     response.data.createdTasks.forEach(function (project) {
                       if (project.hasOwnProperty("id")) {
-                        _this.projects.push(new Project(project));
+                        _this.projects[project.id].tasks = project.tasks;
                       } else if (project[0].project_id === null) {
-                        _this.projects.push(new Project({
-                          id: 0,
-                          title: "No Project",
-                          description: "Tasks without project",
-                          author_id: _this.user.id,
-                          team_id: 0,
-                          created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                          updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                          tasks: project
-                        }));
+                        _this.projects[0].tasks = project;
                       }
                     });
+                    _this.loaded = true;
                   }
                 })["catch"](function (error) {
                   console.log(error);
@@ -487,7 +504,7 @@ function Project(_ref2) {
                   }
                 });
 
-              case 4:
+              case 6:
               case "end":
                 return _context.stop();
             }
@@ -513,16 +530,13 @@ function Project(_ref2) {
                     _this2.modal = false;
 
                     if (_this2.editTask.project_id != null) {
-                      _this2.projects.forEach(function (project) {
-                        if (project.id == _this2.editTask.project_id) {
-                          var taskIndex = project.tasks.findIndex(function (task) {
-                            return task.id == _this2.editTask.id;
-                          });
-                          project.tasks.splice(taskIndex, 1, response.data.task);
-                        }
+                      var taskIndex = _this2.projects[_this2.editTask.project_id].tasks.findIndex(function (task) {
+                        return task.id == _this2.editTask.id;
                       });
+
+                      _this2.projects[_this2.editTask.project_id].tasks.splice(taskIndex, 1, response.data.task);
                     } else {
-                      var taskIndex = _this2.projects[0].tasks.find(function (task) {
+                      var taskIndex = _this2.projects[0].tasks.findIndex(function (task) {
                         return task.id == _this2.editTask.id;
                       });
 
@@ -582,11 +596,11 @@ function Project(_ref2) {
                   if (response.data != null) {
                     _this3.modal = false;
 
-                    _this3.projects.forEach(function (project) {
-                      if (project.id == _this3.form.project_id) {
-                        project.tasks.push(response.data.task);
-                      }
-                    });
+                    if (_this3.form.project_id != null) {
+                      _this3.projects[_this3.form.project_id].tasks.push(response.data.task);
+                    } else {
+                      _this3.projects[0].tasks.push(response.data.task);
+                    }
 
                     _this3.$notify({
                       group: "app",
@@ -630,22 +644,17 @@ function Project(_ref2) {
                   if (response.data.task.id != task.id) {
                     _this4.$alert("Something went wrong.", "Warning", "error");
                   } else {
-                    if (_this4.task.project_id != null) {
-                      _this4.projects.forEach(function (project) {
-                        if (project.id == task.project_id) {
-                          var taskIndex = project.tasks.findIndex(function (task) {
-                            return task.id == _this4.task.id;
-                          });
-                          project.tasks.splice(taskIndex, 1);
-                        }
-                      });
-                    } else {
-                      var taskIndex = _this4.projects[0].tasks.find(function (task) {
-                        return task.id == task.id;
-                      });
+                    if (task.project_id != null) {
+                      _this4.projects[task.project_id].tasks.splice(_this4.projects[task.project_id].tasks.indexOf(task), 1);
 
-                      _this4.projects[0].tasks.splice(taskIndex, 1);
+                      _this4.$forceUpdate();
+                    } else {
+                      _this4.projects[0].tasks.splice(_this4.projects[0].tasks.indexOf(task), 1);
+
+                      _this4.$forceUpdate();
                     }
+
+                    console.log(_this4.projects);
 
                     _this4.$notify({
                       group: "app",
@@ -656,6 +665,14 @@ function Project(_ref2) {
                   }
                 })["catch"](function (error) {
                   console.log(error);
+
+                  if (error.response.status == 403) {
+                    _this4.$alert(error.response.data.error, "Forbidden", "error");
+                  } else if (error.response.status == 404) {
+                    _this4.$alert(error.response.data.message, "Task Not Found!", "error");
+                  } else {
+                    _this4.$alert("Something went wrong", "Warning", "error");
+                  }
                 });
 
               case 2:
@@ -666,7 +683,8 @@ function Project(_ref2) {
         }, _callee4);
       }))();
     },
-    startCreate: function startCreate() {
+    startCreate: function startCreate(project) {
+      this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "Create Task";
       this.form.title = null;
@@ -674,11 +692,12 @@ function Project(_ref2) {
       this.form.date_till_done = moment__WEBPACK_IMPORTED_MODULE_1___default()().format("YYYY-MM-DD");
       this.form.status = this.statuses[1].val;
       this.form.priority = this.priorities[1].val;
-      this.form.project_id = this.projects[0].id;
+      this.form.project_id = this.projects[project.id].id;
       this.form.reporter_id = this.user.id;
       this.form.assignee_id = this.projectsUsers[1].id;
     },
     startEdit: function startEdit(task) {
+      this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "Edit Task";
       this.editTask = task;
@@ -700,9 +719,10 @@ function Project(_ref2) {
     startDelete: function startDelete(task) {
       var _this5 = this;
 
+      this.$store.commit("setErrors", {});
       this.$confirm("Are You sure?", "Confirm Delete", "error").then(function () {
         _this5["delete"](task);
-      });
+      })["catch"]();
     }
   })
 });
@@ -726,7 +746,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.modal-mask[data-v-bb265d88] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-bb265d88] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-dialog[data-v-bb265d88] {\r\n  overflow-y: initial !important;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 65vh;\r\n  overflow-y: auto;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.loader[data-v-bb265d88] {\r\n  border: 8px solid white;\r\n  border-top: 8px solid #007bff;\r\n  border-radius: 50%;\r\n  width: 40px;\r\n  height: 40px;\r\n  -webkit-animation: spin-data-v-bb265d88 2s linear infinite;\r\n          animation: spin-data-v-bb265d88 2s linear infinite;\n}\n@-webkit-keyframes spin-data-v-bb265d88 {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n@keyframes spin-data-v-bb265d88 {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n.modal-mask[data-v-bb265d88] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-bb265d88] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-dialog[data-v-bb265d88] {\r\n  overflow-y: initial !important;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 50vh;\r\n  overflow-y: auto;\n}\ntextarea[data-v-bb265d88] {\r\n  resize: none;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1627,56 +1647,6 @@ var render = function() {
   return _c("div", { staticClass: "container" }, [
     _c("h3", { staticClass: "text-center p-3" }, [_vm._v("Created Tasks")]),
     _vm._v(" "),
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-3 float-md-right" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-secondary",
-            attrs: { type: "button" },
-            on: {
-              click: function($event) {
-                return _vm.startCreate()
-              }
-            }
-          },
-          [
-            _c("span", { staticClass: "icon full-size" }, [
-              _c(
-                "svg",
-                {
-                  staticClass: "bi bi-plus-square",
-                  attrs: {
-                    xmlns: "http://www.w3.org/2000/svg",
-                    width: "16",
-                    height: "16",
-                    fill: "currentColor",
-                    viewBox: "0 0 16 16"
-                  }
-                },
-                [
-                  _c("path", {
-                    attrs: {
-                      d:
-                        "M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("path", {
-                    attrs: {
-                      d:
-                        "M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                    }
-                  })
-                ]
-              ),
-              _vm._v("\n          Add Task\n        ")
-            ])
-          ]
-        )
-      ])
-    ]),
-    _vm._v(" "),
     _vm.modal
       ? _c(
           "div",
@@ -1763,7 +1733,7 @@ var render = function() {
                             ],
                             staticClass: "form-control",
                             class: { "is-invalid": _vm.errors.description },
-                            attrs: { rows: "2" },
+                            attrs: { rows: "3" },
                             domProps: { value: _vm.form.description },
                             on: {
                               input: function($event) {
@@ -2038,73 +2008,6 @@ var render = function() {
                           ])
                         ]),
                         _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", [_vm._v("Choose Project")]),
-                          _vm._v(" "),
-                          _c(
-                            "select",
-                            {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.project_id,
-                                  expression: "form.project_id"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: { "is-invalid": _vm.errors.project_id },
-                              on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.form,
-                                    "project_id",
-                                    $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  )
-                                }
-                              }
-                            },
-                            _vm._l(this.projects, function(project) {
-                              return _c(
-                                "option",
-                                {
-                                  key: project.id,
-                                  domProps: { value: project.id }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(project.title) +
-                                      "\n                    "
-                                  )
-                                ]
-                              )
-                            }),
-                            0
-                          ),
-                          _vm._v(" "),
-                          _vm.errors.project_id
-                            ? _c("div", { staticClass: "invalid-feedback" }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(_vm.errors.project_id) +
-                                    "\n                  "
-                                )
-                              ])
-                            : _vm._e()
-                        ]),
-                        _vm._v(" "),
                         _c("div", { attrs: { align: "center" } }, [
                           _vm.editTask == null
                             ? _c("input", {
@@ -2131,166 +2034,260 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "row justify-content-center" }, [
       _c("div", { staticClass: "col-12" }, [
-        _c(
-          "div",
-          { staticClass: "card p-3" },
-          _vm._l(_vm.projects, function(project) {
-            return _c("div", { key: project.id }, [
-              _c("h5", { staticClass: "text-left p-1" }, [
-                _vm._v(_vm._s(project.title))
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "card p-3" }, [
-                _c("table", { staticClass: "table-striped table-responsive" }, [
-                  _vm._m(0, true),
+        this.loaded
+          ? _c(
+              "div",
+              { staticClass: "card p-3" },
+              _vm._l(_vm.projects, function(project) {
+                return _c("div", { key: project.id }, [
+                  _c("h5", { staticClass: "text-left mt-3 p-1" }, [
+                    _vm._v(_vm._s(project.title))
+                  ]),
                   _vm._v(" "),
-                  _c(
-                    "tbody",
-                    _vm._l(project.tasks, function(task) {
-                      return _c("tr", { key: task.id }, [
-                        _c("td", { staticStyle: { width: "20%" } }, [
-                          _vm._v(_vm._s(task.title))
-                        ]),
-                        _vm._v(" "),
-                        _c("td", { staticStyle: { width: "20%" } }, [
-                          _vm._v(
-                            "\n                    " +
-                              _vm._s(_vm._f("monthDay")(task.date_till_done)) +
-                              "\n                  "
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("td", { staticStyle: { width: "20%" } }, [
-                          _vm._v(_vm._s(task.status))
-                        ]),
+                  _c("div", { staticClass: "card p-3" }, [
+                    _c(
+                      "table",
+                      { staticClass: "table-striped w-100 d-block d-md-table" },
+                      [
+                        project.tasks && project.tasks.length > 0
+                          ? _c("thead", [_vm._m(0, true)])
+                          : _vm._e(),
                         _vm._v(" "),
                         _c(
-                          "td",
-                          {
-                            staticClass: "to-capital-first",
-                            staticStyle: { width: "20%" }
-                          },
+                          "tbody",
                           [
-                            _vm._v(
-                              "\n                    " +
-                                _vm._s(task.priority) +
-                                "\n                  "
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c("td", { staticStyle: { width: "10%" } }, [
-                          _vm._v(
-                            "\n                    " +
-                              _vm._s(_vm.projectsUsers[task.assignee_id].name) +
-                              "\n                  "
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("td", { staticStyle: { width: "5%" } }, [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-primary",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.startEdit(task)
-                                }
-                              }
-                            },
-                            [
-                              _c("span", { staticClass: "icon is-small" }, [
+                            _vm._l(project.tasks, function(task) {
+                              return _c("tr", { key: task.id }, [
+                                _c("td", { staticStyle: { width: "20%" } }, [
+                                  _vm._v(_vm._s(task.title))
+                                ]),
+                                _vm._v(" "),
+                                _c("td", { staticStyle: { width: "20%" } }, [
+                                  _vm._v(
+                                    "\n                    " +
+                                      _vm._s(
+                                        _vm._f("monthDay")(task.date_till_done)
+                                      ) +
+                                      "\n                  "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", { staticStyle: { width: "20%" } }, [
+                                  _vm._v(_vm._s(task.status))
+                                ]),
+                                _vm._v(" "),
                                 _c(
-                                  "svg",
+                                  "td",
                                   {
-                                    staticClass: "bi bi-gear",
-                                    attrs: {
-                                      xmlns: "http://www.w3.org/2000/svg",
-                                      width: "16",
-                                      height: "16",
-                                      fill: "currentColor",
-                                      viewBox: "0 0 16 16"
+                                    staticClass: "to-capital-first",
+                                    staticStyle: { width: "20%" }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                    " +
+                                        _vm._s(task.priority) +
+                                        "\n                  "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("td", { staticStyle: { width: "10%" } }, [
+                                  _vm._v(
+                                    "\n                    " +
+                                      _vm._s(
+                                        _vm.projectsUsers[task.assignee_id].name
+                                      ) +
+                                      "\n                  "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", { staticStyle: { width: "5%" } }, [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-primary",
+                                      staticStyle: { margin: "1px" },
+                                      attrs: { type: "button" },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.startEdit(task)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "span",
+                                        { staticClass: "icon is-small" },
+                                        [
+                                          _c(
+                                            "svg",
+                                            {
+                                              staticClass: "bi bi-gear",
+                                              attrs: {
+                                                xmlns:
+                                                  "http://www.w3.org/2000/svg",
+                                                width: "16",
+                                                height: "16",
+                                                fill: "currentColor",
+                                                viewBox: "0 0 16 16"
+                                              }
+                                            },
+                                            [
+                                              _c("path", {
+                                                attrs: {
+                                                  d:
+                                                    "M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("path", {
+                                                attrs: {
+                                                  d:
+                                                    "M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
+                                                }
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", { staticStyle: { width: "5%" } }, [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-danger",
+                                      staticStyle: { margin: "1px" },
+                                      attrs: { type: "button" },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.startDelete(task)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "span",
+                                        { staticClass: "icon is-small" },
+                                        [
+                                          _c(
+                                            "svg",
+                                            {
+                                              staticClass: "bi bi-trash",
+                                              attrs: {
+                                                xmlns:
+                                                  "http://www.w3.org/2000/svg",
+                                                width: "16",
+                                                height: "16",
+                                                fill: "currentColor",
+                                                viewBox: "0 0 16 16"
+                                              }
+                                            },
+                                            [
+                                              _c("path", {
+                                                attrs: {
+                                                  d:
+                                                    "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("path", {
+                                                attrs: {
+                                                  "fill-rule": "evenodd",
+                                                  d:
+                                                    "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                                }
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ])
+                            }),
+                            _vm._v(" "),
+                            _c("tr", { staticClass: "bg-white" }, [
+                              project.tasks && project.tasks.length > 0
+                                ? _c("td")
+                                : _vm._e(),
+                              _vm._v(" "),
+                              project.tasks && project.tasks.length > 0
+                                ? _c("td")
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c("td", [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-secondary",
+                                    staticStyle: { margin: "3px" },
+                                    attrs: { type: "button" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.startCreate(project)
+                                      }
                                     }
                                   },
                                   [
-                                    _c("path", {
-                                      attrs: {
-                                        d:
-                                          "M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("path", {
-                                      attrs: {
-                                        d:
-                                          "M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
-                                      }
-                                    })
+                                    _c(
+                                      "span",
+                                      { staticClass: "icon full-size" },
+                                      [
+                                        _c(
+                                          "svg",
+                                          {
+                                            staticClass: "bi bi-plus-square",
+                                            attrs: {
+                                              xmlns:
+                                                "http://www.w3.org/2000/svg",
+                                              width: "16",
+                                              height: "16",
+                                              fill: "currentColor",
+                                              viewBox: "0 0 16 16"
+                                            }
+                                          },
+                                          [
+                                            _c("path", {
+                                              attrs: {
+                                                d:
+                                                  "M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+                                              }
+                                            }),
+                                            _vm._v(" "),
+                                            _c("path", {
+                                              attrs: {
+                                                d:
+                                                  "M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                                              }
+                                            })
+                                          ]
+                                        ),
+                                        _vm._v(
+                                          "\n                        Add Task\n                      "
+                                        )
+                                      ]
+                                    )
                                   ]
                                 )
                               ])
-                            ]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("td", { staticStyle: { width: "5%" } }, [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-danger",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.startDelete(task)
-                                }
-                              }
-                            },
-                            [
-                              _c("span", { staticClass: "icon is-small" }, [
-                                _c(
-                                  "svg",
-                                  {
-                                    staticClass: "bi bi-trash",
-                                    attrs: {
-                                      xmlns: "http://www.w3.org/2000/svg",
-                                      width: "16",
-                                      height: "16",
-                                      fill: "currentColor",
-                                      viewBox: "0 0 16 16"
-                                    }
-                                  },
-                                  [
-                                    _c("path", {
-                                      attrs: {
-                                        d:
-                                          "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("path", {
-                                      attrs: {
-                                        "fill-rule": "evenodd",
-                                        d:
-                                          "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-                                      }
-                                    })
-                                  ]
-                                )
-                              ])
-                            ]
-                          )
-                        ])
-                      ])
-                    }),
-                    0
-                  )
+                            ])
+                          ],
+                          2
+                        )
+                      ]
+                    )
+                  ])
                 ])
-              ])
+              }),
+              0
+            )
+          : _c("div", { staticClass: "row justify-content-center" }, [
+              _c("div", { staticClass: "loader" })
             ])
-          }),
-          0
-        )
       ])
     ])
   ])
@@ -2300,22 +2297,20 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Title")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Deadline")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Status")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Priority")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Assignee")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "5%" } }),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "5%" } })
-      ])
+    return _c("tr", [
+      _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Title")]),
+      _vm._v(" "),
+      _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Deadline")]),
+      _vm._v(" "),
+      _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Status")]),
+      _vm._v(" "),
+      _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Priority")]),
+      _vm._v(" "),
+      _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Assignee")]),
+      _vm._v(" "),
+      _c("th", { staticStyle: { width: "5%" } }),
+      _vm._v(" "),
+      _c("th", { staticStyle: { width: "5%" } })
     ])
   }
 ]

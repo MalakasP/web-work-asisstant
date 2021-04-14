@@ -20,7 +20,7 @@ class TaskController extends Controller
     public function getAssignedTasks()
     {
         $assignedTasks = Auth::user()->assignedTasksByProject();
-        
+
         $isEmpty = true;
         foreach ($assignedTasks as $task) {
             if ($task->count() > 0) {
@@ -94,7 +94,7 @@ class TaskController extends Controller
                 isset($author_id)
                 && Auth::id() != $author_id
                 || isset($team)
-                && !$team->isAdmin(Auth::id())
+                && !$team->isUserAdmin(Auth::id())
             ) {
                 return response()->json([
                     'error' => 'You do not have the rights to add task to this project!'
@@ -156,7 +156,7 @@ class TaskController extends Controller
                 isset($author_id)
                 && Auth::id() == $author_id
                 || isset($team)
-                && $team->isAdmin(Auth::id())
+                && $team->isUserAdmin(Auth::id())
                 || $task->reporter_id == Auth::user()->id
             ) {
                 $task->update($request->validated());
@@ -186,22 +186,32 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         // move to middleware 
-        if (
-            $task->reporter_id != Auth::user()->id
-            || $task->project_id != null 
-            && ($task->project->author_id  != Auth::user()->id
-                || $task->project->team)
-        ) {
-            return response()->json([
-                'error' => 'You do not have rights to do this!'
-            ], 403);
+        if (!empty($task->project)) {
+            $project = $task->project;
+            if ($project->team != null) {
+                $team = $project->team;
+            } else if ($project->author_id != null) {
+                $author_id = $project->author_id;
+            }
         }
 
-        $task->delete();
+        if (
+            isset($author_id)
+            && Auth::id() == $author_id
+            || isset($team)
+            && $team->isUserAdmin(Auth::id())
+            || $task->reporter_id == Auth::user()->id
+        ) {
+            $task->delete();
+
+            return response()->json([
+                'task' => $task,
+                'message' => 'Task deleted successfully!'
+            ]);
+        }
 
         return response()->json([
-            'task' => $task,
-            'message' => 'Task deleted successfully!'
-        ]);
+            'error' => 'You do not have rights to do this!'
+        ], 403);
     }
 }

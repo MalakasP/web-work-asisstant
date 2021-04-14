@@ -146,15 +146,15 @@ export default {
       if (!this.isTimerStopped) {
         let todaysDate = moment().startOf("day");
         let savedDate = moment(this.worktime.created_at).startOf("day");
-        let tomorrow = moment().add(1, "days").startOf("day");
-
+        
         if (
-          this.counter &&
-          (todaysDate == savedDate || tomorrow == savedDate.add(1, "days"))
+          this.timer &&
+          (Math.abs(moment.duration(savedDate.diff(todaysDate))._data.days) <= 1)
         ) {
           this.counter.seconds = this.timer;
         } else if (this.duration >= 0) {
-          this.counter.seconds = this.timer;
+          console.log("what")
+          this.counter.seconds = this.duration;
         }
 
         this.counter.ticker = setInterval(() => {

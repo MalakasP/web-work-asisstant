@@ -1994,12 +1994,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (!this.isTimerStopped) {
         var todaysDate = moment__WEBPACK_IMPORTED_MODULE_0___default()().startOf("day");
         var savedDate = moment__WEBPACK_IMPORTED_MODULE_0___default()(this.worktime.created_at).startOf("day");
-        var tomorrow = moment__WEBPACK_IMPORTED_MODULE_0___default()().add(1, "days").startOf("day");
 
-        if (this.counter && (todaysDate == savedDate || tomorrow == savedDate.add(1, "days"))) {
+        if (this.timer && Math.abs(moment__WEBPACK_IMPORTED_MODULE_0___default().duration(savedDate.diff(todaysDate))._data.days) <= 1) {
           this.counter.seconds = this.timer;
         } else if (this.duration >= 0) {
-          this.counter.seconds = this.timer;
+          console.log("what");
+          this.counter.seconds = this.duration;
         }
 
         this.counter.ticker = setInterval(function () {

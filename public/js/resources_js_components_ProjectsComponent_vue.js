@@ -444,7 +444,7 @@ function User(_ref2) {
       createdProjects: [],
       teamProjects: [],
       projectsUsers: {},
-      projectsTeams: {},
+      teams: {},
       form: {
         title: null,
         description: null,
@@ -487,13 +487,13 @@ function User(_ref2) {
                 _context.next = 4;
                 return window.axios.get("api/" + "teams").then(function (response) {
                   if (response.data != null) {
-                    _this.projectsTeams = {};
+                    _this.teams = {};
                     response.data.teams.forEach(function (team) {
                       if (team != null) {
-                        _this.projectsTeams[team.id] = new Team(team);
+                        _this.teams[team.id] = new Team(team);
                       }
                     });
-                    _this.projectsTeams[0] = new Team({
+                    _this.teams[0] = new Team({
                       id: 0,
                       name: "No Team",
                       description: "",
@@ -749,7 +749,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.full-width[data-v-20cb5d70] {\r\n  width: 100%;\n}\n.input-sm[data-v-20cb5d70] {\r\n  height: calc(2.15rem + 2px);\n}\n.modal-mask[data-v-20cb5d70] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-20cb5d70] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.to-capital-first[data-v-20cb5d70] {\r\n  text-transform: capitalize;\n}\n.modal-dialog[data-v-20cb5d70] {\r\n  overflow-y: initial !important;\n}\n.modal-body[data-v-20cb5d70] {\r\n  height: 40vh;\r\n  overflow-y: auto;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.full-width[data-v-20cb5d70] {\r\n  width: 100%;\n}\n.input-sm[data-v-20cb5d70] {\r\n  height: calc(2.15rem + 2px);\n}\n.modal-mask[data-v-20cb5d70] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-20cb5d70] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.modal-dialog[data-v-20cb5d70] {\r\n  overflow-y: initial !important;\n}\n.modal-body[data-v-20cb5d70] {\r\n  height: 40vh;\r\n  overflow-y: auto;\n}\ntextarea[data-v-20cb5d70] {\r\n   resize: none;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1734,7 +1734,7 @@ var render = function() {
                             ],
                             staticClass: "form-control",
                             class: { "is-invalid": _vm.errors.description },
-                            attrs: { rows: "2" },
+                            attrs: { rows: "3" },
                             domProps: { value: _vm.form.description },
                             on: {
                               input: function($event) {
@@ -1798,7 +1798,7 @@ var render = function() {
                                 }
                               }
                             },
-                            _vm._l(this.projectsTeams, function(team) {
+                            _vm._l(this.teams, function(team) {
                               return _c(
                                 "option",
                                 { key: team.id, domProps: { value: team.id } },
@@ -1852,7 +1852,9 @@ var render = function() {
     this.createdProjects.length > 0
       ? _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "col-12" }, [
-            _c("h3", { staticClass: "p-3" }, [_vm._v("Created Projects")]),
+            _c("h3", { staticClass: "p-3 text-center" }, [
+              _vm._v("Created Projects")
+            ]),
             _vm._v(" "),
             _c("div", { staticClass: "card p-3" }, [
               _c("div", { staticClass: "table-responsive" }, [
@@ -1887,9 +1889,7 @@ var render = function() {
                               ? _c("td", { staticStyle: { width: "25%" } }, [
                                   _vm._v(
                                     "\n                  " +
-                                      _vm._s(
-                                        _vm.projectsTeams[project.team_id].name
-                                      ) +
+                                      _vm._s(_vm.teams[project.team_id].name) +
                                       "\n                "
                                   )
                                 ])
@@ -2194,7 +2194,7 @@ var render = function() {
                                       }
                                     }
                                   },
-                                  _vm._l(this.projectsTeams, function(team) {
+                                  _vm._l(this.teams, function(team) {
                                     return _c(
                                       "option",
                                       {
@@ -2424,7 +2424,7 @@ var render = function() {
                       ? _c("td", { staticStyle: { width: "30%" } }, [
                           _vm._v(
                             "\n              " +
-                              _vm._s(_vm.projectsTeams[project.team_id].name) +
+                              _vm._s(_vm.teams[project.team_id].name) +
                               "\n            "
                           )
                         ])
