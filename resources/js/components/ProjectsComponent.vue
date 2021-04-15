@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <h3 class="p-3 text-center">Created Projects</h3>
     <div v-if="modal">
       <transition name="model">
         <div class="modal-mask">
@@ -91,7 +92,6 @@
       v-if="this.createdProjects.length > 0"
     >
       <div class="col-12">
-        <h3 class="p-3 text-center">Created Projects</h3>
         <div class="card p-3">
           <div class="table-responsive">
             <table class="table-striped w-100 d-block d-md-table">
@@ -332,6 +332,9 @@
         </span>
       </button>
     </div>
+    <div v-else class="row justify-content-center">
+      <div class="loader"></div>
+    </div>
     <div class="row justify-content-center" v-if="this.teamProjects.length > 0">
       <div class="col-12">
         <h3 class="p-3">Team Projects</h3>
@@ -477,6 +480,7 @@ export default {
           }
         })
         .catch((error) => {
+          this.loaded = true;
           console.log(error);
         });
     },
@@ -631,32 +635,8 @@ export default {
   height: calc(2.15rem + 2px);
 }
 
-.modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: table;
-  transition: opacity 0.3s ease;
-}
-
-.modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.modal-dialog {
-  overflow-y: initial !important;
-}
 .modal-body {
   height: 40vh;
   overflow-y: auto;
-}
-
-textarea {
-   resize: none;
 }
 </style>

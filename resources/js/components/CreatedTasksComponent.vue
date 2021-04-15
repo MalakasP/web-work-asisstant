@@ -468,6 +468,7 @@ export default {
           if (error.response.status == 404) {
             this.noTasks = true;
           }
+          this.loaded = true;
         });
     },
 
@@ -653,54 +654,13 @@ export default {
 </script>
 
 <style scoped>
-.loader {
-  border: 8px solid white;
-  border-top: 8px solid #007bff;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: table;
-  transition: opacity 0.3s ease;
-}
-
-.modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
-}
-
 .to-capital-first {
   text-transform: capitalize;
 }
 
-.modal-dialog {
-  overflow-y: initial !important;
-}
 .modal-body {
   height: 50vh;
   overflow-y: auto;
 }
 
-textarea {
-  resize: none;
-}
 </style>

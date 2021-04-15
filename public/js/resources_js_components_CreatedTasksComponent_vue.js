@@ -502,6 +502,8 @@ function Project(_ref2) {
                   if (error.response.status == 404) {
                     _this.noTasks = true;
                   }
+
+                  _this.loaded = true;
                 });
 
               case 6:
@@ -746,7 +748,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.loader[data-v-bb265d88] {\r\n  border: 8px solid white;\r\n  border-top: 8px solid #007bff;\r\n  border-radius: 50%;\r\n  width: 40px;\r\n  height: 40px;\r\n  -webkit-animation: spin-data-v-bb265d88 2s linear infinite;\r\n          animation: spin-data-v-bb265d88 2s linear infinite;\n}\n@-webkit-keyframes spin-data-v-bb265d88 {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n@keyframes spin-data-v-bb265d88 {\n0% {\r\n    transform: rotate(0deg);\n}\n100% {\r\n    transform: rotate(360deg);\n}\n}\n.modal-mask[data-v-bb265d88] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-bb265d88] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-dialog[data-v-bb265d88] {\r\n  overflow-y: initial !important;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 50vh;\r\n  overflow-y: auto;\n}\ntextarea[data-v-bb265d88] {\r\n  resize: none;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 50vh;\r\n  overflow-y: auto;\n}\r\n\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
