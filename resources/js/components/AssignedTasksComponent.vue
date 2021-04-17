@@ -139,7 +139,7 @@ export default {
   },
   methods: {
     async read() {
-      await window.axios
+      await axios
         .get(process.env.MIX_API_URL + "assignedTasks")
         .then((response) => {
           if (response.data != null) {

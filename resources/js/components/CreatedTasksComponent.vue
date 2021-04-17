@@ -378,7 +378,7 @@ export default {
     ...mapActions("worktime", []),
 
     async read() {
-      await window.axios
+      await axios
         .get(process.env.MIX_API_URL + "users")
         .then((response) => {
           if (response.data != null) {
@@ -394,7 +394,7 @@ export default {
           console.log(error);
         });
 
-      // await window.axios
+      // await axios
       //   .get(process.env.MIX_API_URL + "teams")
       //   .then((response) => {
       //     if (response.data != null) {
@@ -410,7 +410,7 @@ export default {
       //     console.log(error);
       //   });
 
-      await window.axios
+      await axios
         .get(
           process.env.MIX_API_URL + "users/" + this.user.id + "/teamProjects"
         )
@@ -445,7 +445,7 @@ export default {
           console.log(error);
         });
 
-      await window.axios
+      await axios
         .get(process.env.MIX_API_URL + "createdTasks")
         .then((response) => {
           if (response.data != null) {
@@ -473,7 +473,7 @@ export default {
         this.form.project_id = null;
       }
 
-      await window.axios
+      await axios
         .put(process.env.MIX_API_URL + "tasks/" + this.editTask.id, this.form)
         .then((response) => {
           if (response.data != null) {
@@ -524,7 +524,7 @@ export default {
         this.form.project_id = null;
       }
 
-      await window.axios
+      await axios
         .post(process.env.MIX_API_URL + "tasks", this.form)
         .then((response) => {
           if (response.data != null) {
@@ -559,7 +559,7 @@ export default {
     },
 
     async delete(task) {
-      await window.axios
+      await axios
         .delete(process.env.MIX_API_URL + "tasks/" + task.id)
         .then((response) => {
           if (response.data.task.id != task.id) {

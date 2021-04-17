@@ -182,7 +182,7 @@ function Project(_ref2) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return window.axios.get("api/" + "assignedTasks").then(function (response) {
+                return axios.get("api/" + "assignedTasks").then(function (response) {
                   if (response.data != null) {
                     _this.assignedTasks = [];
                     response.data.assignedTasks.forEach(function (project) {

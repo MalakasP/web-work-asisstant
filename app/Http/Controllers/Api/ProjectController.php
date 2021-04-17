@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateProjectRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
 use App\Models\User;
+use App\Models\Team;
 
 class ProjectController extends Controller
 {
@@ -27,7 +28,7 @@ class ProjectController extends Controller
         $createdProjects = Auth::user()->createdProjects;
 
         $user_teams = Auth::user()->teams;
-        
+
         if (!$user_teams->isEmpty()) {
             foreach ($user_teams as $team) {
                 $teams_projects[] = Project::where('team_id', $team->id)->where('author_id', '!=', Auth::id())->first();
@@ -51,14 +52,15 @@ class ProjectController extends Controller
 
         return response()->json([
             'createdProjects'    => $createdProjects,
-            'teamProjects'    => $isEmpty ? null : $teams_projects 
+            'teamProjects'    => $isEmpty ? null : $teams_projects
         ]);
     }
 
     /**
      * Get all projects user is envolved with.
      */
-    public function getUserProjects() {
+    public function getUserProjects()
+    {
         $projects =  Auth::user()->projects();
 
         if ($projects->isEmpty()) {
@@ -80,12 +82,30 @@ class ProjectController extends Controller
      */
     public function store(CreateProjectRequest $request)
     {
-        $project = Project::create($request->validated());
+        //check if user is admin in team or team_id is null
+        $request->validated();
+
+        if ($request->validated()['author_id'] == Auth::user()->id) {
+            if (
+                $request->has('team_id') && $request->validated()['team_id'] != null
+                && Team::findOrFail($request->team_id)->isUserAdmin(Auth::id())
+                || !$request->has('team_id') || $request->validated()['team_id'] == null
+            ) {
+                $project = Project::create($request->validated());
+
+                return response()->json([
+                    'project' => $project,
+                    'message' => 'Project created successfully!'
+                ]);
+            }
+            return response()->json([
+                'message' => 'You do not have rights to do this!'
+            ], 403);
+        }
 
         return response()->json([
-            'project' => $project,
-            'message' => 'Project created successfully!'
-        ]);
+            'message' => 'Author ID does not match logged user!'
+        ], 422);
     }
 
     /**
@@ -110,18 +130,22 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        if ($project->author_id != Auth::user()->id) {
+        if (
+            $request->has('team_id') && $request->validated()['team_id'] != null
+            && Team::findOrFail($request->team_id)->isUserAdmin(Auth::id())
+            || ((!$request->has('team_id') || $request->validated()['team_id'] == null) && $project->author_id == Auth::user()->id)
+        ) {
+            $project->update($request->validated());
+
             return response()->json([
-                'message' => 'You do not have rights to do this!'
-            ], 403);
+                'project' => $project,
+                'message' => 'Project updated successfully!'
+            ]);
         }
 
-        $project->update($request->validated());
-
         return response()->json([
-            'project' => $project,
-            'message' => 'Project updated successfully!'
-        ]);
+            'message' => 'You do not have rights to do this!'
+        ], 403);
     }
 
     /**

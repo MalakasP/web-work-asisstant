@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <h3 class="p-3 text-center">Created Projects</h3>
     <div v-if="modal">
       <transition name="model">
         <div class="modal-mask">
@@ -45,7 +44,7 @@
                       {{ errors.description }}
                     </div>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group" v-if="Object.keys(this.teamsAdmin).lenght > 1">
                     <label>Choose Team</label>
                     <select
                       class="form-control"
@@ -53,7 +52,7 @@
                       v-model="form.team_id"
                     >
                       <option
-                        v-for="team in this.teams"
+                        v-for="team in this.teamsAdmin"
                         :value="team.id"
                         :key="team.id"
                       >
@@ -91,8 +90,9 @@
       class="row justify-content-center"
       v-if="this.createdProjects.length > 0"
     >
-      <div class="col-12">
-        <div class="card p-3">
+      <div class="col-12 card mt-3">
+        <div class="card-body text-center">
+          <h3 class="card-title">Created Projects</h3>
           <div class="table-responsive">
             <table class="table-striped w-100 d-block d-md-table">
               <thead>
@@ -234,7 +234,7 @@
                       v-model="form.team_id"
                     >
                       <option
-                        v-for="team in this.teams"
+                        v-for="team in this.teamsAdmin"
                         :value="team.id"
                         :key="team.id"
                       >
@@ -307,57 +307,66 @@
         </div>
       </div>
     </div>
-    <div v-else-if="this.loaded">
-      <button type="button" class="btn btn-secondary" @click="startProject()">
-        <span class="icon full-size">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-plus-square"
-            viewBox="0 0 16 16"
+    <div v-else-if="this.loaded" class="row justify-content-center">
+      <div class="col-12 card mt-3">
+        <div class="card-body text-center">
+          <h3 class="card-title">Created Projects</h3>
+          <button
+            type="button"
+            class="btn btn-secondary w-25 mt-3"
+            @click="startProject()"
           >
-            <path
-              d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-            />
-            <path
-              d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-            />
-          </svg>
-          Start Project
-        </span>
-      </button>
+            <span class="icon full-size">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-plus-square"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+                />
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                />
+              </svg>
+              Start Project
+            </span>
+          </button>
+        </div>
+      </div>
     </div>
     <div v-else class="row justify-content-center">
       <div class="loader"></div>
     </div>
     <div class="row justify-content-center" v-if="this.teamProjects.length > 0">
-      <div class="col-12">
-        <h3 class="p-3">Team Projects</h3>
-        <table class="table-striped full-width">
-          <thead>
-            <tr>
-              <th style="width: 30%">Title</th>
-              <th style="width: 30%">Author</th>
-              <th style="width: 30%">Team</th>
-              <th style="width: 5%"></th>
-              <th style="width: 5%"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="project in teamProjects" :key="project.id">
-              <td style="width: 30%">{{ project.title }}</td>
-              <td style="width: 30%">
-                {{ projectsUsers[project.author_id].name }}
-              </td>
-              <td style="width: 30%" v-if="project.team_id != null">
-                {{ teams[project.team_id].name }}
-              </td>
-              <td style="width: 30%" v-else>No Team</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="col-12 card mt-3">
+        <div class="card-body text-center">
+          <h3 class="card-title">Team Projects</h3>
+          <table class="table-striped full-width">
+            <thead>
+              <tr>
+                <th style="width: 35%">Title</th>
+                <th style="width: 30%">Author</th>
+                <th style="width: 35%">Team</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="project in teamProjects" :key="project.id">
+                <td style="width: 35%">{{ project.title }}</td>
+                <td style="width: 30%">
+                  {{ projectsUsers[project.author_id].name }}
+                </td>
+                <td style="width: 35%" v-if="project.team_id != null">
+                  {{ teams[project.team_id].name }}
+                </td>
+                <td style="width: 35%" v-else>No Team</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -367,12 +376,13 @@
 import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
 
-function Team({ id, name, description, created_at, updated_at }) {
+function Team({ id, name, description, created_at, updated_at, pivot }) {
   this.id = id;
   this.name = name;
   this.description = description;
   this.created_at = created_at;
   this.updated_at = updated_at;
+  this.pivot = pivot;
 }
 
 function User({ id, name, email, created_at, updated_at }) {
@@ -406,6 +416,21 @@ export default {
   computed: {
     ...mapGetters(["errors"]),
     ...mapGetters("auth", ["user"]),
+
+    teamsAdmin: function () {
+      const adminTeams = Object.entries(this.teams).filter(function ([
+        key,
+        team,
+      ]) {
+        console.log(key, team.pivot.is_admin);
+        if (team.pivot.is_admin) {
+          return team.pivot.is_admin;
+        } else {
+          return false;
+        }
+      });
+      return Object.fromEntries(adminTeams);
+    },
   },
   mounted() {
     this.$store.commit("setErrors", {});
@@ -415,7 +440,7 @@ export default {
   },
   methods: {
     async read() {
-      await window.axios
+      await axios
         .get(process.env.MIX_API_URL + "users")
         .then((response) => {
           if (response.data != null) {
@@ -431,7 +456,7 @@ export default {
           console.log(error);
         });
 
-      await window.axios
+      await axios
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
           if (response.data != null) {
@@ -447,14 +472,19 @@ export default {
               description: "",
               created_at: moment(),
               updated_at: moment(),
+              pivot: {
+                is_admin: true,
+              },
             });
+
+            console.log(response.data.teams);
           }
         })
         .catch((error) => {
           console.log(error);
         });
 
-      await window.axios
+      await axios
         .get(
           process.env.MIX_API_URL + "users/" + this.user.id + "/teamProjects"
         )
@@ -487,7 +517,7 @@ export default {
         this.form.team_id = null;
       }
 
-      await window.axios
+      await axios
         .put(process.env.MIX_API_URL + "projects/" + this.edit.id, this.form)
         .then((response) => {
           if (response.data != null) {
@@ -526,7 +556,7 @@ export default {
         this.form.team_id = null;
       }
 
-      await window.axios
+      await axios
         .post(process.env.MIX_API_URL + "projects", this.form)
         .then((response) => {
           if (response.data != null) {
@@ -558,7 +588,7 @@ export default {
     },
 
     async delete(id) {
-      await window.axios
+      await axios
         .delete(process.env.MIX_API_URL + "projects/" + id)
         .then((response) => {
           if (response.data.project.id != id) {
@@ -610,6 +640,7 @@ export default {
 
     startProject() {
       this.modal = true;
+      this.dynamicTitle = "New Project";
       this.form.title = null;
       this.form.description = null;
       this.form.team_id = 0;
@@ -624,6 +655,13 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  min-height: 200px;
+  border: 0;
+  -webkit-box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);
+  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);
+}
+
 .full-width {
   width: 100%;
 }
@@ -635,5 +673,10 @@ export default {
 .modal-body {
   height: 40vh;
   overflow-y: auto;
+}
+
+thead tr,
+tbody tr {
+  line-height: 40px;
 }
 </style>

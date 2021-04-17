@@ -1998,7 +1998,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (this.timer && Math.abs(moment__WEBPACK_IMPORTED_MODULE_0___default().duration(savedDate.diff(todaysDate))._data.days) <= 1) {
           this.counter.seconds = this.timer;
         } else if (this.duration >= 0) {
-          console.log("what");
           this.counter.seconds = this.duration;
         }
 
@@ -2065,8 +2064,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         user_id: this.user.id,
         end_time: moment__WEBPACK_IMPORTED_MODULE_0___default()().format()
       };
-      console.log(data);
-      axios.put("api/" + "worktimes/" + this.worktime.id, data).then(function (response) {
+      axios({
+        url: "api/" + "worktimes/" + this.worktime.id,
+        baseURL: "/",
+        data: data
+      }).then(function (response) {
         console.log(response.data);
 
         _this2.setTimerStopped(true);

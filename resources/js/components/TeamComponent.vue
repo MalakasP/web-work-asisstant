@@ -16,18 +16,26 @@
               <div class="col-12">
                 <table class="table-striped full-width">
                   <thead>
-                    <tr>
+                    <tr v-if="isAdmin">
                       <th style="width: 30%">Name</th>
                       <th style="width: 30%">Name In Team</th>
                       <th style="width: 30%">Team Admin</th>
                       <th style="width: 5%"></th>
                       <th style="width: 5%"></th>
                     </tr>
+                    <tr v-else>
+                      <th style="width: 30%">Name</th>
+                      <th style="width: 40%">Name In Team</th>
+                      <th style="width: 30%">Team Admin</th>
+                    </tr>
                   </thead>
                   <tbody>
                     <tr v-for="user in this.team.users" :key="user.id">
                       <td style="width: 30%">{{ user.name }}</td>
-                      <td style="width: 30%">
+                      <td style="width: 30%" v-if="isAdmin">
+                        {{ user.pivot.name_in_team }}
+                      </td>
+                      <td style="width: 40%" v-else>
                         {{ user.pivot.name_in_team }}
                       </td>
                       <td style="width: 30%">
@@ -115,7 +123,7 @@
                         </button>
                       </td>
                     </tr>
-                    <tr class="bg-white" v-else>
+                    <tr class="bg-white" v-else-if="isAdmin">
                       <td>
                         <input
                           type="text"
@@ -271,11 +279,10 @@ export default {
   },
   methods: {
     async read() {
-      await window
-        .axios({
-          url: process.env.MIX_API_URL + "teams/" + this.$route.params.teamId,
-          baseURL: "/",
-        })
+      await axios({
+        url: process.env.MIX_API_URL + "teams/" + this.$route.params.teamId,
+        baseURL: "/",
+      })
         .then((response) => {
           if (response.data != null) {
             this.team = {};
@@ -295,21 +302,20 @@ export default {
     },
 
     async create() {
-      await window
-        .axios({
-          method: "post",
-          url: process.env.MIX_API_URL + "teams/" + this.team.id + "/addUser",
-          baseURL: "/",
-          data: this.form,
-        })
+      await axios({
+        method: "post",
+        url: process.env.MIX_API_URL + "teams/" + this.team.id + "/addUser",
+        baseURL: "/",
+        data: this.form,
+      })
         .then((response) => {
           if (response.data != null) {
             this.createForm = false;
 
             response.data.user.pivot = [];
-            response.data.user.pivot.is_admin = this.form.is_admin,
-            response.data.user.pivot.name_in_team = this.form.name_in_team,
-            this.team.users.push(response.data.user);
+            (response.data.user.pivot.is_admin = this.form.is_admin),
+              (response.data.user.pivot.name_in_team = this.form.name_in_team),
+              this.team.users.push(response.data.user);
             this.$notify({
               group: "app",
               title: "Success!",
@@ -336,17 +342,16 @@ export default {
     },
 
     async remove(userId) {
-      await window
-        .axios({
-          method: "delete",
-          url:
-            process.env.MIX_API_URL +
-            "teams/" +
-            this.team.id +
-            "/users/" +
-            userId,
-          baseURL: "/",
-        })
+      await axios({
+        method: "delete",
+        url:
+          process.env.MIX_API_URL +
+          "teams/" +
+          this.team.id +
+          "/users/" +
+          userId,
+        baseURL: "/",
+      })
         .then((response) => {
           if (response.data != null) {
             var userIndex = this.team.users.findIndex(
@@ -419,5 +424,10 @@ export default {
 
 .to-capital-first {
   text-transform: capitalize;
+}
+
+thead tr,
+tbody tr {
+  line-height: 40px;
 }
 </style>

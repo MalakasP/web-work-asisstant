@@ -132,7 +132,7 @@ function User(_ref2) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return window.axios.get("api/" + "teams").then(function (response) {
+                return axios.get("api/" + "teams").then(function (response) {
                   if (response.data != null) {
                     _this.teams = {};
                     console.log(response.data.teams);

@@ -435,7 +435,7 @@ function Project(_ref2) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return window.axios.get("api/" + "users").then(function (response) {
+                return axios.get("api/" + "users").then(function (response) {
                   if (response.data != null) {
                     _this.projectsUsers = {};
                     response.data.users.forEach(function (user) {
@@ -450,7 +450,7 @@ function Project(_ref2) {
 
               case 2:
                 _context.next = 4;
-                return window.axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
+                return axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
                   if (response.data != null) {
                     if (response.data.createdProjects != null) {
                       _this.projects = {};
@@ -482,7 +482,7 @@ function Project(_ref2) {
 
               case 4:
                 _context.next = 6;
-                return window.axios.get("api/" + "createdTasks").then(function (response) {
+                return axios.get("api/" + "createdTasks").then(function (response) {
                   if (response.data != null) {
                     response.data.createdTasks.forEach(function (project) {
                       if (project.hasOwnProperty("id")) {
@@ -524,7 +524,7 @@ function Project(_ref2) {
                 }
 
                 _context2.next = 3;
-                return window.axios.put("api/" + "tasks/" + _this2.editTask.id, _this2.form).then(function (response) {
+                return axios.put("api/" + "tasks/" + _this2.editTask.id, _this2.form).then(function (response) {
                   if (response.data != null) {
                     _this2.modal = false;
 
@@ -591,7 +591,7 @@ function Project(_ref2) {
                 }
 
                 _context3.next = 3;
-                return window.axios.post("api/" + "tasks", _this3.form).then(function (response) {
+                return axios.post("api/" + "tasks", _this3.form).then(function (response) {
                   if (response.data != null) {
                     _this3.modal = false;
 
@@ -639,7 +639,7 @@ function Project(_ref2) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 _context4.next = 2;
-                return window.axios["delete"]("api/" + "tasks/" + task.id).then(function (response) {
+                return axios["delete"]("api/" + "tasks/" + task.id).then(function (response) {
                   if (response.data.task.id != task.id) {
                     _this4.$alert("Something went wrong.", "Warning", "error");
                   } else {

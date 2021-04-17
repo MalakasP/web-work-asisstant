@@ -302,6 +302,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -346,7 +354,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return window.axios({
+                return axios({
                   url: "api/" + "teams/" + _this.$route.params.teamId,
                   baseURL: "/"
                 }).then(function (response) {
@@ -382,7 +390,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.next = 2;
-                return window.axios({
+                return axios({
                   method: "post",
                   url: "api/" + "teams/" + _this2.team.id + "/addUser",
                   baseURL: "/",
@@ -434,7 +442,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             switch (_context3.prev = _context3.next) {
               case 0:
                 _context3.next = 2;
-                return window.axios({
+                return axios({
                   method: "delete",
                   url: "api/" + "teams/" + _this3.team.id + "/users/" + userId,
                   baseURL: "/"
@@ -542,7 +550,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-4916dec5] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-4916dec5] {\r\n  width: 100%;\n}\n.min-height[data-v-4916dec5] {\r\n  min-height: 50px;\n}\n.to-capital-first[data-v-4916dec5] {\r\n  text-transform: capitalize;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-4916dec5] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-4916dec5] {\r\n  width: 100%;\n}\n.min-height[data-v-4916dec5] {\r\n  min-height: 50px;\n}\n.to-capital-first[data-v-4916dec5] {\r\n  text-transform: capitalize;\n}\nthead tr[data-v-4916dec5],\r\ntbody tr[data-v-4916dec5] {\r\n  line-height: 40px;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1611,7 +1619,51 @@ var render = function() {
                           "table",
                           { staticClass: "table-striped full-width" },
                           [
-                            _vm._m(0),
+                            _c("thead", [
+                              _vm.isAdmin
+                                ? _c("tr", [
+                                    _c(
+                                      "th",
+                                      { staticStyle: { width: "30%" } },
+                                      [_vm._v("Name")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "th",
+                                      { staticStyle: { width: "30%" } },
+                                      [_vm._v("Name In Team")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "th",
+                                      { staticStyle: { width: "30%" } },
+                                      [_vm._v("Team Admin")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("th", { staticStyle: { width: "5%" } }),
+                                    _vm._v(" "),
+                                    _c("th", { staticStyle: { width: "5%" } })
+                                  ])
+                                : _c("tr", [
+                                    _c(
+                                      "th",
+                                      { staticStyle: { width: "30%" } },
+                                      [_vm._v("Name")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "th",
+                                      { staticStyle: { width: "40%" } },
+                                      [_vm._v("Name In Team")]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "th",
+                                      { staticStyle: { width: "30%" } },
+                                      [_vm._v("Team Admin")]
+                                    )
+                                  ])
+                            ]),
                             _vm._v(" "),
                             _c(
                               "tbody",
@@ -1624,17 +1676,33 @@ var render = function() {
                                       [_vm._v(_vm._s(user.name))]
                                     ),
                                     _vm._v(" "),
-                                    _c(
-                                      "td",
-                                      { staticStyle: { width: "30%" } },
-                                      [
-                                        _vm._v(
-                                          "\n                      " +
-                                            _vm._s(user.pivot.name_in_team) +
-                                            "\n                    "
+                                    _vm.isAdmin
+                                      ? _c(
+                                          "td",
+                                          { staticStyle: { width: "30%" } },
+                                          [
+                                            _vm._v(
+                                              "\n                      " +
+                                                _vm._s(
+                                                  user.pivot.name_in_team
+                                                ) +
+                                                "\n                    "
+                                            )
+                                          ]
                                         )
-                                      ]
-                                    ),
+                                      : _c(
+                                          "td",
+                                          { staticStyle: { width: "40%" } },
+                                          [
+                                            _vm._v(
+                                              "\n                      " +
+                                                _vm._s(
+                                                  user.pivot.name_in_team
+                                                ) +
+                                                "\n                    "
+                                            )
+                                          ]
+                                        ),
                                     _vm._v(" "),
                                     _c(
                                       "td",
@@ -1837,7 +1905,8 @@ var render = function() {
                                         )
                                       ])
                                     ])
-                                  : _c("tr", { staticClass: "bg-white" }, [
+                                  : _vm.isAdmin
+                                  ? _c("tr", { staticClass: "bg-white" }, [
                                       _c("td", [
                                         _c("input", {
                                           directives: [
@@ -2130,6 +2199,7 @@ var render = function() {
                                         )
                                       ])
                                     ])
+                                  : _vm._e()
                               ],
                               2
                             )
@@ -2149,26 +2219,7 @@ var render = function() {
         ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", { staticStyle: { width: "30%" } }, [_vm._v("Name")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "30%" } }, [_vm._v("Name In Team")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "30%" } }, [_vm._v("Team Admin")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "5%" } }),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "5%" } })
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

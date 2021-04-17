@@ -146,14 +146,13 @@ export default {
       if (!this.isTimerStopped) {
         let todaysDate = moment().startOf("day");
         let savedDate = moment(this.worktime.created_at).startOf("day");
-        
+
         if (
           this.timer &&
-          (Math.abs(moment.duration(savedDate.diff(todaysDate))._data.days) <= 1)
+          Math.abs(moment.duration(savedDate.diff(todaysDate))._data.days) <= 1
         ) {
           this.counter.seconds = this.timer;
         } else if (this.duration >= 0) {
-          console.log("what")
           this.counter.seconds = this.duration;
         }
 
@@ -227,9 +226,12 @@ export default {
         user_id: this.user.id,
         end_time: moment().format(),
       };
-      console.log(data);
-      axios
-        .put(process.env.MIX_API_URL + "worktimes/" + this.worktime.id, data)
+
+      axios({
+        url: process.env.MIX_API_URL + "worktimes/" + this.worktime.id,
+        baseURL: "/",
+        data: data,
+      })
         .then((response) => {
           console.log(response.data);
           this.setTimerStopped(true);

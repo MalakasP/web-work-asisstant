@@ -80,7 +80,7 @@ export default {
 
   methods: {
     async read() {
-      await window.axios
+      await axios
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
           if (response.data != null) {
@@ -99,28 +99,6 @@ export default {
           console.log(error);
           this.loaded = true;
         });
-
-      // await window.axios
-      //   .get(process.env.MIX_API_URL + "users")
-      //   .then((response) => {
-      //     if (response.data != null) {
-      //       this.users = {};
-      //       response.data.users.forEach((user) => {
-      //         if (user != null) {
-      //           if (this.users[user.pivot.team_id] != null) {
-      //             this.users[user.pivot.team_id].push(user);
-      //           } else {
-      //             this.users[user.pivot.team_id] = [];
-      //             this.users[user.pivot.team_id].push(user);
-      //           }
-      //         }
-      //       });
-
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
     },
 
     loadRouterLink(team) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTeamUserRequest;
+use App\Http\Requests\UpdateTeamUserRequest;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +15,7 @@ class AdminController extends Controller
     /**
      * Add new user to the team.
      *
-     * @param \App\Models\Team;
-     * @param \App\Models\User;
+     * @param \App\Models\Team $team
      * @param \App\Http\Requests\CreateTeamUserRequest $request
      * @return \Illuminate\Http\Response
      */
@@ -47,8 +47,8 @@ class AdminController extends Controller
     /**
      * Remove the user from the team.
      *
-     * @param \App\Models\Team;
-     * @param \App\Models\User;
+     * @param \App\Models\Team $team
+     * @param \App\Models\User $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(Team $team, User $user)
@@ -64,6 +64,18 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'User removed from the team!'
         ]);
+    }
+
+    /**
+     * Update team user info.
+     * 
+     * @param \App\Models\Team $team
+     * @param \App\Models\User $user
+     * @param \App\Http\Requests\UpdateTeamUserRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Team $team, User $user, UpdateTeamUserRequest $request) {
+
     }
 
     /**
