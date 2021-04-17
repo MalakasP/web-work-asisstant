@@ -30,7 +30,7 @@ class TaskController extends Controller
 
         if ($isEmpty) {
             return response()->json([
-                'error' => 'No tasks found!'
+                'message' => 'No tasks found!'
             ], 404);
         }
 
@@ -55,7 +55,7 @@ class TaskController extends Controller
 
         if ($isEmpty) {
             return response()->json([
-                'error' => 'No tasks found!'
+                'message' => 'No tasks found!'
             ], 404);
         }
 
@@ -97,7 +97,7 @@ class TaskController extends Controller
                 && !$team->isUserAdmin(Auth::id())
             ) {
                 return response()->json([
-                    'error' => 'You do not have the rights to add task to this project!'
+                    'message' => 'You do not have the rights to add task to this project!'
                 ], 403);
             } else {
                 $task = Task::create($request->validated());
@@ -107,7 +107,7 @@ class TaskController extends Controller
             }
         } else {
             return response()->json([
-                'error' => 'Selected assignee does not exist or is not in the selected team!'
+                'message' => 'Selected assignee does not exist or is not in the selected team!'
             ], 404);
         }
     }
@@ -167,12 +167,12 @@ class TaskController extends Controller
                 ]);
             } else {
                 return response()->json([
-                    'error' => 'You do not have the rights to add task to this project!'
+                    'message' => 'You do not have the rights to add task to this project!'
                 ], 403);
             }
         } else {
             return response()->json([
-                'error' => 'Selected assignee or reporter does not exist!'
+                'message' => 'Selected assignee or reporter does not exist!'
             ], 404);
         }
     }
@@ -211,7 +211,7 @@ class TaskController extends Controller
         }
 
         return response()->json([
-            'error' => 'You do not have rights to do this!'
+            'message' => 'You do not have rights to do this!'
         ], 403);
     }
 }

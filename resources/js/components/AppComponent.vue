@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex flex-column min-vh-100">
     <header>
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
         <router-link class="navbar-brand" to="/">Work Assistant</router-link>
@@ -375,5 +375,9 @@ textarea {
   button.width-20 {
     width: 20%;
   }
+}
+
+.min-vh-100 {
+  min-height: 100vh;
 }
 </style>

@@ -24,6 +24,7 @@ class CreateTeamUserRequest extends FormRequest
     public function rules()
     {
         return [
+            'email' => ['required', 'string', 'email'],
             'is_admin' => ['required', 'boolean'],
             'name_in_team' => ['required', 'string']
         ];

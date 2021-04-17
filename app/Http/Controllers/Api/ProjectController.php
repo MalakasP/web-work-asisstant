@@ -20,7 +20,7 @@ class ProjectController extends Controller
     {
         if (Auth::id() != $user->id) {
             return response()->json([
-                'error' => 'You do not have permission to access this data!'
+                'message' => 'You do not have permission to access this data!'
             ], 403);
         }
 
@@ -45,7 +45,7 @@ class ProjectController extends Controller
 
         if ($createdProjects->isEmpty() && ($isEmpty)) {
             return response()->json([
-                'error' => 'No projects found!'
+                'message' => 'No projects found!'
             ], 404);
         }
 
@@ -63,7 +63,7 @@ class ProjectController extends Controller
 
         if ($projects->isEmpty()) {
             return response()->json([
-                'error' => 'No projects found!'
+                'message' => 'No projects found!'
             ], 404);
         }
 
@@ -112,7 +112,7 @@ class ProjectController extends Controller
     {
         if ($project->author_id != Auth::user()->id) {
             return response()->json([
-                'error' => 'You do not have rights to do this!'
+                'message' => 'You do not have rights to do this!'
             ], 403);
         }
 
@@ -134,7 +134,7 @@ class ProjectController extends Controller
     {
         if ($project->author_id != Auth::user()->id) {
             return response()->json([
-                'error' => 'You do not have rights to do this!'
+                'message' => 'You do not have rights to do this!'
             ], 403);
         }
 

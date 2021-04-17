@@ -20,7 +20,7 @@ class TeamController extends Controller
 
         if ($teams->isEmpty()) {
             return response()->json([
-                'error' => 'No teams found!'
+                'message' => 'No teams found!'
             ], 404);
         }
         
@@ -37,8 +37,14 @@ class TeamController extends Controller
      */
     public function show(Team $team)
     {
+        if(!$team->users()->where('user_id', Auth::id())->exists()) {
+            return response()->json([
+                'message' => 'You do not have permission!'
+            ],403);
+        }
+
         return response()->json([
-            'team' => $team
+            'team' => $team->load('users')
         ]);
     }
 
@@ -71,7 +77,7 @@ class TeamController extends Controller
     {
         if (!$team->isUserAdmin(Auth::user()->id)) {
             return response()->json([
-                'error' => 'You do not have rights to do this!'
+                'message' => 'You do not have rights to do this!'
             ], 403);
         }
         
@@ -93,7 +99,7 @@ class TeamController extends Controller
     {
         if (!$team->isUserAdmin(Auth::user()->id)) {
             return response()->json([
-                'error' => 'You do not have rights to do this!'
+                'message' => 'You do not have rights to do this!'
             ], 403);
         }
 

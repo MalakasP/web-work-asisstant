@@ -25,7 +25,7 @@ class RequestController extends Controller
 
         if ($createdRequests->isEmpty() && $gottenRequests->isEmpty()) {
             return response()->json([
-                'error' => 'No requests found!'
+                'message' => 'No requests found!'
             ], 404);
         }
 
@@ -48,7 +48,7 @@ class RequestController extends Controller
             && Auth::id() != $request->validated()['responser_id']
         ) {
             return response()->json([
-                'error' => 'The addressee is not in the same team!'
+                'message' => 'The addressee is not in the same team!'
             ], 403);
         }
 
@@ -84,7 +84,7 @@ class RequestController extends Controller
     {
         if (Auth::id() != $userRequest->requester_id) {
             return response()->json([
-                'error' => 'You do not have the rights to do this!'
+                'message' => 'You do not have the rights to do this!'
             ], 403);
         }
 
@@ -106,7 +106,7 @@ class RequestController extends Controller
     {
         if (Auth::id() != $request->requester_id) {
             return response()->json([
-                'error' => 'You do not have the rights to do this!'
+                'message' => 'You do not have the rights to do this!'
             ], 403);
         }
 

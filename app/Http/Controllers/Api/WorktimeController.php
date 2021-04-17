@@ -34,7 +34,7 @@ class WorktimeController extends Controller
 
         if ($worktimes->isEmpty()) {
             return response()->json([
-                'error' => 'You do not have saved worktimes.'
+                'message' => 'You do not have saved worktimes.'
             ], 404);
         }
 
@@ -56,7 +56,7 @@ class WorktimeController extends Controller
 
         if (!User::find($request->validated()['user_id'])) {
             return response()->json([
-                'error' => 'User not found!'
+                'message' => 'User not found!'
             ], 404);
         }
 
@@ -69,7 +69,7 @@ class WorktimeController extends Controller
             && Auth::id() != $request->validated()['user_id']
         ) {
             return response()->json([
-                'error' => 'You do not have rights to do this!'
+                'message' => 'You do not have rights to do this!'
             ], 403);
         }
 
@@ -114,7 +114,7 @@ class WorktimeController extends Controller
             Auth::id() != $request->validated()['user_id']
         ) {
             return response()->json([
-                'error' => 'You do not have rights to do this!'
+                'message' => 'You do not have rights to do this!'
             ], 403);
         }
         
@@ -128,7 +128,7 @@ class WorktimeController extends Controller
         // var_dump($duration);die;
         if (strtotime($duration) - strtotime('TODAY') == 0) {
             return response()->json([
-                'error' => 'You have worked less than 15 minutes after You started working.'
+                'message' => 'You have worked less than 15 minutes after You started working.'
             ], 406);
         }
 
@@ -162,7 +162,7 @@ class WorktimeController extends Controller
             Auth::id() != $worktime->user_id
         ) {
             return response()->json([
-                'error' => 'You do not have the rights to do this!'
+                'message' => 'You do not have the rights to do this!'
             ], 403);
         }
 

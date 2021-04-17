@@ -2323,6 +2323,13 @@ var routes = [{
     return __webpack_require__.e(/*! import() */ "resources_js_components_TeamsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/TeamsComponent.vue */ "./resources/js/components/TeamsComponent.vue"));
   }
 }, {
+  path: "/teams/:teamId",
+  name: "Team",
+  beforeEnter: auth,
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_TeamComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/TeamComponent.vue */ "./resources/js/components/TeamComponent.vue"));
+  }
+}, {
   path: "/createdTasks",
   name: "CreatedTasks",
   beforeEnter: auth,
@@ -7093,7 +7100,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.timer[data-v-cd268472] {\r\n  padding-right: 0.5rem;\r\n  font-size: 25px;\r\n  color: white;\n}\n@media (max-width: 768px) {\nbutton.width-20[data-v-cd268472] {\r\n    width: 20%;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.timer[data-v-cd268472] {\r\n  padding-right: 0.5rem;\r\n  font-size: 25px;\r\n  color: white;\n}\n@media (max-width: 768px) {\nbutton.width-20[data-v-cd268472] {\r\n    width: 20%;\n}\n}\n.min-vh-100[data-v-cd268472] {\r\n  min-height: 100vh;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -62935,6 +62942,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
+    { staticClass: "d-flex flex-column min-vh-100" },
     [
       _c("header", [
         _c(
@@ -81220,7 +81228,7 @@ var index = {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_TeamComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};
