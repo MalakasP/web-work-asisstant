@@ -2069,8 +2069,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         baseURL: "/",
         data: data
       }).then(function (response) {
-        console.log(response.data);
-
         _this2.setTimerStopped(true);
 
         clearInterval(_this2.counter.ticker);

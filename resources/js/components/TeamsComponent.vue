@@ -1,7 +1,62 @@
 <template>
   <div class="container">
     <h3 class="p-3 text-center">Teams</h3>
-
+    <div v-if="modal">
+      <transition name="model">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">{{ dynamicTitle }}</h4>
+                  <button
+                    type="button"
+                    class="close"
+                    @click="(modal = false)"
+                  >
+                    <span aria-hidden="true">&times; </span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label>Enter Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      :class="{ 'is-invalid': errors.name }"
+                      v-model="form.name"
+                    />
+                    <div class="invalid-feedback" v-if="errors.name">
+                      {{ errors.name }}
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Enter Description</label>
+                    <textarea
+                      class="form-control"
+                      :class="{ 'is-invalid': errors.description }"
+                      v-model="form.description"
+                      rows="3"
+                    ></textarea>
+                    <div class="invalid-feedback" v-if="errors.description">
+                      {{ errors.description }}
+                    </div>
+                  </div>
+                  <div align="center">
+                    <input
+                      type="button"
+                      class="btn btn-primary"
+                      value="Submit"
+                      @click="create()"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
     <div
       class="row justify-content-center"
       v-if="this.teamsLength > 0 && this.loaded"
@@ -20,7 +75,7 @@
             </div>
           </div>
           <div class="col-4 p-1">
-            <div class="card ripple">
+            <div class="card ripple" @click="startCreate()">
               <div class="card-body">
                 <h5 class="card-title">Create new team</h5>
                 <p class="card-text">Want to start a new team? Click here.</p>
@@ -65,6 +120,12 @@ export default {
       teams: {},
       teamsLength: 0,
       users: {},
+      form: {
+        name: null,
+        description: null,
+      },
+      modal: false,
+      dynamicTitle: null,
     };
   },
   computed: {
@@ -85,7 +146,6 @@ export default {
         .then((response) => {
           if (response.data != null) {
             this.teams = {};
-            console.log(response.data.teams);
             response.data.teams.forEach((team) => {
               if (team != null) {
                 this.teams[team.id] = new Team(team);
@@ -101,9 +161,59 @@ export default {
         });
     },
 
+    async create() {
+      await axios({
+        method: "post",
+        url: process.env.MIX_API_URL + "teams/",
+        baseURL: "/",
+        data: this.form,
+      })
+        .then((response) => {
+          if (response.data != null) {
+            this.$store.commit("setErrors", {});
+            this.modal = false;
+            if (response.data.team != null) {
+              this.teams[response.data.team.id] = new Team(response.data.team);
+            }
+            this.$notify({
+              group: "app",
+              title: "Success!",
+              type: "success",
+              text: response.data.message,
+            });
+            this.loadRouterLink(this.teams[response.data.team.id]);
+          }
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.$store.commit("setErrors", error.response.data.errors);
+          } else if (error.response.status == 409) {
+            this.$notify({
+              group: "app",
+              title: "Warning",
+              type: "error",
+              text: response.data.message,
+            });
+          } else if (error.response.status == 403) {
+            this.$alert(error.response.data.error, "Forbidden", "error");
+          } else {
+            this.$alert(error.response.data.status, "Warning", "error");
+          }
+        });
+    },
+
     loadRouterLink(team) {
       this.$router.push({ name: "Team", params: { teamId: team.id } });
     },
+
+    startCreate() {
+      this.dynamicTitle = "Create Team";
+      this.modal = true;
+      this.form.name = null;
+      this.form.description = null;
+      this.$store.commit("setErrors", {});
+    },
+
   },
 };
 </script>

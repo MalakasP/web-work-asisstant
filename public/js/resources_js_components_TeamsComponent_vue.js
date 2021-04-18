@@ -78,6 +78,61 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 function Team(_ref) {
@@ -112,7 +167,13 @@ function User(_ref2) {
       loaded: false,
       teams: {},
       teamsLength: 0,
-      users: {}
+      users: {},
+      form: {
+        name: null,
+        description: null
+      },
+      modal: false,
+      dynamicTitle: null
     };
   },
   computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)("auth", ["user"])),
@@ -135,7 +196,6 @@ function User(_ref2) {
                 return axios.get("api/" + "teams").then(function (response) {
                   if (response.data != null) {
                     _this.teams = {};
-                    console.log(response.data.teams);
                     response.data.teams.forEach(function (team) {
                       if (team != null) {
                         _this.teams[team.id] = new Team(team);
@@ -157,6 +217,64 @@ function User(_ref2) {
         }, _callee);
       }))();
     },
+    create: function create() {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return axios({
+                  method: "post",
+                  url: "api/" + "teams/",
+                  baseURL: "/",
+                  data: _this2.form
+                }).then(function (response) {
+                  if (response.data != null) {
+                    _this2.$store.commit("setErrors", {});
+
+                    _this2.modal = false;
+
+                    if (response.data.team != null) {
+                      _this2.teams[response.data.team.id] = new Team(response.data.team);
+                    }
+
+                    _this2.$notify({
+                      group: "app",
+                      title: "Success!",
+                      type: "success",
+                      text: response.data.message
+                    });
+
+                    _this2.loadRouterLink(_this2.teams[response.data.team.id]);
+                  }
+                })["catch"](function (error) {
+                  if (error.response.status == 422) {
+                    _this2.$store.commit("setErrors", error.response.data.errors);
+                  } else if (error.response.status == 409) {
+                    _this2.$notify({
+                      group: "app",
+                      title: "Warning",
+                      type: "error",
+                      text: response.data.message
+                    });
+                  } else if (error.response.status == 403) {
+                    _this2.$alert(error.response.data.error, "Forbidden", "error");
+                  } else {
+                    _this2.$alert(error.response.data.status, "Warning", "error");
+                  }
+                });
+
+              case 2:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
     loadRouterLink: function loadRouterLink(team) {
       this.$router.push({
         name: "Team",
@@ -164,6 +282,13 @@ function User(_ref2) {
           teamId: team.id
         }
       });
+    },
+    startCreate: function startCreate() {
+      this.dynamicTitle = "Create Team";
+      this.modal = true;
+      this.form.name = null;
+      this.form.description = null;
+      this.$store.commit("setErrors", {});
     }
   }
 });
@@ -1088,6 +1213,140 @@ var render = function() {
   return _c("div", { staticClass: "container" }, [
     _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Teams")]),
     _vm._v(" "),
+    _vm.modal
+      ? _c(
+          "div",
+          [
+            _c("transition", { attrs: { name: "model" } }, [
+              _c("div", { staticClass: "modal-mask" }, [
+                _c("div", { staticClass: "modal-wrapper" }, [
+                  _c("div", { staticClass: "modal-dialog" }, [
+                    _c("div", { staticClass: "modal-content" }, [
+                      _c("div", { staticClass: "modal-header" }, [
+                        _c("h4", { staticClass: "modal-title" }, [
+                          _vm._v(_vm._s(_vm.dynamicTitle))
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "close",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                _vm.modal = false
+                              }
+                            }
+                          },
+                          [
+                            _c("span", { attrs: { "aria-hidden": "true" } }, [
+                              _vm._v("× ")
+                            ])
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "modal-body" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", [_vm._v("Enter Name")]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.name,
+                                expression: "form.name"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: { "is-invalid": _vm.errors.name },
+                            attrs: { type: "text" },
+                            domProps: { value: _vm.form.name },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(_vm.form, "name", $event.target.value)
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.errors.name
+                            ? _c("div", { staticClass: "invalid-feedback" }, [
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(_vm.errors.name) +
+                                    "\n                  "
+                                )
+                              ])
+                            : _vm._e()
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", [_vm._v("Enter Description")]),
+                          _vm._v(" "),
+                          _c("textarea", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.description,
+                                expression: "form.description"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: { "is-invalid": _vm.errors.description },
+                            attrs: { rows: "3" },
+                            domProps: { value: _vm.form.description },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form,
+                                  "description",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.errors.description
+                            ? _c("div", { staticClass: "invalid-feedback" }, [
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(_vm.errors.description) +
+                                    "\n                  "
+                                )
+                              ])
+                            : _vm._e()
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { attrs: { align: "center" } }, [
+                          _c("input", {
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "button", value: "Submit" },
+                            on: {
+                              click: function($event) {
+                                return _vm.create()
+                              }
+                            }
+                          })
+                        ])
+                      ])
+                    ])
+                  ])
+                ])
+              ])
+            ])
+          ],
+          1
+        )
+      : _vm._e(),
+    _vm._v(" "),
     this.teamsLength > 0 && this.loaded
       ? _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "container" }, [
@@ -1130,7 +1389,20 @@ var render = function() {
                   ])
                 }),
                 _vm._v(" "),
-                _vm._m(0)
+                _c("div", { staticClass: "col-4 p-1" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "card ripple",
+                      on: {
+                        click: function($event) {
+                          return _vm.startCreate()
+                        }
+                      }
+                    },
+                    [_vm._m(0)]
+                  )
+                ])
               ],
               2
             )
@@ -1152,15 +1424,11 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-4 p-1" }, [
-      _c("div", { staticClass: "card ripple" }, [
-        _c("div", { staticClass: "card-body" }, [
-          _c("h5", { staticClass: "card-title" }, [_vm._v("Create new team")]),
-          _vm._v(" "),
-          _c("p", { staticClass: "card-text" }, [
-            _vm._v("Want to start a new team? Click here.")
-          ])
-        ])
+    return _c("div", { staticClass: "card-body" }, [
+      _c("h5", { staticClass: "card-title" }, [_vm._v("Create new team")]),
+      _vm._v(" "),
+      _c("p", { staticClass: "card-text" }, [
+        _vm._v("Want to start a new team? Click here.")
       ])
     ])
   }

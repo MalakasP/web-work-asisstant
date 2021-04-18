@@ -13,7 +13,7 @@ class UpdateTeamUserRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class UpdateTeamUserRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'is_admin' => ['required', 'boolean'],
+            'name_in_team' => ['required', 'string']
         ];
     }
 }

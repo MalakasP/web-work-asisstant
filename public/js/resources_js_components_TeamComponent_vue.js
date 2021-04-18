@@ -310,6 +310,156 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -328,7 +478,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         name_in_team: null,
         is_admin: null
       },
-      editForm: {}
+      modal: false,
+      editForm: {
+        name_in_team: null,
+        is_admin: null
+      },
+      dynamicTitle: null,
+      editUser: null,
+      editTeamForm: {
+        name: null,
+        description: null
+      }
     };
   },
   computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])),
@@ -345,8 +505,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   methods: {
-    read: function read() {
+    isUserAdmin: function isUserAdmin() {
       var _this = this;
+
+      if (this.team.users.find(function (user) {
+        return user.id == _this.user.id;
+      }).pivot.is_admin) {
+        this.isAdmin = true;
+      }
+    },
+    read: function read() {
+      var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
@@ -355,25 +524,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               case 0:
                 _context.next = 2;
                 return axios({
-                  url: "api/" + "teams/" + _this.$route.params.teamId,
+                  url: "api/" + "teams/" + _this2.$route.params.teamId,
                   baseURL: "/"
                 }).then(function (response) {
                   if (response.data != null) {
-                    _this.team = {};
-                    _this.team = response.data.team;
-                    _this.loaded = true;
+                    _this2.team = {};
+                    _this2.team = response.data.team;
+
+                    _this2.isUserAdmin();
+
+                    _this2.loaded = true;
                   }
                 })["catch"](function (error) {
                   if (error.response.status == 404) {
-                    _this.error = true;
-                    _this.loaded = true;
+                    _this2.error = true;
+                    _this2.loaded = true;
                   }
                 });
 
               case 2:
-                _this.isUserAdmin();
-
-              case 3:
               case "end":
                 return _context.stop();
             }
@@ -382,7 +551,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }))();
     },
     create: function create() {
-      var _this2 = this;
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
@@ -392,36 +561,38 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 _context2.next = 2;
                 return axios({
                   method: "post",
-                  url: "api/" + "teams/" + _this2.team.id + "/addUser",
+                  url: "api/" + "teams/" + _this3.team.id + "/addUser",
                   baseURL: "/",
-                  data: _this2.form
+                  data: _this3.form
                 }).then(function (response) {
                   if (response.data != null) {
-                    _this2.createForm = false;
-                    response.data.user.pivot = [];
-                    response.data.user.pivot.is_admin = _this2.form.is_admin, response.data.user.pivot.name_in_team = _this2.form.name_in_team, _this2.team.users.push(response.data.user);
+                    _this3.createForm = false;
+                    response.data.user.pivot = {};
+                    response.data.user.pivot.is_admin = _this3.form.is_admin, response.data.user.pivot.name_in_team = _this3.form.name_in_team, _this3.team.users.push(response.data.user);
 
-                    _this2.$notify({
+                    _this3.$notify({
                       group: "app",
                       title: "Success!",
                       type: "success",
                       text: response.data.message
                     });
 
-                    _this2.$store.commit("setErrors", {});
+                    _this3.$store.commit("setErrors", {});
                   }
                 })["catch"](function (error) {
-                  if (error.response.status == 409) {
-                    _this2.$notify({
+                  if (error.response.status == 422) {
+                    _this3.$store.commit("setErrors", error.response.data.errors);
+                  } else if (error.response.status == 409) {
+                    _this3.$notify({
                       group: "app",
                       title: "Warning",
                       type: "error",
                       text: response.data.message
                     });
                   } else if (error.response.status == 403) {
-                    _this2.$alert(error.response.data.error, "Forbidden", "error");
+                    _this3.$alert(error.response.data.error, "Forbidden", "error");
                   } else {
-                    _this2.$alert(error.response.data.status, "Warning", "error");
+                    _this3.$alert(error.response.data.status, "Warning", "error");
                   }
                 });
 
@@ -434,7 +605,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }))();
     },
     remove: function remove(userId) {
-      var _this3 = this;
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
@@ -444,17 +615,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 _context3.next = 2;
                 return axios({
                   method: "delete",
-                  url: "api/" + "teams/" + _this3.team.id + "/users/" + userId,
+                  url: "api/" + "teams/" + _this4.team.id + "/users/" + userId,
                   baseURL: "/"
                 }).then(function (response) {
                   if (response.data != null) {
-                    var userIndex = _this3.team.users.findIndex(function (user) {
+                    var userIndex = _this4.team.users.findIndex(function (user) {
                       return user.id == userId;
                     });
 
-                    _this3.team.users.splice(userIndex, 1);
+                    _this4.team.users.splice(userIndex, 1);
 
-                    _this3.$notify({
+                    _this4.$notify({
                       group: "app",
                       title: "Success!",
                       type: "success",
@@ -463,9 +634,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   }
                 })["catch"](function (error) {
                   if (error.response.status == 403) {
-                    _this3.$alert(error.response.data.error, "Forbidden", "error");
+                    _this4.$alert(error.response.data.error, "Forbidden", "error");
                   } else {
-                    _this3.$alert(error.response.data.status, "Warning", "error");
+                    _this4.$alert(error.response.data.status, "Warning", "error");
                   }
                 });
 
@@ -477,32 +648,211 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee3);
       }))();
     },
+    update: function update() {
+      var _this5 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _this5.$store.commit("setErrors", {});
+
+                _context4.next = 3;
+                return axios({
+                  method: "put",
+                  url: "api/" + "teams/" + _this5.team.id + "/users/" + _this5.editUser.id,
+                  baseURL: "/",
+                  data: _this5.editForm
+                }).then(function (response) {
+                  if (response.data != null) {
+                    var index = _this5.team.users.findIndex(function (user) {
+                      return user.id == _this5.editUser.id;
+                    });
+
+                    _this5.team.users[index].pivot.is_admin = _this5.editForm.is_admin;
+                    _this5.team.users[index].pivot.name_in_team = _this5.editForm.name_in_team;
+                    console.log(_this5.team.users[index]);
+                    _this5.editUser = null;
+                    _this5.modal = false;
+
+                    _this5.$notify({
+                      group: "app",
+                      title: "Success!",
+                      type: "success",
+                      text: response.data.message
+                    });
+                  }
+                })["catch"](function (error) {
+                  if (error.response.status == 422) {
+                    _this5.$store.commit("setErrors", error.response.data.errors);
+                  } else if (error.response.status == 403) {
+                    _this5.modal = false;
+                    _this5.editUser = null;
+
+                    _this5.$alert(error.response.data.error, "Forbidden", "error");
+                  } else {
+                    _this5.modal = false;
+                    _this5.editUser = null;
+
+                    _this5.$alert(error.response.data.status, "Warning", "error");
+                  }
+                });
+
+              case 3:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }))();
+    },
+    "delete": function _delete() {
+      var _this6 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _context5.next = 2;
+                return axios({
+                  method: "delete",
+                  url: "api/" + "teams/" + _this6.team.id,
+                  baseURL: "/"
+                }).then(function (response) {
+                  if (response.data != null) {
+                    _this6.$notify({
+                      group: "app",
+                      title: "Success!",
+                      type: "success",
+                      text: response.data.message
+                    });
+
+                    _this6.$router.push({
+                      name: "Teams"
+                    });
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+
+                  if (error.response.status == 403) {
+                    _this6.$alert(error.response.data.error, "Forbidden", "error");
+                  } else {
+                    _this6.$alert(error.response.data.status, "Warning", "error");
+                  }
+                });
+
+              case 2:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5);
+      }))();
+    },
+    updateTeam: function updateTeam() {
+      var _this7 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _this7.$store.commit("setErrors", {});
+
+                _context6.next = 3;
+                return axios({
+                  method: "put",
+                  url: "api/" + "teams/" + _this7.team.id,
+                  baseURL: "/",
+                  data: _this7.editTeamForm
+                }).then(function (response) {
+                  if (response.data != null) {
+                    _this7.modal = false;
+                    _this7.team.name = _this7.editTeamForm.name;
+                    _this7.team.description = _this7.editTeamForm.description;
+
+                    _this7.$notify({
+                      group: "app",
+                      title: "Success!",
+                      type: "success",
+                      text: response.data.message
+                    });
+                  }
+                })["catch"](function (error) {
+                  if (error.response.status == 422) {
+                    _this7.$store.commit("setErrors", error.response.data.errors);
+                  } else if (error.response.status == 403) {
+                    _this7.modal = false;
+                    _this7.editUser = null;
+
+                    _this7.$alert(error.response.data.error, "Forbidden", "error");
+                  } else {
+                    _this7.modal = false;
+                    _this7.editUser = null;
+
+                    _this7.$alert(error.response.data.status, "Warning", "error");
+                  }
+                });
+
+              case 3:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6);
+      }))();
+    },
     startCreate: function startCreate() {
       this.createForm = true;
       this.form.email = null;
       this.form.name_in_team = null;
       this.form.is_admin = false;
+      this.$store.commit("setErrors", {});
     },
     endCreate: function endCreate() {
       this.createForm = false;
       this.$store.commit("setErrors", {});
     },
-    startEdit: function startEdit(user) {},
+    startEdit: function startEdit(user) {
+      this.dynamicTitle = "Edit User";
+      this.editUser = user;
+      this.modal = true;
+      this.editForm.name_in_team = user.pivot.name_in_team;
+
+      if (user.pivot.is_admin == 1) {
+        this.editForm.is_admin = true;
+      } else {
+        this.editForm.is_admin = false;
+      }
+
+      this.$store.commit("setErrors", {});
+    },
     startRemove: function startRemove(user) {
-      var _this4 = this;
+      var _this8 = this;
 
       this.$confirm("Are You sure?", "Confirm Remove", "error").then(function () {
-        _this4.remove(user.id);
+        _this8.remove(user.id);
+      })["catch"](function (error) {
+        console.log(error);
       });
     },
-    isUserAdmin: function isUserAdmin() {
-      var _this5 = this;
+    startDelete: function startDelete() {
+      var _this9 = this;
 
-      if (this.team.users.find(function (user) {
-        return user.id == _this5.user.id;
-      }).pivot.is_admin) {
-        this.isAdmin = true;
-      }
+      this.$confirm("Are You sure?", "Confirm Remove", "error").then(function () {
+        _this9["delete"]();
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    startEditTeam: function startEditTeam() {
+      this.dynamicTitle = "Edit Team";
+      this.modal = true;
+      this.editTeamForm.name = this.team.name;
+      this.editTeamForm.description = this.team.description;
+      this.$store.commit("setErrors", {});
     }
   }
 });
@@ -550,7 +900,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-4916dec5] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-4916dec5] {\r\n  width: 100%;\n}\n.min-height[data-v-4916dec5] {\r\n  min-height: 50px;\n}\n.to-capital-first[data-v-4916dec5] {\r\n  text-transform: capitalize;\n}\nthead tr[data-v-4916dec5],\r\ntbody tr[data-v-4916dec5] {\r\n  line-height: 40px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-4916dec5] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-4916dec5] {\r\n  width: 100%;\n}\n.min-height[data-v-4916dec5] {\r\n  min-height: 50px;\n}\n.to-capital-first[data-v-4916dec5] {\r\n  text-transform: capitalize;\n}\nthead tr[data-v-4916dec5],\r\ntbody tr[data-v-4916dec5] {\r\n  line-height: 40px;\n}\n.card-header[data-v-4916dec5] {\r\n  border: none;\r\n  background-color: white;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1599,18 +1949,409 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
+    _vm.modal
+      ? _c(
+          "div",
+          [
+            _c("transition", { attrs: { name: "model" } }, [
+              _c("div", { staticClass: "modal-mask" }, [
+                _c("div", { staticClass: "modal-wrapper" }, [
+                  _c("div", { staticClass: "modal-dialog" }, [
+                    _c("div", { staticClass: "modal-content" }, [
+                      _c("div", { staticClass: "modal-header" }, [
+                        _c("h4", { staticClass: "modal-title" }, [
+                          _vm._v(_vm._s(_vm.dynamicTitle))
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "close",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                ;(_vm.modal = false), (_vm.editUser = null)
+                              }
+                            }
+                          },
+                          [
+                            _c("span", { attrs: { "aria-hidden": "true" } }, [
+                              _vm._v("× ")
+                            ])
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _vm.editUser
+                        ? _c("div", { staticClass: "modal-body" }, [
+                            _c("div", { staticClass: "form-group" }, [
+                              _c("label", [_vm._v("Enter Name In Team")]),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.editForm.name_in_team,
+                                    expression: "editForm.name_in_team"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: {
+                                  "is-invalid": _vm.errors.name_in_team
+                                },
+                                attrs: { type: "text" },
+                                domProps: { value: _vm.editForm.name_in_team },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.editForm,
+                                      "name_in_team",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _vm.errors.name_in_team
+                                ? _c(
+                                    "div",
+                                    { staticClass: "invalid-feedback" },
+                                    [
+                                      _vm._v(
+                                        "\n                    " +
+                                          _vm._s(_vm.errors.name_in_team) +
+                                          "\n                  "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e()
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "form-group" }, [
+                              _c("label", [_vm._v("Choose Admin Status")]),
+                              _vm._v(" "),
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.editForm.is_admin,
+                                      expression: "editForm.is_admin"
+                                    }
+                                  ],
+                                  staticClass: "form-control input-sm",
+                                  class: { "is-invalid": _vm.errors.is_admin },
+                                  on: {
+                                    change: function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.$set(
+                                        _vm.editForm,
+                                        "is_admin",
+                                        $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      )
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("option", { domProps: { value: true } }, [
+                                    _vm._v("Yes")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { domProps: { value: false } }, [
+                                    _vm._v("No")
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _vm.errors.is_admin
+                                ? _c(
+                                    "div",
+                                    { staticClass: "invalid-feedback" },
+                                    [
+                                      _vm._v(
+                                        "\n                    " +
+                                          _vm._s(_vm.errors.is_admin) +
+                                          "\n                  "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e()
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { attrs: { align: "center" } }, [
+                              _c("input", {
+                                staticClass: "btn btn-primary",
+                                attrs: { type: "button", value: "Submit" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.update()
+                                  }
+                                }
+                              })
+                            ])
+                          ])
+                        : _c("div", { staticClass: "modal-body" }, [
+                            _c("div", { staticClass: "form-group" }, [
+                              _c("label", [_vm._v("Enter Name")]),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.editTeamForm.name,
+                                    expression: "editTeamForm.name"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: { "is-invalid": _vm.errors.name },
+                                attrs: { type: "text" },
+                                domProps: { value: _vm.editTeamForm.name },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.editTeamForm,
+                                      "name",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _vm.errors.name
+                                ? _c(
+                                    "div",
+                                    { staticClass: "invalid-feedback" },
+                                    [
+                                      _vm._v(
+                                        "\n                    " +
+                                          _vm._s(_vm.errors.name) +
+                                          "\n                  "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e()
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "form-group" }, [
+                              _c("label", [_vm._v("Enter Description")]),
+                              _vm._v(" "),
+                              _c("textarea", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.editTeamForm.description,
+                                    expression: "editTeamForm.description"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: { "is-invalid": _vm.errors.description },
+                                attrs: { rows: "3" },
+                                domProps: {
+                                  value: _vm.editTeamForm.description
+                                },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.editTeamForm,
+                                      "description",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _vm.errors.description
+                                ? _c(
+                                    "div",
+                                    { staticClass: "invalid-feedback" },
+                                    [
+                                      _vm._v(
+                                        "\n                    " +
+                                          _vm._s(_vm.errors.description) +
+                                          "\n                  "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e()
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { attrs: { align: "center" } }, [
+                              _c("input", {
+                                staticClass: "btn btn-primary",
+                                attrs: { type: "button", value: "Submit" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.updateTeam()
+                                  }
+                                }
+                              })
+                            ])
+                          ])
+                    ])
+                  ])
+                ])
+              ])
+            ])
+          ],
+          1
+        )
+      : _vm._e(),
+    _vm._v(" "),
     Object.keys(this.team).length > 0 && this.loaded
       ? _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "container" }, [
             _c("div", { staticClass: "card mt-5" }, [
+              _c("div", { staticClass: "card-header" }, [
+                _c("div", { staticClass: "row justify-content-between" }, [
+                  _c(
+                    "div",
+                    { staticClass: "col-4" },
+                    [
+                      _c("router-link", { attrs: { to: "/teams" } }, [
+                        _vm._v("Back")
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-4" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-danger float-right",
+                        staticStyle: { margin: "1px" },
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.startDelete()
+                          }
+                        }
+                      },
+                      [
+                        _c("span", { staticClass: "icon is-small" }, [
+                          _c(
+                            "svg",
+                            {
+                              staticClass: "bi bi-trash",
+                              attrs: {
+                                xmlns: "http://www.w3.org/2000/svg",
+                                width: "16",
+                                height: "16",
+                                fill: "currentColor",
+                                viewBox: "0 0 16 16"
+                              }
+                            },
+                            [
+                              _c("path", {
+                                attrs: {
+                                  d:
+                                    "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("path", {
+                                attrs: {
+                                  "fill-rule": "evenodd",
+                                  d:
+                                    "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                }
+                              })
+                            ]
+                          )
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary float-right",
+                        staticStyle: { margin: "1px" },
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.startEditTeam()
+                          }
+                        }
+                      },
+                      [
+                        _c("span", { staticClass: "icon is-small" }, [
+                          _c(
+                            "svg",
+                            {
+                              staticClass: "bi bi-pencil-square",
+                              attrs: {
+                                xmlns: "http://www.w3.org/2000/svg",
+                                width: "16",
+                                height: "16",
+                                fill: "currentColor",
+                                viewBox: "0 0 16 16"
+                              }
+                            },
+                            [
+                              _c("path", {
+                                attrs: {
+                                  d:
+                                    "M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("path", {
+                                attrs: {
+                                  "fill-rule": "evenodd",
+                                  d:
+                                    "M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
+                                }
+                              })
+                            ]
+                          )
+                        ])
+                      ]
+                    )
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
               _c("div", { staticClass: "card-body" }, [
                 _c("h3", { staticClass: "card-title text-center" }, [
                   _vm._v(_vm._s(_vm.team.name))
                 ]),
                 _vm._v(" "),
-                _c("h5", { staticClass: "card-text min-height p-3" }, [
-                  _vm._v(_vm._s(_vm.team.description))
-                ]),
+                _vm.team.description
+                  ? _c("h5", { staticClass: "card-text min-height p-3" }, [
+                      _vm._v(
+                        "\n            " +
+                          _vm._s(_vm.team.description) +
+                          "\n          "
+                      )
+                    ])
+                  : _vm._e(),
                 _vm._v(" "),
                 this.team.users.length > 0
                   ? _c("div", { staticClass: "row justify-content-center" }, [
@@ -1804,7 +2545,7 @@ var render = function() {
                                                       "svg",
                                                       {
                                                         staticClass:
-                                                          "bi bi-trash",
+                                                          "bi bi-person-x-fill",
                                                         attrs: {
                                                           xmlns:
                                                             "http://www.w3.org/2000/svg",
@@ -1817,17 +2558,10 @@ var render = function() {
                                                       [
                                                         _c("path", {
                                                           attrs: {
-                                                            d:
-                                                              "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-                                                          }
-                                                        }),
-                                                        _vm._v(" "),
-                                                        _c("path", {
-                                                          attrs: {
                                                             "fill-rule":
                                                               "evenodd",
                                                             d:
-                                                              "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                                              "M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"
                                                           }
                                                         })
                                                       ]

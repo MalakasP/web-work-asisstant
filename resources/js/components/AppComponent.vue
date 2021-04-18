@@ -233,7 +233,6 @@ export default {
         data: data,
       })
         .then((response) => {
-          console.log(response.data);
           this.setTimerStopped(true);
           clearInterval(this.counter.ticker);
         })

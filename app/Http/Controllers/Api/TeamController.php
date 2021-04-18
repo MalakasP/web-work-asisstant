@@ -61,7 +61,7 @@ class TeamController extends Controller
         $team->users()->attach(Auth::user()->id, ['is_admin' => 1 , 'name_in_team' => 'admin']);
 
         return response()->json([
-            'team' => $team,
+            'team' => $team->load('users'),
             'message' => 'Team created successfully!'
         ]);
     }
@@ -102,11 +102,13 @@ class TeamController extends Controller
                 'message' => 'You do not have rights to do this!'
             ], 403);
         }
+        //maybe will be a need to detach every user before deleting the object
+        $team->users()->detach();
 
         $team->delete();
 
         return response()->json([
-            'task' => $team,
+            'team' => $team,
             'message' => 'Team deleted successfully!'
         ]);
     }

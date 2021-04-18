@@ -32,10 +32,14 @@ class AdminController extends Controller
         }
 
         $user = User::where('email', $request->validated()['email'])->first();
-        
-        $team->users()->attach($user->id,
-            ['is_admin' => $request->validated()['is_admin'],
-            'name_in_team' => $request->validated()['name_in_team']]);
+
+        $team->users()->attach(
+            $user->id,
+            [
+                'is_admin' => $request->validated()['is_admin'],
+                'name_in_team' => $request->validated()['name_in_team']
+            ]
+        );
 
         return response()->json([
             'user' => $user,
@@ -74,8 +78,24 @@ class AdminController extends Controller
      * @param \App\Http\Requests\UpdateTeamUserRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Team $team, User $user, UpdateTeamUserRequest $request) {
+    public function update(Team $team, User $user, UpdateTeamUserRequest $request)
+    {
+        $request->validated();
 
+        if (!$team->isUserAdmin(Auth::id())) {
+            return response()->json([
+                'message' => 'You are not the admin of this team!'
+            ], 403);
+        }
+
+        $user->teams()->updateExistingPivot($team->id, [
+            'is_admin' => $request->validated()['is_admin'],
+            'name_in_team' => $request->validated()['name_in_team']
+        ]);
+
+        return response()->json([
+            'message' => 'User information updated!'
+        ]); 
     }
 
     /**
@@ -83,7 +103,6 @@ class AdminController extends Controller
      */
     public function getUserWorktimes(User $user)
     {
-
     }
 
     /**
@@ -91,7 +110,6 @@ class AdminController extends Controller
      */
     public function getTeamUsers(Team $team)
     {
-
     }
 
     // /**
