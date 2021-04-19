@@ -25,7 +25,7 @@ class TeamController extends Controller
         }
         
         return response()->json([
-            'teams' => $teams
+            'teams' => $teams->load('users')
         ]);
     }
 

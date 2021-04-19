@@ -75,6 +75,13 @@ const routes = [
         component: () =>
             import("../components/AssignedTasksComponent.vue")
     },
+    {
+        path: "/requests",
+        name: "Requests",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/RequestsComponent.vue")
+    },
     { 
         path: '*',
         component: () =>

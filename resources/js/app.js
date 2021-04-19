@@ -4,11 +4,13 @@ import router from "./router";
 import VueSimpleAlert from "vue-simple-alert";
 import Notifications from 'vue-notification'
 import AppComponent from './components/AppComponent.vue';
+import VCalendar from 'v-calendar';
 
 require('./bootstrap');
 
 Vue.use(VueSimpleAlert);
 Vue.use(Notifications);
+Vue.use(VCalendar);
 
 Vue.config.productionTip = false;
 

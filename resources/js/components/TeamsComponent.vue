@@ -159,6 +159,8 @@ export default {
           console.log(error);
           this.loaded = true;
         });
+
+        //get projects and show in team card (atleast a few)
     },
 
     async create() {

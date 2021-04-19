@@ -483,8 +483,6 @@ function User(_ref2) {
             key = _ref4[0],
             team = _ref4[1];
 
-        console.log(key, team.pivot.is_admin);
-
         if (team.pivot.is_admin) {
           return team.pivot.is_admin;
         } else {

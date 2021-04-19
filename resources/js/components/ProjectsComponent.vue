@@ -422,7 +422,6 @@ export default {
         key,
         team,
       ]) {
-        console.log(key, team.pivot.is_admin);
         if (team.pivot.is_admin) {
           return team.pivot.is_admin;
         } else {

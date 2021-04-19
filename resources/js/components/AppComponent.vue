@@ -53,7 +53,7 @@
               <router-link class="nav-link" to="/">Worktimes</router-link>
             </li>
             <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/">Requests</router-link>
+              <router-link class="nav-link" to="/requests">Requests</router-link>
             </li>
           </ul>
           <ul class="navbar-nav">
@@ -216,6 +216,7 @@ export default {
     startTimer() {
       this.setTimerStopped(false);
       this.createWorktime(this.user);
+      this.initiateTimerAfterLogin();
     },
 
     /**
