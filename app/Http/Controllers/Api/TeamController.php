@@ -20,12 +20,12 @@ class TeamController extends Controller
 
         if ($teams->isEmpty()) {
             return response()->json([
-                'error' => 'No teams found!'
+                'message' => 'No teams found!'
             ], 404);
         }
         
         return response()->json([
-            'teams' => $teams
+            'teams' => $teams->load('users')
         ]);
     }
 
@@ -37,8 +37,14 @@ class TeamController extends Controller
      */
     public function show(Team $team)
     {
+        if(!$team->users()->where('user_id', Auth::id())->exists()) {
+            return response()->json([
+                'message' => 'You do not have permission!'
+            ],403);
+        }
+
         return response()->json([
-            'team' => $team
+            'team' => $team->load('users')
         ]);
     }
 
@@ -55,7 +61,7 @@ class TeamController extends Controller
         $team->users()->attach(Auth::user()->id, ['is_admin' => 1 , 'name_in_team' => 'admin']);
 
         return response()->json([
-            'team' => $team,
+            'team' => $team->load('users'),
             'message' => 'Team created successfully!'
         ]);
     }
@@ -71,7 +77,7 @@ class TeamController extends Controller
     {
         if (!$team->isUserAdmin(Auth::user()->id)) {
             return response()->json([
-                'error' => 'You do not have rights to do this!'
+                'message' => 'You do not have rights to do this!'
             ], 403);
         }
         
@@ -93,14 +99,16 @@ class TeamController extends Controller
     {
         if (!$team->isUserAdmin(Auth::user()->id)) {
             return response()->json([
-                'error' => 'You do not have rights to do this!'
+                'message' => 'You do not have rights to do this!'
             ], 403);
         }
+        //maybe will be a need to detach every user before deleting the object
+        $team->users()->detach();
 
         $team->delete();
 
         return response()->json([
-            'task' => $team,
+            'team' => $team,
             'message' => 'Team deleted successfully!'
         ]);
     }

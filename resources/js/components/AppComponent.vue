@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex flex-column min-vh-100">
     <header>
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
         <router-link class="navbar-brand" to="/">Work Assistant</router-link>
@@ -53,7 +53,7 @@
               <router-link class="nav-link" to="/">Worktimes</router-link>
             </li>
             <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/">Requests</router-link>
+              <router-link class="nav-link" to="/requests">Requests</router-link>
             </li>
           </ul>
           <ul class="navbar-nav">
@@ -146,14 +146,13 @@ export default {
       if (!this.isTimerStopped) {
         let todaysDate = moment().startOf("day");
         let savedDate = moment(this.worktime.created_at).startOf("day");
-        
+
         if (
           this.timer &&
-          (Math.abs(moment.duration(savedDate.diff(todaysDate))._data.days) <= 1)
+          Math.abs(moment.duration(savedDate.diff(todaysDate))._data.days) <= 1
         ) {
           this.counter.seconds = this.timer;
         } else if (this.duration >= 0) {
-          console.log("what")
           this.counter.seconds = this.duration;
         }
 
@@ -217,6 +216,7 @@ export default {
     startTimer() {
       this.setTimerStopped(false);
       this.createWorktime(this.user);
+      this.initiateTimerAfterLogin();
     },
 
     /**
@@ -227,11 +227,13 @@ export default {
         user_id: this.user.id,
         end_time: moment().format(),
       };
-      console.log(data);
-      axios
-        .put(process.env.MIX_API_URL + "worktimes/" + this.worktime.id, data)
+
+      axios({
+        url: process.env.MIX_API_URL + "worktimes/" + this.worktime.id,
+        baseURL: "/",
+        data: data,
+      })
         .then((response) => {
-          console.log(response.data);
           this.setTimerStopped(true);
           clearInterval(this.counter.ticker);
         })
@@ -338,8 +340,29 @@ td {
   text-align: center;
 }
 
-tr {
-  padding: 3px;
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: table;
+  transition: opacity 0.3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-dialog {
+  overflow-y: initial !important;
+}
+
+textarea {
+  resize: none;
 }
 </style>
 
@@ -354,5 +377,9 @@ tr {
   button.width-20 {
     width: 20%;
   }
+}
+
+.min-vh-100 {
+  min-height: 100vh;
 }
 </style>

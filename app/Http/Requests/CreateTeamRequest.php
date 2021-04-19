@@ -24,7 +24,7 @@ class CreateTeamRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['nullable', 'string', 'max:191'],
+            'name' => ['required', 'string', 'max:191'],
             'description' => ['nullable', 'string', 'max:191']
         ];
     }

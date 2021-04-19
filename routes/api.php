@@ -77,7 +77,11 @@ Route::group(['as' => 'api.'], function () {
 
         Route::resource('teams', TeamController::class, ['except' => ['create', 'edit']]);
 
-        Route::post('teams/{team}/users/{user}', [AdminController::class, 'store'])->name('admin.addTeamUser');
+        Route::post('teams/{team}/addUser', [AdminController::class, 'store'])->name('admin.addTeamUser');
+
+        Route::put('teams/{team}/users/{user}', [AdminController::class, 'update'])->name('admin.update');
+
+        Route::delete('teams/{team}/users/{user}', [AdminController::class, 'destroy'])->name('admin.destroy');
 
         // Route::put('teams/{team}', 'TeamController@update');
     });

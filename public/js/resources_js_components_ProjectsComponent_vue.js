@@ -33,12 +33,33 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -412,12 +433,14 @@ function Team(_ref) {
       name = _ref.name,
       description = _ref.description,
       created_at = _ref.created_at,
-      updated_at = _ref.updated_at;
+      updated_at = _ref.updated_at,
+      pivot = _ref.pivot;
   this.id = id;
   this.name = name;
   this.description = description;
   this.created_at = created_at;
   this.updated_at = updated_at;
+  this.pivot = pivot;
 }
 
 function User(_ref2) {
@@ -453,7 +476,22 @@ function User(_ref2) {
       }
     };
   },
-  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])),
+  computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])), {}, {
+    teamsAdmin: function teamsAdmin() {
+      var adminTeams = Object.entries(this.teams).filter(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            key = _ref4[0],
+            team = _ref4[1];
+
+        if (team.pivot.is_admin) {
+          return team.pivot.is_admin;
+        } else {
+          return false;
+        }
+      });
+      return Object.fromEntries(adminTeams);
+    }
+  }),
   mounted: function mounted() {
     this.$store.commit("setErrors", {});
   },
@@ -470,7 +508,7 @@ function User(_ref2) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return window.axios.get("api/" + "users").then(function (response) {
+                return axios.get("api/" + "users").then(function (response) {
                   if (response.data != null) {
                     _this.projectsUsers = {};
                     response.data.users.forEach(function (user) {
@@ -485,7 +523,7 @@ function User(_ref2) {
 
               case 2:
                 _context.next = 4;
-                return window.axios.get("api/" + "teams").then(function (response) {
+                return axios.get("api/" + "teams").then(function (response) {
                   if (response.data != null) {
                     _this.teams = {};
                     response.data.teams.forEach(function (team) {
@@ -498,8 +536,12 @@ function User(_ref2) {
                       name: "No Team",
                       description: "",
                       created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
-                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()()
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      pivot: {
+                        is_admin: true
+                      }
                     });
+                    console.log(response.data.teams);
                   }
                 })["catch"](function (error) {
                   console.log(error);
@@ -507,7 +549,7 @@ function User(_ref2) {
 
               case 4:
                 _context.next = 6;
-                return window.axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
+                return axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
                   if (response.data != null) {
                     _this.createdProjects = [];
                     _this.teamProjects = [];
@@ -527,6 +569,7 @@ function User(_ref2) {
                     _this.loaded = true;
                   }
                 })["catch"](function (error) {
+                  _this.loaded = true;
                   console.log(error);
                 });
 
@@ -551,7 +594,7 @@ function User(_ref2) {
                 }
 
                 _context2.next = 3;
-                return window.axios.put("api/" + "projects/" + _this2.edit.id, _this2.form).then(function (response) {
+                return axios.put("api/" + "projects/" + _this2.edit.id, _this2.form).then(function (response) {
                   if (response.data != null) {
                     _this2.modal = false;
 
@@ -610,7 +653,7 @@ function User(_ref2) {
                 }
 
                 _context3.next = 4;
-                return window.axios.post("api/" + "projects", _this3.form).then(function (response) {
+                return axios.post("api/" + "projects", _this3.form).then(function (response) {
                   if (response.data != null) {
                     _this3.createForm = false;
 
@@ -660,7 +703,7 @@ function User(_ref2) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 _context4.next = 2;
-                return window.axios["delete"]("api/" + "projects/" + id).then(function (response) {
+                return axios["delete"]("api/" + "projects/" + id).then(function (response) {
                   if (response.data.project.id != id) {
                     _this4.$alert("Something went wrong.", "Warning", "error");
                   } else {
@@ -719,6 +762,7 @@ function User(_ref2) {
     },
     startProject: function startProject() {
       this.modal = true;
+      this.dynamicTitle = "New Project";
       this.form.title = null;
       this.form.description = null;
       this.form.team_id = 0;
@@ -749,7 +793,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.full-width[data-v-20cb5d70] {\r\n  width: 100%;\n}\n.input-sm[data-v-20cb5d70] {\r\n  height: calc(2.15rem + 2px);\n}\n.modal-mask[data-v-20cb5d70] {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-20cb5d70] {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.modal-dialog[data-v-20cb5d70] {\r\n  overflow-y: initial !important;\n}\n.modal-body[data-v-20cb5d70] {\r\n  height: 40vh;\r\n  overflow-y: auto;\n}\ntextarea[data-v-20cb5d70] {\r\n   resize: none;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-20cb5d70] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-20cb5d70] {\r\n  width: 100%;\n}\n.input-sm[data-v-20cb5d70] {\r\n  height: calc(2.15rem + 2px);\n}\n.modal-body[data-v-20cb5d70] {\r\n  height: 40vh;\r\n  overflow-y: auto;\n}\nthead tr[data-v-20cb5d70],\r\ntbody tr[data-v-20cb5d70] {\r\n  line-height: 40px;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1761,69 +1805,80 @@ var render = function() {
                             : _vm._e()
                         ]),
                         _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", [_vm._v("Choose Team")]),
-                          _vm._v(" "),
-                          _c(
-                            "select",
-                            {
-                              directives: [
+                        Object.keys(this.teamsAdmin).lenght > 1
+                          ? _c("div", { staticClass: "form-group" }, [
+                              _c("label", [_vm._v("Choose Team")]),
+                              _vm._v(" "),
+                              _c(
+                                "select",
                                 {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.team_id,
-                                  expression: "form.team_id"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: { "is-invalid": _vm.errors.team_id },
-                              on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.form,
-                                    "team_id",
-                                    $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.team_id,
+                                      expression: "form.team_id"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  class: { "is-invalid": _vm.errors.team_id },
+                                  on: {
+                                    change: function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.$set(
+                                        _vm.form,
+                                        "team_id",
+                                        $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      )
+                                    }
+                                  }
+                                },
+                                _vm._l(this.teamsAdmin, function(team) {
+                                  return _c(
+                                    "option",
+                                    {
+                                      key: team.id,
+                                      domProps: { value: team.id }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                      " +
+                                          _vm._s(team.name) +
+                                          "\n                    "
+                                      )
+                                    ]
                                   )
-                                }
-                              }
-                            },
-                            _vm._l(this.teams, function(team) {
-                              return _c(
-                                "option",
-                                { key: team.id, domProps: { value: team.id } },
-                                [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(team.name) +
-                                      "\n                    "
+                                }),
+                                0
+                              ),
+                              _vm._v(" "),
+                              _vm.errors.team_id
+                                ? _c(
+                                    "div",
+                                    { staticClass: "invalid-feedback" },
+                                    [
+                                      _vm._v(
+                                        "\n                    " +
+                                          _vm._s(_vm.errors.team_id) +
+                                          "\n                  "
+                                      )
+                                    ]
                                   )
-                                ]
-                              )
-                            }),
-                            0
-                          ),
-                          _vm._v(" "),
-                          _vm.errors.team_id
-                            ? _c("div", { staticClass: "invalid-feedback" }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(_vm.errors.team_id) +
-                                    "\n                  "
-                                )
-                              ])
-                            : _vm._e()
-                        ]),
+                                : _vm._e()
+                            ])
+                          : _vm._e(),
                         _vm._v(" "),
                         _c("div", { attrs: { align: "center" } }, [
                           _vm.edit == null
@@ -1851,12 +1906,12 @@ var render = function() {
     _vm._v(" "),
     this.createdProjects.length > 0
       ? _c("div", { staticClass: "row justify-content-center" }, [
-          _c("div", { staticClass: "col-12" }, [
-            _c("h3", { staticClass: "p-3 text-center" }, [
-              _vm._v("Created Projects")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card p-3" }, [
+          _c("div", { staticClass: "col-12 card mt-3" }, [
+            _c("div", { staticClass: "card-body text-center" }, [
+              _c("h3", { staticClass: "card-title" }, [
+                _vm._v("Created Projects")
+              ]),
+              _vm._v(" "),
               _c("div", { staticClass: "table-responsive" }, [
                 _c(
                   "table",
@@ -1915,7 +1970,7 @@ var render = function() {
                                     _c(
                                       "svg",
                                       {
-                                        staticClass: "bi bi-gear",
+                                        staticClass: "bi bi-three-dots",
                                         attrs: {
                                           xmlns: "http://www.w3.org/2000/svg",
                                           width: "16",
@@ -1928,14 +1983,7 @@ var render = function() {
                                         _c("path", {
                                           attrs: {
                                             d:
-                                              "M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
-                                          }
-                                        }),
-                                        _vm._v(" "),
-                                        _c("path", {
-                                          attrs: {
-                                            d:
-                                              "M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
+                                              "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
                                           }
                                         })
                                       ]
@@ -2194,7 +2242,7 @@ var render = function() {
                                       }
                                     }
                                   },
-                                  _vm._l(this.teams, function(team) {
+                                  _vm._l(this.teamsAdmin, function(team) {
                                     return _c(
                                       "option",
                                       {
@@ -2347,94 +2395,108 @@ var render = function() {
           ])
         ])
       : this.loaded
-      ? _c("div", [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-secondary",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  return _vm.startProject()
-                }
-              }
-            },
-            [
-              _c("span", { staticClass: "icon full-size" }, [
-                _c(
-                  "svg",
-                  {
-                    staticClass: "bi bi-plus-square",
-                    attrs: {
-                      xmlns: "http://www.w3.org/2000/svg",
-                      width: "16",
-                      height: "16",
-                      fill: "currentColor",
-                      viewBox: "0 0 16 16"
+      ? _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12 card mt-3" }, [
+            _c("div", { staticClass: "card-body text-center" }, [
+              _c("h3", { staticClass: "card-title" }, [
+                _vm._v("Created Projects")
+              ]),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-secondary w-25 mt-3",
+                  attrs: { type: "button" },
+                  on: {
+                    click: function($event) {
+                      return _vm.startProject()
                     }
-                  },
-                  [
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                      }
-                    })
-                  ]
-                ),
-                _vm._v("\n        Start Project\n      ")
-              ])
-            ]
-          )
+                  }
+                },
+                [
+                  _c("span", { staticClass: "icon full-size" }, [
+                    _c(
+                      "svg",
+                      {
+                        staticClass: "bi bi-plus-square",
+                        attrs: {
+                          xmlns: "http://www.w3.org/2000/svg",
+                          width: "16",
+                          height: "16",
+                          fill: "currentColor",
+                          viewBox: "0 0 16 16"
+                        }
+                      },
+                      [
+                        _c("path", {
+                          attrs: {
+                            d:
+                              "M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("path", {
+                          attrs: {
+                            d:
+                              "M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                          }
+                        })
+                      ]
+                    ),
+                    _vm._v("\n            Start Project\n          ")
+                  ])
+                ]
+              )
+            ])
+          ])
         ])
-      : _vm._e(),
+      : _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "loader" })
+        ]),
     _vm._v(" "),
     this.teamProjects.length > 0
       ? _c("div", { staticClass: "row justify-content-center" }, [
-          _c("div", { staticClass: "col-12" }, [
-            _c("h3", { staticClass: "p-3" }, [_vm._v("Team Projects")]),
-            _vm._v(" "),
-            _c("table", { staticClass: "table-striped full-width" }, [
-              _vm._m(1),
+          _c("div", { staticClass: "col-12 card mt-3" }, [
+            _c("div", { staticClass: "card-body text-center" }, [
+              _c("h3", { staticClass: "card-title" }, [
+                _vm._v("Team Projects")
+              ]),
               _vm._v(" "),
-              _c(
-                "tbody",
-                _vm._l(_vm.teamProjects, function(project) {
-                  return _c("tr", { key: project.id }, [
-                    _c("td", { staticStyle: { width: "30%" } }, [
-                      _vm._v(_vm._s(project.title))
-                    ]),
-                    _vm._v(" "),
-                    _c("td", { staticStyle: { width: "30%" } }, [
-                      _vm._v(
-                        "\n              " +
-                          _vm._s(_vm.projectsUsers[project.author_id].name) +
-                          "\n            "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    project.team_id != null
-                      ? _c("td", { staticStyle: { width: "30%" } }, [
-                          _vm._v(
-                            "\n              " +
-                              _vm._s(_vm.teams[project.team_id].name) +
-                              "\n            "
-                          )
-                        ])
-                      : _c("td", { staticStyle: { width: "30%" } }, [
-                          _vm._v("No Team")
-                        ])
-                  ])
-                }),
-                0
-              )
+              _c("table", { staticClass: "table-striped full-width" }, [
+                _vm._m(1),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.teamProjects, function(project) {
+                    return _c("tr", { key: project.id }, [
+                      _c("td", { staticStyle: { width: "35%" } }, [
+                        _vm._v(_vm._s(project.title))
+                      ]),
+                      _vm._v(" "),
+                      _c("td", { staticStyle: { width: "30%" } }, [
+                        _vm._v(
+                          "\n                " +
+                            _vm._s(_vm.projectsUsers[project.author_id].name) +
+                            "\n              "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      project.team_id != null
+                        ? _c("td", { staticStyle: { width: "35%" } }, [
+                            _vm._v(
+                              "\n                " +
+                                _vm._s(_vm.teams[project.team_id].name) +
+                                "\n              "
+                            )
+                          ])
+                        : _c("td", { staticStyle: { width: "35%" } }, [
+                            _vm._v("No Team")
+                          ])
+                    ])
+                  }),
+                  0
+                )
+              ])
             ])
           ])
         ])
@@ -2466,15 +2528,11 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", { staticStyle: { width: "30%" } }, [_vm._v("Title")]),
+        _c("th", { staticStyle: { width: "35%" } }, [_vm._v("Title")]),
         _vm._v(" "),
         _c("th", { staticStyle: { width: "30%" } }, [_vm._v("Author")]),
         _vm._v(" "),
-        _c("th", { staticStyle: { width: "30%" } }, [_vm._v("Team")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "5%" } }),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "5%" } })
+        _c("th", { staticStyle: { width: "35%" } }, [_vm._v("Team")])
       ])
     ])
   }

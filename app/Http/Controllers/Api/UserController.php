@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     /**
-     * Gets authenticated user information
-     * 
+     * Gets all the users of teams the user is in.
      */
     public function index()
     {
@@ -17,7 +16,7 @@ class UserController extends Controller
 
         if ($users->isEmpty()) {
             return response()->json([
-                'error' => 'No users found!'
+                'message' => 'No users found!'
             ], 404);
         }
 
@@ -27,7 +26,7 @@ class UserController extends Controller
     }
 
     /**
-     * Gets all the users informations by given IDs
+     * Gets authenticated user information.
      */
     public function show()
     {

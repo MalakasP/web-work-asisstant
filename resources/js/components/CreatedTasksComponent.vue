@@ -188,14 +188,11 @@
                             width="16"
                             height="16"
                             fill="currentColor"
-                            class="bi bi-gear"
+                            class="bi bi-three-dots"
                             viewBox="0 0 16 16"
                           >
                             <path
-                              d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
-                            />
-                            <path
-                              d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
+                              d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
                             />
                           </svg>
                         </span>
@@ -381,7 +378,7 @@ export default {
     ...mapActions("worktime", []),
 
     async read() {
-      await window.axios
+      await axios
         .get(process.env.MIX_API_URL + "users")
         .then((response) => {
           if (response.data != null) {
@@ -397,8 +394,7 @@ export default {
           console.log(error);
         });
 
-      
-      // await window.axios
+      // await axios
       //   .get(process.env.MIX_API_URL + "teams")
       //   .then((response) => {
       //     if (response.data != null) {
@@ -412,9 +408,9 @@ export default {
       //   })
       //   .catch((error) => {
       //     console.log(error);
-      //   });  
+      //   });
 
-      await window.axios
+      await axios
         .get(
           process.env.MIX_API_URL + "users/" + this.user.id + "/teamProjects"
         )
@@ -449,7 +445,7 @@ export default {
           console.log(error);
         });
 
-      await window.axios
+      await axios
         .get(process.env.MIX_API_URL + "createdTasks")
         .then((response) => {
           if (response.data != null) {
@@ -468,6 +464,7 @@ export default {
           if (error.response.status == 404) {
             this.noTasks = true;
           }
+          this.loaded = true;
         });
     },
 
@@ -476,15 +473,15 @@ export default {
         this.form.project_id = null;
       }
 
-      await window.axios
+      await axios
         .put(process.env.MIX_API_URL + "tasks/" + this.editTask.id, this.form)
         .then((response) => {
           if (response.data != null) {
             this.modal = false;
             if (this.editTask.project_id != null) {
-              var taskIndex = this.projects[this.editTask.project_id].tasks.findIndex(
-                (task) => task.id == this.editTask.id
-              );
+              var taskIndex = this.projects[
+                this.editTask.project_id
+              ].tasks.findIndex((task) => task.id == this.editTask.id);
               this.projects[this.editTask.project_id].tasks.splice(
                 taskIndex,
                 1,
@@ -527,7 +524,7 @@ export default {
         this.form.project_id = null;
       }
 
-      await window.axios
+      await axios
         .post(process.env.MIX_API_URL + "tasks", this.form)
         .then((response) => {
           if (response.data != null) {
@@ -562,7 +559,7 @@ export default {
     },
 
     async delete(task) {
-      await window.axios
+      await axios
         .delete(process.env.MIX_API_URL + "tasks/" + task.id)
         .then((response) => {
           if (response.data.task.id != task.id) {
@@ -653,54 +650,12 @@ export default {
 </script>
 
 <style scoped>
-.loader {
-  border: 8px solid white;
-  border-top: 8px solid #007bff;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: table;
-  transition: opacity 0.3s ease;
-}
-
-.modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
-}
-
 .to-capital-first {
   text-transform: capitalize;
 }
 
-.modal-dialog {
-  overflow-y: initial !important;
-}
 .modal-body {
   height: 50vh;
   overflow-y: auto;
-}
-
-textarea {
-  resize: none;
 }
 </style>

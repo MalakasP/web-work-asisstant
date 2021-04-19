@@ -179,9 +179,7 @@ class User extends Authenticatable
 
         foreach ($this->teams as $team) {
             foreach($team->users as $user) {
-                if (!$users->contains('id', $user->id)) {
-                    $users->push($user);
-                }
+                $users->push($user);
             }
         }
 

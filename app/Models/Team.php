@@ -47,7 +47,7 @@ class Team extends Model
      */
     public function isUserAdmin($user_id)
     {
-        return $this->users()->where('user_id', '=', $user_id)
+        return $this->users()->where('user_id', '=', $user_id)->exists()
             ? $this->users()->where('user_id', '=', $user_id)->first()->pivot->is_admin
             : false;
     }
