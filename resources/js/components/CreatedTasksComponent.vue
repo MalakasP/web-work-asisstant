@@ -150,115 +150,117 @@
           <div v-for="project in projects" :key="project.id">
             <h5 class="text-left mt-3 p-1">{{ project.title }}</h5>
             <div class="card p-3">
-              <table class="table-striped w-100 d-block d-md-table">
-                <thead v-if="project.tasks && project.tasks.length > 0">
-                  <tr>
-                    <th style="width: 20%">Title</th>
-                    <th style="width: 20%">Deadline</th>
-                    <th style="width: 20%">Status</th>
-                    <th style="width: 20%">Priority</th>
-                    <th style="width: 10%">Assignee</th>
-                    <th style="width: 5%"></th>
-                    <th style="width: 5%"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="task in project.tasks" :key="task.id">
-                    <td style="width: 20%">{{ task.title }}</td>
-                    <td style="width: 20%">
-                      {{ task.date_till_done | monthDay }}
-                    </td>
-                    <td style="width: 20%">{{ task.status }}</td>
-                    <td class="to-capital-first" style="width: 20%">
-                      {{ task.priority }}
-                    </td>
-                    <td style="width: 10%">
-                      {{ projectsUsers[task.assignee_id].name }}
-                    </td>
-                    <td style="width: 5%">
-                      <button
-                        type="button"
-                        style="margin: 1px"
-                        class="btn btn-primary"
-                        @click="startEdit(task)"
-                      >
-                        <span class="icon is-small">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-three-dots"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                            />
-                          </svg>
-                        </span>
-                      </button>
-                    </td>
-                    <td style="width: 5%">
-                      <button
-                        type="button"
-                        class="btn btn-danger"
-                        style="margin: 1px"
-                        @click="startDelete(task)"
-                      >
-                        <span class="icon is-small">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-trash"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-                            />
-                            <path
-                              fill-rule="evenodd"
-                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-                            />
-                          </svg>
-                        </span>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr class="bg-white">
-                    <td v-if="project.tasks && project.tasks.length > 0"></td>
-                    <td v-if="project.tasks && project.tasks.length > 0"></td>
-                    <td>
-                      <button
-                        type="button"
-                        class="btn btn-secondary"
-                        style="margin: 3px"
-                        @click="startCreate(project)"
-                      >
-                        <span class="icon full-size">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-plus-square"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-                            />
-                            <path
-                              d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                            />
-                          </svg>
-                          Add Task
-                        </span>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="table-responsive">
+                <table class="table-striped w-100 d-block d-md-table">
+                  <thead v-if="project.tasks && project.tasks.length > 0">
+                    <tr>
+                      <th style="width: 20%">Title</th>
+                      <th style="width: 20%">Deadline</th>
+                      <th style="width: 20%">Status</th>
+                      <th style="width: 20%">Priority</th>
+                      <th style="width: 10%">Assignee</th>
+                      <th style="width: 5%"></th>
+                      <th style="width: 5%"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="task in project.tasks" :key="task.id">
+                      <td style="width: 20%">{{ task.title }}</td>
+                      <td style="width: 20%">
+                        {{ task.date_till_done | monthDay }}
+                      </td>
+                      <td style="width: 20%">{{ task.status }}</td>
+                      <td class="to-capital-first" style="width: 20%">
+                        {{ task.priority }}
+                      </td>
+                      <td style="width: 10%">
+                        {{ projectsUsers[task.assignee_id].name }}
+                      </td>
+                      <td style="width: 5%">
+                        <button
+                          type="button"
+                          style="margin: 1px"
+                          class="btn btn-primary"
+                          @click="startEdit(task)"
+                        >
+                          <span class="icon is-small">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="bi bi-three-dots"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+                      </td>
+                      <td style="width: 5%">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          style="margin: 1px"
+                          @click="startDelete(task)"
+                        >
+                          <span class="icon is-small">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="bi bi-trash"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                              />
+                              <path
+                                fill-rule="evenodd"
+                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr class="bg-white">
+                      <td v-if="project.tasks && project.tasks.length > 0"></td>
+                      <td v-if="project.tasks && project.tasks.length > 0"></td>
+                      <td>
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          style="margin: 3px"
+                          @click="startCreate(project)"
+                        >
+                          <span class="icon full-size">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="bi bi-plus-square"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+                              />
+                              <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                              />
+                            </svg>
+                            Add Task
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -479,7 +481,7 @@ export default {
           if (response.data != null) {
             this.modal = false;
             if (this.editTask.project_id != null) {
-              var taskIndex = this.projects[
+              let taskIndex = this.projects[
                 this.editTask.project_id
               ].tasks.findIndex((task) => task.id == this.editTask.id);
               this.projects[this.editTask.project_id].tasks.splice(
@@ -488,7 +490,7 @@ export default {
                 response.data.task
               );
             } else {
-              var taskIndex = this.projects[0].tasks.findIndex(
+              let taskIndex = this.projects[0].tasks.findIndex(
                 (task) => task.id == this.editTask.id
               );
               this.projects[0].tasks.splice(taskIndex, 1, response.data.task);
@@ -508,7 +510,7 @@ export default {
             if (error.response.status != 422) {
               this.modal = false;
               this.editTask = null;
-              this.$alert(error.response.data.status, "Warning", "error");
+              this.$alert("Something went wrong", "Warning", "error");
             } else {
               if (this.form.project_id == null) {
                 this.form.project_id = 0;

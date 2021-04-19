@@ -521,7 +521,7 @@ export default {
         .then((response) => {
           if (response.data != null) {
             this.modal = false;
-            var projectIndex = this.createdProjects.findIndex(
+            let projectIndex = this.createdProjects.findIndex(
               (project) => project.id == this.edit.id
             );
             this.createdProjects.splice(projectIndex, 1, response.data.project);
@@ -593,7 +593,7 @@ export default {
           if (response.data.project.id != id) {
             this.$alert("Something went wrong.", "Warning", "error");
           } else {
-            var projectIndex = this.createdProjects.findIndex(
+            let projectIndex = this.createdProjects.findIndex(
               (project) => project.id == id
             );
             this.createdProjects.splice(projectIndex, 1);

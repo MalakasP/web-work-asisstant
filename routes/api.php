@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\ProjectController;
 // use App\Http\Controllers\Api\WorktimeController;
-// use App\Http\Controllers\Api\RequestController;
+use App\Http\Controllers\Api\RequestController;
 // use App\Http\Controllers\Api\TeamController;
 
 
@@ -61,7 +61,7 @@ Route::group(['as' => 'api.'], function () {
 
         Route::get('users/{user}/teamProjects', [ProjectController::class, 'getCreatedAndTeamProjects'])->name('getCreatedAndTeamProjects');
 
-        Route::get('projects/{project}', [TaskContProjectControllerroller::class, 'show'])->name('projects.show');
+        Route::get('projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 
         Route::post('projects', [ProjectController::class, 'store'])->name('projects.store');
 
@@ -73,7 +73,21 @@ Route::group(['as' => 'api.'], function () {
 
         Route::resource('worktimes', WorktimeController::class, ['except' => ['create', 'edit']]);
 
-        Route::resource('requests', RequestController::class, ['except' => ['create', 'edit']]);
+        // Route::resource('requests', RequestController::class, ['except' => ['create', 'edit']]);
+
+        Route::get('createdRequests', [RequestController::class, 'getCreatedRequests'])->name('getCreatedRequests');
+
+        Route::get('getNotAnsweredRequests', [RequestController::class, 'getNotAnsweredRequests'])->name('getNotAnsweredRequests');
+
+        Route::get('getAnsweredRequests', [RequestController::class, 'getAnsweredRequests'])->name('getAnsweredRequests');
+
+        Route::get('requests/{request}', [RequestController::class, 'show'])->name('requests.show');
+
+        Route::post('requests', [RequestController::class, 'store'])->name('requests.store');
+
+        Route::put('requests/{request}', [RequestController::class, 'update'])->name('requests.update');
+
+        Route::delete('requests/{request}', [RequestController::class, 'destroy'])->name('requests.destroy');
 
         Route::resource('teams', TeamController::class, ['except' => ['create', 'edit']]);
 

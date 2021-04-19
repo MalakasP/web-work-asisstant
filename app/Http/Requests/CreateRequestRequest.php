@@ -24,11 +24,10 @@ class CreateRequestRequest extends FormRequest
     public function rules()
     {
         return [
-            'date_from' => ['required', 'date', 'after:start_date'],
-            'date_to' => ['required', 'date', 'after:start_date'],
+            'date_from' => ['required', 'date', 'after:yesterday'],
+            'date_to' => ['required', 'date', 'after:date_from'],
             'description' => ['required', 'string', 'max:191'],
             'type' => ['required', 'string', 'max:191'],
-            'is_confirmed' => ['boolean'],
             'requester_id' => ['required', 'integer', 'numeric'],
             'responser_id' => ['required', 'integer', 'numeric']
         ];

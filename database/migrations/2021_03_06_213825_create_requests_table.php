@@ -20,6 +20,7 @@ class CreateRequestsTable extends Migration
             $table->string('description');
             $table->string('type');
             $table->boolean('is_confirmed')->default(false);
+            $table->timestamp('confirmed_at')->default(null);
             $table->unsignedBigInteger('requester_id');
             $table->unsignedBigInteger('responser_id');
             $table->timestamps();

@@ -125,7 +125,7 @@ class WorktimeController extends Controller
             $duration = $request->validated()['duration'];
             $duration = gmdate("H:i", $duration);
         }
-        // var_dump($duration);die;
+        
         if (strtotime($duration) - strtotime('TODAY') == 0) {
             return response()->json([
                 'message' => 'You have worked less than 15 minutes after You started working.'

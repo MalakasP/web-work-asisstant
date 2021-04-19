@@ -52,8 +52,30 @@
             <li class="nav-item" v-show="isAuthenticated">
               <router-link class="nav-link" to="/">Worktimes</router-link>
             </li>
-            <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/requests">Requests</router-link>
+            <li class="nav-item dropdown">
+              <div
+                class="nav-link dropdown-toggle"
+                id="navbarDropdownRequests"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                v-show="isAuthenticated"
+              >
+                <a>Requests</a>
+              </div>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownRequests">
+                <a class="dropdown-item"
+                  ><router-link to="/gottenRequests"
+                    >Gotten Requests</router-link
+                  ></a
+                >
+                <a class="dropdown-item"
+                  ><router-link to="/createdRequests"
+                    >Created Requests</router-link
+                  ></a
+                >
+              </div>
             </li>
           </ul>
           <ul class="navbar-nav">
@@ -229,18 +251,21 @@ export default {
       };
 
       axios({
+        method: "put",
         url: process.env.MIX_API_URL + "worktimes/" + this.worktime.id,
         baseURL: "/",
         data: data,
       })
         .then((response) => {
+          console.log(response);
+          this.setDuration(this.duration + this._durationToSeconds(response.data.worktime.duration));
           this.setTimerStopped(true);
           clearInterval(this.counter.ticker);
         })
         .catch((error) => {
           if (error.response) {
             if (error.response.status === 406) {
-              this.$alert(error.response.data.error);
+              this.$alert(error.response.data.message);
             }
           }
         });
@@ -261,6 +286,7 @@ export default {
           this.activeTimerString = `${time.hours}:${time.minutes}`;
           if (this.counter.seconds % 60 == 0) {
             this.setTimer(this.counter.seconds);
+            // this.duration(this.counter.seconds);
           }
         }, 1000);
       }

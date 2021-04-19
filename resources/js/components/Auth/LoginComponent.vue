@@ -91,8 +91,8 @@ export default {
      * Get the duration of today worked hours.
      */
     getTodaysWorktimesDuration() {
-      var format_to = "YYYY-MM-DD HH:mm:ss";
-      var date = moment().format(format_to);
+      let format_to = "YYYY-MM-DD HH:mm:ss";
+      let date = moment().format(format_to);
       axios
         .get(process.env.MIX_API_URL + "worktimes?date=" + date)
         .then((response) => {

@@ -29,7 +29,7 @@ export default {
     actions: {
 
         getWorktimesByDate({ commit }, date) {
-            var format_to = 'YYYY-MM-DD HH:mm:ss';
+            let format_to = 'YYYY-MM-DD HH:mm:ss';
             date = date.format(format_to);
             axios
                 .get(process.env.MIX_API_URL + "worktimes?date=" + date)
@@ -58,13 +58,11 @@ export default {
          * Create current worktime
          */
         createWorktime({ commit }, user) {
-            var data = { user_id: user.id };
+            let data = { user_id: user.id };
             axios
                 .post(process.env.MIX_API_URL + "worktimes", data)
                 .then((response) => {
                     commit("setWorktime", response.data.worktime);
-                    // localStorage.setObject("worktime", response.data.worktime);
-                    // localStorage.setObject("date", new Date());
                 });
         },
 

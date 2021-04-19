@@ -521,7 +521,7 @@ export default {
       })
         .then((response) => {
           if (response.data != null) {
-            var userIndex = this.team.users.findIndex(
+            let userIndex = this.team.users.findIndex(
               (user) => user.id == userId
             );
             this.team.users.splice(userIndex, 1);
@@ -557,7 +557,7 @@ export default {
       })
         .then((response) => {
           if (response.data != null) {
-            var index = this.team.users.findIndex(
+            let index = this.team.users.findIndex(
               (user) => user.id == this.editUser.id
             );
             this.team.users[index].pivot.is_admin = this.editForm.is_admin;

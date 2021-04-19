@@ -1971,6 +1971,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2066,17 +2088,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         end_time: moment__WEBPACK_IMPORTED_MODULE_0___default()().format()
       };
       axios({
+        method: "put",
         url: "api/" + "worktimes/" + this.worktime.id,
         baseURL: "/",
         data: data
       }).then(function (response) {
+        console.log(response);
+
+        _this2.setDuration(_this2.duration + _this2._durationToSeconds(response.data.worktime.duration));
+
         _this2.setTimerStopped(true);
 
         clearInterval(_this2.counter.ticker);
       })["catch"](function (error) {
         if (error.response) {
           if (error.response.status === 406) {
-            _this2.$alert(error.response.data.error);
+            _this2.$alert(error.response.data.message);
           }
         }
       });
@@ -2101,7 +2128,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _this3.activeTimerString = "".concat(time.hours, ":").concat(time.minutes);
 
           if (_this3.counter.seconds % 60 == 0) {
-            _this3.setTimer(_this3.counter.seconds);
+            _this3.setTimer(_this3.counter.seconds); // this.duration(this.counter.seconds);
+
           }
         }, 1000);
       }
@@ -2201,6 +2229,13 @@ axios.interceptors.request.use(function (config) {
     Accept: "application/json"
   };
   return config;
+});
+vue__WEBPACK_IMPORTED_MODULE_6__.default.directive('tooltip', function (el, binding) {
+  $(el).tooltip({
+    title: binding.value,
+    placement: binding.arg,
+    trigger: 'hover'
+  });
 });
 var app = new vue__WEBPACK_IMPORTED_MODULE_6__.default({
   el: '#app',
@@ -2349,11 +2384,18 @@ var routes = [{
     return __webpack_require__.e(/*! import() */ "resources_js_components_AssignedTasksComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/AssignedTasksComponent.vue */ "./resources/js/components/AssignedTasksComponent.vue"));
   }
 }, {
-  path: "/requests",
-  name: "Requests",
+  path: "/gottenRequests",
+  name: "GottenRequests",
   beforeEnter: auth,
   component: function component() {
-    return __webpack_require__.e(/*! import() */ "resources_js_components_RequestsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/RequestsComponent.vue */ "./resources/js/components/RequestsComponent.vue"));
+    return __webpack_require__.e(/*! import() */ "resources_js_components_GottenRequestsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/GottenRequestsComponent.vue */ "./resources/js/components/GottenRequestsComponent.vue"));
+  }
+}, {
+  path: "/createdRequests",
+  name: "CreatedRequests",
+  beforeEnter: auth,
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_CreatedRequestsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/CreatedRequestsComponent.vue */ "./resources/js/components/CreatedRequestsComponent.vue"));
   }
 }, {
   path: '*',
@@ -2603,8 +2645,7 @@ __webpack_require__.r(__webpack_exports__);
         user_id: user.id
       };
       axios.post("api/" + "worktimes", data).then(function (response) {
-        commit("setWorktime", response.data.worktime); // localStorage.setObject("worktime", response.data.worktime);
-        // localStorage.setObject("date", new Date());
+        commit("setWorktime", response.data.worktime);
       });
     }
   },
@@ -63120,28 +63161,65 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c(
-                    "li",
-                    {
-                      directives: [
-                        {
-                          name: "show",
-                          rawName: "v-show",
-                          value: _vm.isAuthenticated,
-                          expression: "isAuthenticated"
+                  _c("li", { staticClass: "nav-item dropdown" }, [
+                    _c(
+                      "div",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.isAuthenticated,
+                            expression: "isAuthenticated"
+                          }
+                        ],
+                        staticClass: "nav-link dropdown-toggle",
+                        attrs: {
+                          id: "navbarDropdownRequests",
+                          role: "button",
+                          "data-toggle": "dropdown",
+                          "aria-haspopup": "true",
+                          "aria-expanded": "false"
                         }
-                      ],
-                      staticClass: "nav-item"
-                    },
-                    [
-                      _c(
-                        "router-link",
-                        { staticClass: "nav-link", attrs: { to: "/requests" } },
-                        [_vm._v("Requests")]
-                      )
-                    ],
-                    1
-                  )
+                      },
+                      [_c("a", [_vm._v("Requests")])]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "dropdown-menu",
+                        attrs: { "aria-labelledby": "navbarDropdownRequests" }
+                      },
+                      [
+                        _c(
+                          "a",
+                          { staticClass: "dropdown-item" },
+                          [
+                            _c(
+                              "router-link",
+                              { attrs: { to: "/gottenRequests" } },
+                              [_vm._v("Gotten Requests")]
+                            )
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          { staticClass: "dropdown-item" },
+                          [
+                            _c(
+                              "router-link",
+                              { attrs: { to: "/createdRequests" } },
+                              [_vm._v("Created Requests")]
+                            )
+                          ],
+                          1
+                        )
+                      ]
+                    )
+                  ])
                 ]),
                 _vm._v(" "),
                 _c("ul", { staticClass: "navbar-nav" }, [
@@ -81251,7 +81329,7 @@ var index = {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_TeamComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_RequestsComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_TeamComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_GottenRequestsComponent_vue":1,"resources_js_components_CreatedRequestsComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

@@ -39,10 +39,18 @@ axios.interceptors.request.use( function(config) {
   return config;
 });
 
+Vue.directive('tooltip', function(el, binding){
+  $(el).tooltip({
+           title: binding.value,
+           placement: binding.arg,
+           trigger: 'hover'             
+       })
+})
+
 const app = new Vue({
     el: '#app',
     components: {
-        AppComponent
+        AppComponent,
     },
     router,
     store,

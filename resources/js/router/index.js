@@ -76,11 +76,18 @@ const routes = [
             import("../components/AssignedTasksComponent.vue")
     },
     {
-        path: "/requests",
-        name: "Requests",
+        path: "/gottenRequests",
+        name: "GottenRequests",
         beforeEnter: auth,
         component: () =>
-            import("../components/RequestsComponent.vue")
+            import("../components/GottenRequestsComponent.vue")
+    },
+    {
+        path: "/createdRequests",
+        name: "CreatedRequests",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/CreatedRequestsComponent.vue")
     },
     { 
         path: '*',

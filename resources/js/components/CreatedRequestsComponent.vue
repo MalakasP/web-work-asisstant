@@ -27,71 +27,43 @@
                       mode="dateTime"
                       :masks="masks"
                       is-range
+                      is24hr
+                      :minute-increment="15"
                     >
                       <template
-                        v-slot="{ inputValue, inputEvents, isDragging }"
+                        v-slot="{ inputValue, inputEvents}"
                       >
                         <div
-                          class="flex flex-col sm:flex-row justify-start items-center"
+                          class="form-group row"
                         >
-                          <div class="relative flex-grow">
-                            <svg
-                              class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"
-                              fill="none"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              ></path>
-                            </svg>
+                          <div class="form-group col-md-6">
                             <input
-                              class="flex-grow pl-8 pr-2 py-1 bg-gray-100 border rounded w-full"
-                              :class="
-                                isDragging ? 'text-gray-600' : 'text-gray-900'
-                              "
+                              class="form-control"
+                              :class="{ 'is-invalid': errors.date_from }"
                               :value="inputValue.start"
                               v-on="inputEvents.start"
                             />
+                             <div
+                                class="invalid-feedback"
+                                v-if="errors.date_from"
+                              >
+                                {{ errors.date_from }}
+                              </div>
                           </div>
-                          <span class="flex-shrink-0 m-2">
-                            <svg
-                              class="w-4 h-4 stroke-current text-gray-600"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3"
-                              />
-                            </svg>
-                          </span>
-                          <div class="relative flex-grow">
-                            <svg
-                              class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"
-                              fill="none"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              ></path>
-                            </svg>
+                         
+                          <div class="form-group col-md-6">
                             <input
-                              class="flex-grow pl-8 pr-2 py-1 bg-gray-100 border rounded w-full"
-                              :class="
-                                isDragging ? 'text-gray-600' : 'text-gray-900'
-                              "
+                              class="form-control"
+                              :class="{ 'is-invalid': errors.date_to }"
                               :value="inputValue.end"
                               v-on="inputEvents.end"
                             />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.date_to"
+                              >
+                                {{ errors.date_to }}
+                              </div>
                           </div>
                         </div>
                       </template>
@@ -174,12 +146,84 @@
         </div>
       </transition>
     </div>
-    <div class="row justify-content-center" v-if="true">
+    <div class="row justify-content-center" v-if="this.createdRequests.length > 0 && this.loaded">
       <div class="col-12 card mt-3">
         <div class="card-body text-center">
-          <h3 class="card-title">Requests</h3>
+          <h3 class="card-title">Created Requests</h3>
           <div class="table-responsive">
-            <table class="table-striped w-100 d-block d-md-table"></table>
+            <table class="table-striped w-100 d-block d-md-table">
+              <thead>
+                <tr>
+                  <th style="width: 40%">Type</th>
+                  <th style="width: 35%">Responser</th>
+                  <th style="width: 5%">Status</th>
+                  <th style="width: 10%">Date From</th>
+                  <th style="width: 10%">Date To</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="request in createdRequests" :key="request.id">
+                  <td style="width: 40%">{{ request.type }}</td>
+                  <td style="width: 35%">Responser from Team??</td>
+                  <td style="width: 5%">{{request.is_confirmed | makeBooleanReadable}}</td>
+                  <td style="width: 10%">
+                    {{ request.date_from | monthDay }}
+                  </td>
+                  <td style="width: 10%">
+                    {{ request.date_to | monthDay }}
+                  </td>
+                  <td style="width: 5%">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      style="margin: 1px"
+                      @click="startEdit(request)"
+                    >
+                      <span class="icon is-small">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-three-dots"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                  </td>
+                  <td style="width: 5%">
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      @click="startDelete(request)"
+                    >
+                      <span class="icon is-small">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-trash"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                          />
+                          <path
+                            fill-rule="evenodd"
+                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -187,11 +231,11 @@
     <div v-else-if="this.loaded" class="row justify-content-center">
       <div class="col-12 card mt-3">
         <div class="card-body text-center">
-          <h3 class="card-title">Created Projects</h3>
+          <h3 class="card-title">Created Requests</h3>
           <button
             type="button"
             class="btn btn-secondary w-25 mt-3"
-            @click="startProject()"
+            @click="startCreate()"
           >
             <span class="icon full-size">
               <svg
@@ -209,7 +253,7 @@
                   d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
                 />
               </svg>
-              Start Project
+              Create Request
             </span>
           </button>
         </div>
@@ -217,33 +261,6 @@
     </div>
     <div v-else class="row justify-content-center">
       <div class="loader"></div>
-    </div>
-    <div class="row justify-content-center" v-if="true">
-      <div class="col-12 card mt-3">
-        <div class="card-body text-center">
-          <h3 class="card-title">Gotten Requests</h3>
-          <table class="table-striped full-width">
-            <thead>
-              <tr>
-                <th style="width: 35%">Title</th>
-                <th style="width: 30%">Author</th>
-                <th style="width: 35%">Team</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="request in gottenRequests" :key="request.id">
-                <td style="width: 35%">{{ request.description }}</td>
-                <td style="width: 30%">
-                  {{ request.date_from }}
-                </td>
-                <td style="width: 35%">
-                  {{ request.responser_id }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -262,7 +279,18 @@ function Team({ id, name, description, created_at, updated_at, pivot, users }) {
   this.users = users;
 }
 
-function Request({ id, date_from, date_to, description, type, is_confirmed, requester_id, responser_id, created_at, updated_at }) {
+function Request({
+  id,
+  date_from,
+  date_to,
+  description,
+  type,
+  is_confirmed,
+  requester_id,
+  responser_id,
+  created_at,
+  updated_at,
+}) {
   this.id = id;
   this.date_from = date_from;
   this.date_to = date_to;
@@ -290,12 +318,12 @@ export default {
       modal: false,
       edit: null,
       dynamicTitle: null,
-        gottenRequests: [],
-        createdRequests: [],
+      gottenRequests: [],
+      createdRequests: [],
       teams: {},
       range: {
-        start: new Date(moment()),
-        end: new Date(moment().add(2, "days")),
+        start: null,
+        end: null,
       },
       masks: {
         input: "YYYY-MM-DD h:mm A",
@@ -309,6 +337,7 @@ export default {
         requester_id: null,
         responser_id: null,
       },
+      selectedTeam: null,
     };
   },
   computed: {
@@ -340,7 +369,7 @@ export default {
           return true;
         }
       });
-      return Object.fromEntries(adminTeams);
+      return Object.fromEntries(adminNotTeams);
     },
 
     adminOfTeams: function () {
@@ -361,6 +390,17 @@ export default {
   },
   created() {
     this.read();
+  },
+  filters: {
+    monthDay: function (value) {
+      if (!value) return "";
+      value = value.toString();
+      return value.substring(16, 5);
+    },
+    makeBooleanReadable: function (value) {
+      if (!value) return "No";
+      return "Yes";
+    },
   },
   methods: {
     async read() {
@@ -413,7 +453,7 @@ export default {
             this.gottenRequests = [];
             this.createdRequests = [];
             if (response.data.gottenRequests != null) {
-                console.log(response.data.gottenRequests);
+              console.log(response.data.gottenRequests);
               response.data.gottenRequests.forEach((gottenRequest) => {
                 if (gottenRequest != null) {
                   this.gottenRequests.push(new Request(gottenRequest));
@@ -421,19 +461,52 @@ export default {
               });
             }
             if (response.data.createdRequests != null) {
-                console.log(response.data.createdRequests);
+              console.log(response.data.createdRequests);
               response.data.createdRequests.forEach((createdRequest) => {
                 if (createdRequest != null) {
                   this.createdRequests.push(new Request(createdRequest));
                 }
               });
             }
+            this.loaded = true;
           }
         })
         .catch((error) => {
           console.log(error);
         });
     },
+
+    update() {},
+
+    create() {},
+
+    startCreate(request) {
+      let start = moment();
+      let remainder = 15 - (start.minute() % 15);
+      let now = moment(start).add(remainder, "minutes");
+      this.range.start = new Date(now);
+      this.range.end = new Date(now.add(1, "days"));
+      this.modal = true;
+      this.edit = request;
+      console.log(request.id);
+    },
+
+    startEdit(request) {
+      let start = moment();
+      let remainder = 15 - (start.minute() % 15);
+      let now = moment(start).add(remainder, "minutes");
+      this.range.start = new Date(now);
+      this.range.end = new Date(now.add(1, "days"));
+      this.modal = true;
+      this.edit = request;
+      console.log(request.id);
+    },
+
+    startDelete(request) {
+      console.log(request.id);
+    },
+
+
   },
 };
 </script>
@@ -455,12 +528,8 @@ export default {
 }
 
 .modal-body {
-  height: 40vh;
-  overflow-y: auto;
-}
-
-thead tr,
-tbody tr {
-  line-height: 40px;
+  position: relative;
+  flex: 1 1 auto;
+  padding: 1rem;
 }
 </style>

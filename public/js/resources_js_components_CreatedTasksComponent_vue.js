@@ -311,6 +311,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 
@@ -535,11 +537,11 @@ function Project(_ref2) {
 
                       _this2.projects[_this2.editTask.project_id].tasks.splice(taskIndex, 1, response.data.task);
                     } else {
-                      var taskIndex = _this2.projects[0].tasks.findIndex(function (task) {
+                      var _taskIndex = _this2.projects[0].tasks.findIndex(function (task) {
                         return task.id == _this2.editTask.id;
                       });
 
-                      _this2.projects[0].tasks.splice(taskIndex, 1, response.data.task);
+                      _this2.projects[0].tasks.splice(_taskIndex, 1, response.data.task);
                     }
 
                     _this2.editTask = null;
@@ -559,7 +561,7 @@ function Project(_ref2) {
                       _this2.modal = false;
                       _this2.editTask = null;
 
-                      _this2.$alert(error.response.data.status, "Warning", "error");
+                      _this2.$alert("Something went wrong", "Warning", "error");
                     } else {
                       if (_this2.form.project_id == null) {
                         _this2.form.project_id = 0;
@@ -2044,130 +2046,201 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "card p-3" }, [
-                    _c(
-                      "table",
-                      { staticClass: "table-striped w-100 d-block d-md-table" },
-                      [
-                        project.tasks && project.tasks.length > 0
-                          ? _c("thead", [_vm._m(0, true)])
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _c(
-                          "tbody",
-                          [
-                            _vm._l(project.tasks, function(task) {
-                              return _c("tr", { key: task.id }, [
-                                _c("td", { staticStyle: { width: "20%" } }, [
-                                  _vm._v(_vm._s(task.title))
-                                ]),
-                                _vm._v(" "),
-                                _c("td", { staticStyle: { width: "20%" } }, [
-                                  _vm._v(
-                                    "\n                    " +
-                                      _vm._s(
-                                        _vm._f("monthDay")(task.date_till_done)
-                                      ) +
-                                      "\n                  "
-                                  )
-                                ]),
-                                _vm._v(" "),
-                                _c("td", { staticStyle: { width: "20%" } }, [
-                                  _vm._v(_vm._s(task.status))
-                                ]),
-                                _vm._v(" "),
-                                _c(
-                                  "td",
-                                  {
-                                    staticClass: "to-capital-first",
-                                    staticStyle: { width: "20%" }
-                                  },
-                                  [
+                    _c("div", { staticClass: "table-responsive" }, [
+                      _c(
+                        "table",
+                        {
+                          staticClass: "table-striped w-100 d-block d-md-table"
+                        },
+                        [
+                          project.tasks && project.tasks.length > 0
+                            ? _c("thead", [_vm._m(0, true)])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c(
+                            "tbody",
+                            [
+                              _vm._l(project.tasks, function(task) {
+                                return _c("tr", { key: task.id }, [
+                                  _c("td", { staticStyle: { width: "20%" } }, [
+                                    _vm._v(_vm._s(task.title))
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "20%" } }, [
                                     _vm._v(
-                                      "\n                    " +
-                                        _vm._s(task.priority) +
-                                        "\n                  "
+                                      "\n                      " +
+                                        _vm._s(
+                                          _vm._f("monthDay")(
+                                            task.date_till_done
+                                          )
+                                        ) +
+                                        "\n                    "
                                     )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c("td", { staticStyle: { width: "10%" } }, [
-                                  _vm._v(
-                                    "\n                    " +
-                                      _vm._s(
-                                        _vm.projectsUsers[task.assignee_id].name
-                                      ) +
-                                      "\n                  "
-                                  )
-                                ]),
-                                _vm._v(" "),
-                                _c("td", { staticStyle: { width: "5%" } }, [
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "20%" } }, [
+                                    _vm._v(_vm._s(task.status))
+                                  ]),
+                                  _vm._v(" "),
                                   _c(
-                                    "button",
+                                    "td",
                                     {
-                                      staticClass: "btn btn-primary",
-                                      staticStyle: { margin: "1px" },
-                                      attrs: { type: "button" },
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.startEdit(task)
-                                        }
-                                      }
+                                      staticClass: "to-capital-first",
+                                      staticStyle: { width: "20%" }
                                     },
                                     [
-                                      _c(
-                                        "span",
-                                        { staticClass: "icon is-small" },
-                                        [
-                                          _c(
-                                            "svg",
-                                            {
-                                              staticClass: "bi bi-three-dots",
-                                              attrs: {
-                                                xmlns:
-                                                  "http://www.w3.org/2000/svg",
-                                                width: "16",
-                                                height: "16",
-                                                fill: "currentColor",
-                                                viewBox: "0 0 16 16"
-                                              }
-                                            },
-                                            [
-                                              _c("path", {
-                                                attrs: {
-                                                  d:
-                                                    "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                                                }
-                                              })
-                                            ]
-                                          )
-                                        ]
+                                      _vm._v(
+                                        "\n                      " +
+                                          _vm._s(task.priority) +
+                                          "\n                    "
                                       )
                                     ]
-                                  )
-                                ]),
+                                  ),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "10%" } }, [
+                                    _vm._v(
+                                      "\n                      " +
+                                        _vm._s(
+                                          _vm.projectsUsers[task.assignee_id]
+                                            .name
+                                        ) +
+                                        "\n                    "
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "5%" } }, [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-primary",
+                                        staticStyle: { margin: "1px" },
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.startEdit(task)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "span",
+                                          { staticClass: "icon is-small" },
+                                          [
+                                            _c(
+                                              "svg",
+                                              {
+                                                staticClass: "bi bi-three-dots",
+                                                attrs: {
+                                                  xmlns:
+                                                    "http://www.w3.org/2000/svg",
+                                                  width: "16",
+                                                  height: "16",
+                                                  fill: "currentColor",
+                                                  viewBox: "0 0 16 16"
+                                                }
+                                              },
+                                              [
+                                                _c("path", {
+                                                  attrs: {
+                                                    d:
+                                                      "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
+                                                  }
+                                                })
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "5%" } }, [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger",
+                                        staticStyle: { margin: "1px" },
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.startDelete(task)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "span",
+                                          { staticClass: "icon is-small" },
+                                          [
+                                            _c(
+                                              "svg",
+                                              {
+                                                staticClass: "bi bi-trash",
+                                                attrs: {
+                                                  xmlns:
+                                                    "http://www.w3.org/2000/svg",
+                                                  width: "16",
+                                                  height: "16",
+                                                  fill: "currentColor",
+                                                  viewBox: "0 0 16 16"
+                                                }
+                                              },
+                                              [
+                                                _c("path", {
+                                                  attrs: {
+                                                    d:
+                                                      "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                                                  }
+                                                }),
+                                                _vm._v(" "),
+                                                _c("path", {
+                                                  attrs: {
+                                                    "fill-rule": "evenodd",
+                                                    d:
+                                                      "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                                  }
+                                                })
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ])
+                                ])
+                              }),
+                              _vm._v(" "),
+                              _c("tr", { staticClass: "bg-white" }, [
+                                project.tasks && project.tasks.length > 0
+                                  ? _c("td")
+                                  : _vm._e(),
                                 _vm._v(" "),
-                                _c("td", { staticStyle: { width: "5%" } }, [
+                                project.tasks && project.tasks.length > 0
+                                  ? _c("td")
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _c("td", [
                                   _c(
                                     "button",
                                     {
-                                      staticClass: "btn btn-danger",
-                                      staticStyle: { margin: "1px" },
+                                      staticClass: "btn btn-secondary",
+                                      staticStyle: { margin: "3px" },
                                       attrs: { type: "button" },
                                       on: {
                                         click: function($event) {
-                                          return _vm.startDelete(task)
+                                          return _vm.startCreate(project)
                                         }
                                       }
                                     },
                                     [
                                       _c(
                                         "span",
-                                        { staticClass: "icon is-small" },
+                                        { staticClass: "icon full-size" },
                                         [
                                           _c(
                                             "svg",
                                             {
-                                              staticClass: "bi bi-trash",
+                                              staticClass: "bi bi-plus-square",
                                               attrs: {
                                                 xmlns:
                                                   "http://www.w3.org/2000/svg",
@@ -2181,18 +2254,20 @@ var render = function() {
                                               _c("path", {
                                                 attrs: {
                                                   d:
-                                                    "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                                                    "M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
                                                 }
                                               }),
                                               _vm._v(" "),
                                               _c("path", {
                                                 attrs: {
-                                                  "fill-rule": "evenodd",
                                                   d:
-                                                    "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                                    "M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
                                                 }
                                               })
                                             ]
+                                          ),
+                                          _vm._v(
+                                            "\n                          Add Task\n                        "
                                           )
                                         ]
                                       )
@@ -2200,78 +2275,12 @@ var render = function() {
                                   )
                                 ])
                               ])
-                            }),
-                            _vm._v(" "),
-                            _c("tr", { staticClass: "bg-white" }, [
-                              project.tasks && project.tasks.length > 0
-                                ? _c("td")
-                                : _vm._e(),
-                              _vm._v(" "),
-                              project.tasks && project.tasks.length > 0
-                                ? _c("td")
-                                : _vm._e(),
-                              _vm._v(" "),
-                              _c("td", [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-secondary",
-                                    staticStyle: { margin: "3px" },
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.startCreate(project)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _c(
-                                      "span",
-                                      { staticClass: "icon full-size" },
-                                      [
-                                        _c(
-                                          "svg",
-                                          {
-                                            staticClass: "bi bi-plus-square",
-                                            attrs: {
-                                              xmlns:
-                                                "http://www.w3.org/2000/svg",
-                                              width: "16",
-                                              height: "16",
-                                              fill: "currentColor",
-                                              viewBox: "0 0 16 16"
-                                            }
-                                          },
-                                          [
-                                            _c("path", {
-                                              attrs: {
-                                                d:
-                                                  "M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-                                              }
-                                            }),
-                                            _vm._v(" "),
-                                            _c("path", {
-                                              attrs: {
-                                                d:
-                                                  "M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                                              }
-                                            })
-                                          ]
-                                        ),
-                                        _vm._v(
-                                          "\n                        Add Task\n                      "
-                                        )
-                                      ]
-                                    )
-                                  ]
-                                )
-                              ])
-                            ])
-                          ],
-                          2
-                        )
-                      ]
-                    )
+                            ],
+                            2
+                          )
+                        ]
+                      )
+                    ])
                   ])
                 ])
               }),
