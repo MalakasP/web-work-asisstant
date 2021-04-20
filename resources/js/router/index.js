@@ -96,6 +96,13 @@ const routes = [
         component: () =>
             import("../components/CreatedRequestsComponent.vue")
     },
+    {
+        path: "/worktimes",
+        name: "Worktimes",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/WorktimesComponent.vue")
+    },
     { 
         path: '*',
         component: () =>

@@ -103,43 +103,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
-function Task(_ref) {
+function Project(_ref) {
   var id = _ref.id,
       title = _ref.title,
       description = _ref.description,
-      date_till_done = _ref.date_till_done,
-      status = _ref.status,
-      priority = _ref.priority,
-      project_id = _ref.project_id,
-      reporter_id = _ref.reporter_id,
-      assignee_id = _ref.assignee_id,
+      author_id = _ref.author_id,
+      team_id = _ref.team_id,
       created_at = _ref.created_at,
-      updated_at = _ref.updated_at;
-  this.id = id;
-  this.title = title;
-  this.description = description;
-  this.date_till_done = date_till_done;
-  this.status = status;
-  this.priority = priority;
-  this.project_id = project_id;
-  this.reporter_id = reporter_id;
-  this.assignee_id = assignee_id;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
-
-function Project(_ref2) {
-  var id = _ref2.id,
-      title = _ref2.title,
-      description = _ref2.description,
-      author_id = _ref2.author_id,
-      team_id = _ref2.team_id,
-      created_at = _ref2.created_at,
-      updated_at = _ref2.updated_at,
-      tasks = _ref2.tasks;
+      updated_at = _ref.updated_at,
+      tasks = _ref.tasks;
   this.id = id;
   this.title = title;
   this.description = description;
@@ -150,11 +134,29 @@ function Project(_ref2) {
   this.tasks = tasks;
 }
 
+function Team(_ref2) {
+  var id = _ref2.id,
+      name = _ref2.name,
+      description = _ref2.description,
+      created_at = _ref2.created_at,
+      updated_at = _ref2.updated_at,
+      pivot = _ref2.pivot,
+      users = _ref2.users;
+  this.id = id;
+  this.name = name;
+  this.description = description;
+  this.created_at = created_at;
+  this.updated_at = updated_at;
+  this.pivot = pivot;
+  this.users = users;
+}
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       loaded: false,
       noTasks: false,
+      teams: {},
       projects: []
     };
   },
@@ -182,11 +184,41 @@ function Project(_ref2) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
+                return axios.get("api/" + "teams").then(function (response) {
+                  if (response.data != null) {
+                    _this.teams = {};
+                    response.data.teams.forEach(function (team) {
+                      if (team != null) {
+                        _this.teams[team.id] = new Team(team);
+                      }
+                    });
+                    _this.teams[0] = new Team({
+                      id: 0,
+                      name: "No Team",
+                      description: "",
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      pivot: {
+                        is_admin: true
+                      }
+                    });
+                    console.log(_this.teams);
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 2:
+                _context.next = 4;
                 return axios.get("api/" + "assignedTasks").then(function (response) {
                   if (response.data != null) {
                     _this.assignedTasks = [];
                     response.data.assignedTasks.forEach(function (project) {
                       if (project.hasOwnProperty("id")) {
+                        if (project.team_id == null) {
+                          project.team_id = 0;
+                        }
+
                         _this.projects.push(new Project(project));
                       } else if (project[0].project_id === null) {
                         _this.projects.push(new Project({
@@ -212,7 +244,7 @@ function Project(_ref2) {
                   }
                 });
 
-              case 2:
+              case 4:
               case "end":
                 return _context.stop();
             }
@@ -222,6 +254,30 @@ function Project(_ref2) {
     }
   }
 });
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-33281c28] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\r\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
 
 /***/ }),
 
@@ -983,6 +1039,36 @@ try {
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&":
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
 /***/ "./resources/js/components/AssignedTasksComponent.vue":
 /*!************************************************************!*\
   !*** ./resources/js/components/AssignedTasksComponent.vue ***!
@@ -996,15 +1082,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true& */ "./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true&");
 /* harmony import */ var _AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AssignedTasksComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& */ "./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
+;
 
 
 /* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__.default)(
   _AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
   _AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
   _AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
@@ -1035,6 +1123,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AssignedTasksComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
+/***/ "./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&":
+/*!*********************************************************************************************************************!*\
+  !*** ./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& ***!
+  \*********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&");
+
 
 /***/ }),
 
@@ -1081,11 +1182,28 @@ var render = function() {
               "div",
               _vm._l(_vm.projects, function(project) {
                 return _c("div", { key: project.id }, [
-                  _c("h5", { staticClass: "p-1 mt-3 text-left" }, [
-                    _vm._v(_vm._s(project.title))
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "card p-3" }, [
+                  _c("div", { staticClass: "card p-3 mt-3" }, [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "card-header bg-white justify-content-start"
+                      },
+                      [
+                        _c("div", { staticClass: "row" }, [
+                          _c("div", { staticClass: "col-2" }, [
+                            _c("h5", [_vm._v(_vm._s(project.title))])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-2" }, [
+                            _c("h6", [
+                              _vm._v(_vm._s(_vm.teams[project.team_id].name))
+                            ])
+                          ])
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
                     _c(
                       "table",
                       { staticClass: "table-striped w-100 d-block d-md-table" },

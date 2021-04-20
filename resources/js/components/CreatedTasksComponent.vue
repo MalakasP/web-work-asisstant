@@ -148,8 +148,17 @@
       <div class="col-12">
         <div class="card p-3" v-if="this.loaded">
           <div v-for="project in projects" :key="project.id">
-            <h5 class="text-left mt-3 p-1">{{ project.title }}</h5>
-            <div class="card p-3">
+            <div class="card p-3 mt-3">
+              <div class="card-header bg-white justify-content-start">
+                <div class="row">
+                  <div class="col-2">
+                    <h5>{{ project.title }}</h5>
+                  </div>
+                  <div class="col-2">
+                    <h6>{{ teams[project.team_id].name }}</h6>
+                  </div>
+                </div>
+              </div>
               <div class="table-responsive">
                 <table class="table-striped w-100 d-block d-md-table">
                   <thead v-if="project.tasks && project.tasks.length > 0">
@@ -265,7 +274,7 @@
           </div>
         </div>
         <div v-else class="row justify-content-center">
-          <div class="loader"></div>
+          <div class="loader mt-3"></div>
         </div>
       </div>
     </div>
@@ -275,32 +284,6 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
-
-function Task({
-  id,
-  title,
-  description,
-  date_till_done,
-  status,
-  priority,
-  project_id,
-  reporter_id,
-  assignee_id,
-  created_at,
-  updated_at,
-}) {
-  this.id = id;
-  this.title = title;
-  this.description = description;
-  this.date_till_done = date_till_done;
-  this.status = status;
-  this.priority = priority;
-  this.project_id = project_id;
-  this.reporter_id = reporter_id;
-  this.assignee_id = assignee_id;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
 
 function Project({
   id,
@@ -320,6 +303,16 @@ function Project({
   this.created_at = created_at;
   this.updated_at = updated_at;
   this.tasks = tasks;
+}
+
+function Team({ id, name, description, created_at, updated_at, pivot, users }) {
+  this.id = id;
+  this.name = name;
+  this.description = description;
+  this.created_at = created_at;
+  this.updated_at = updated_at;
+  this.pivot = pivot;
+  this.users = users;
 }
 
 export default {
@@ -345,6 +338,7 @@ export default {
       taskProject: null,
       projects: {},
       projectsUsers: {},
+      teams: {},
       form: {
         title: null,
         description: null,
@@ -396,21 +390,32 @@ export default {
           console.log(error);
         });
 
-      // await axios
-      //   .get(process.env.MIX_API_URL + "teams")
-      //   .then((response) => {
-      //     if (response.data != null) {
-      //       this.projectsUsers = {};
-      //       response.data.users.forEach((user) => {
-      //         if (user != null) {
-      //           this.projectsUsers[user.id] = user;
-      //         }
-      //       });
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
+      await axios
+        .get(process.env.MIX_API_URL + "teams")
+        .then((response) => {
+          if (response.data != null) {
+            this.teams = {};
+            response.data.teams.forEach((team) => {
+              if (team != null) {
+                this.teams[team.id] = new Team(team);
+              }
+            });
+            this.teams[0] = new Team({
+              id: 0,
+              name: "No Team",
+              description: "",
+              created_at: moment(),
+              updated_at: moment(),
+              pivot: {
+                is_admin: true,
+              },
+            });
+            console.log(this.teams);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
       await axios
         .get(
@@ -431,10 +436,14 @@ export default {
                 tasks: [],
               });
               response.data.createdProjects.forEach((project) => {
+                if(project.team_id == null) {
+                  project.team_id = 0;
+                }
                 this.projects[project.id] = new Project(project);
                 this.projects[project.id].tasks = [];
               });
             }
+            console.log(this.projects);
             //User might have rights to add tasks to the project if he is admin of the project
             // if (response.data.teamProjects != null) {
             //   response.data.teamProjects.forEach((project) => {
@@ -652,6 +661,13 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  min-height: 200px;
+  border: 0;
+  -webkit-box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);
+  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);
+}
+
 .to-capital-first {
   text-transform: capitalize;
 }

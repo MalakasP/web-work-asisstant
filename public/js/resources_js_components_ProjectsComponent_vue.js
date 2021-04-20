@@ -541,7 +541,6 @@ function User(_ref2) {
                         is_admin: true
                       }
                     });
-                    console.log(response.data.teams);
                   }
                 })["catch"](function (error) {
                   console.log(error);
@@ -2451,7 +2450,7 @@ var render = function() {
           ])
         ])
       : _c("div", { staticClass: "row justify-content-center" }, [
-          _c("div", { staticClass: "loader" })
+          _c("div", { staticClass: "loader mt-3" })
         ]),
     _vm._v(" "),
     this.teamProjects.length > 0

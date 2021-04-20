@@ -50,7 +50,7 @@
               <router-link class="nav-link" to="/teams">Teams</router-link>
             </li>
             <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/">Worktimes</router-link>
+              <router-link class="nav-link" to="/worktimes">Worktimes</router-link>
             </li>
             <li class="nav-item dropdown">
               <div

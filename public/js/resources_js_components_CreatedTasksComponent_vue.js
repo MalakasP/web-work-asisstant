@@ -313,43 +313,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
-function Task(_ref) {
+function Project(_ref) {
   var id = _ref.id,
       title = _ref.title,
       description = _ref.description,
-      date_till_done = _ref.date_till_done,
-      status = _ref.status,
-      priority = _ref.priority,
-      project_id = _ref.project_id,
-      reporter_id = _ref.reporter_id,
-      assignee_id = _ref.assignee_id,
+      author_id = _ref.author_id,
+      team_id = _ref.team_id,
       created_at = _ref.created_at,
-      updated_at = _ref.updated_at;
-  this.id = id;
-  this.title = title;
-  this.description = description;
-  this.date_till_done = date_till_done;
-  this.status = status;
-  this.priority = priority;
-  this.project_id = project_id;
-  this.reporter_id = reporter_id;
-  this.assignee_id = assignee_id;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
-
-function Project(_ref2) {
-  var id = _ref2.id,
-      title = _ref2.title,
-      description = _ref2.description,
-      author_id = _ref2.author_id,
-      team_id = _ref2.team_id,
-      created_at = _ref2.created_at,
-      updated_at = _ref2.updated_at,
-      tasks = _ref2.tasks;
+      updated_at = _ref.updated_at,
+      tasks = _ref.tasks;
   this.id = id;
   this.title = title;
   this.description = description;
@@ -358,6 +342,23 @@ function Project(_ref2) {
   this.created_at = created_at;
   this.updated_at = updated_at;
   this.tasks = tasks;
+}
+
+function Team(_ref2) {
+  var id = _ref2.id,
+      name = _ref2.name,
+      description = _ref2.description,
+      created_at = _ref2.created_at,
+      updated_at = _ref2.updated_at,
+      pivot = _ref2.pivot,
+      users = _ref2.users;
+  this.id = id;
+  this.name = name;
+  this.description = description;
+  this.created_at = created_at;
+  this.updated_at = updated_at;
+  this.pivot = pivot;
+  this.users = users;
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -399,6 +400,7 @@ function Project(_ref2) {
       taskProject: null,
       projects: {},
       projectsUsers: {},
+      teams: {},
       form: {
         title: null,
         description: null,
@@ -452,6 +454,32 @@ function Project(_ref2) {
 
               case 2:
                 _context.next = 4;
+                return axios.get("api/" + "teams").then(function (response) {
+                  if (response.data != null) {
+                    _this.teams = {};
+                    response.data.teams.forEach(function (team) {
+                      if (team != null) {
+                        _this.teams[team.id] = new Team(team);
+                      }
+                    });
+                    _this.teams[0] = new Team({
+                      id: 0,
+                      name: "No Team",
+                      description: "",
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      pivot: {
+                        is_admin: true
+                      }
+                    });
+                    console.log(_this.teams);
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 4:
+                _context.next = 6;
                 return axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
                   if (response.data != null) {
                     if (response.data.createdProjects != null) {
@@ -467,23 +495,28 @@ function Project(_ref2) {
                         tasks: []
                       });
                       response.data.createdProjects.forEach(function (project) {
+                        if (project.team_id == null) {
+                          project.team_id = 0;
+                        }
+
                         _this.projects[project.id] = new Project(project);
                         _this.projects[project.id].tasks = [];
                       });
-                    } //User might have rights to add tasks to the project if he is admin of the project
+                    }
+
+                    console.log(_this.projects); //User might have rights to add tasks to the project if he is admin of the project
                     // if (response.data.teamProjects != null) {
                     //   response.data.teamProjects.forEach((project) => {
                     //     this.teamProjects.push(project);
                     //   });
                     // }
-
                   }
                 })["catch"](function (error) {
                   console.log(error);
                 });
 
-              case 4:
-                _context.next = 6;
+              case 6:
+                _context.next = 8;
                 return axios.get("api/" + "createdTasks").then(function (response) {
                   if (response.data != null) {
                     response.data.createdTasks.forEach(function (project) {
@@ -505,7 +538,7 @@ function Project(_ref2) {
                   _this.loaded = true;
                 });
 
-              case 6:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -747,7 +780,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 50vh;\r\n  overflow-y: auto;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-bb265d88] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 50vh;\r\n  overflow-y: auto;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -2041,11 +2074,28 @@ var render = function() {
               { staticClass: "card p-3" },
               _vm._l(_vm.projects, function(project) {
                 return _c("div", { key: project.id }, [
-                  _c("h5", { staticClass: "text-left mt-3 p-1" }, [
-                    _vm._v(_vm._s(project.title))
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "card p-3" }, [
+                  _c("div", { staticClass: "card p-3 mt-3" }, [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "card-header bg-white justify-content-start"
+                      },
+                      [
+                        _c("div", { staticClass: "row" }, [
+                          _c("div", { staticClass: "col-2" }, [
+                            _c("h5", [_vm._v(_vm._s(project.title))])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-2" }, [
+                            _c("h6", [
+                              _vm._v(_vm._s(_vm.teams[project.team_id].name))
+                            ])
+                          ])
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
                     _c("div", { staticClass: "table-responsive" }, [
                       _c(
                         "table",
@@ -2287,7 +2337,7 @@ var render = function() {
               0
             )
           : _c("div", { staticClass: "row justify-content-center" }, [
-              _c("div", { staticClass: "loader" })
+              _c("div", { staticClass: "loader mt-3" })
             ])
       ])
     ])

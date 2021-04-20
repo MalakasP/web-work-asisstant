@@ -460,6 +460,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -853,6 +869,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.editTeamForm.name = this.team.name;
       this.editTeamForm.description = this.team.description;
       this.$store.commit("setErrors", {});
+    },
+    goBack: function goBack() {
+      this.$router.push({
+        name: "Teams"
+      });
     }
   }
 });
@@ -900,7 +921,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-4916dec5] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-4916dec5] {\r\n  width: 100%;\n}\n.min-height[data-v-4916dec5] {\r\n  min-height: 50px;\n}\n.to-capital-first[data-v-4916dec5] {\r\n  text-transform: capitalize;\n}\nthead tr[data-v-4916dec5],\r\ntbody tr[data-v-4916dec5] {\r\n  line-height: 40px;\n}\n.card-header[data-v-4916dec5] {\r\n  border: none;\r\n  padding-top: .75rem;\r\n  padding-left: 1.25rem;\r\n  padding-right: 1.25rem;\r\n  padding-bottom:0;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-4916dec5] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-4916dec5] {\r\n  width: 100%;\n}\n.min-height[data-v-4916dec5] {\r\n  min-height: 50px;\n}\n.to-capital-first[data-v-4916dec5] {\r\n  text-transform: capitalize;\n}\nthead tr[data-v-4916dec5],\r\ntbody tr[data-v-4916dec5] {\r\n  line-height: 40px;\n}\n.card-header[data-v-4916dec5] {\r\n  border: none;\r\n  padding-top: 0.75rem;\r\n  padding-left: 1.25rem;\r\n  padding-right: 1.25rem;\r\n  padding-bottom: 0;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -2229,16 +2250,46 @@ var render = function() {
             _c("div", { staticClass: "card mt-5" }, [
               _c("div", { staticClass: "card-header bg-white" }, [
                 _c("div", { staticClass: "row justify-content-between" }, [
-                  _c(
-                    "div",
-                    { staticClass: "col-4" },
-                    [
-                      _c("router-link", { attrs: { to: "/teams" } }, [
-                        _vm._v("Back")
-                      ])
-                    ],
-                    1
-                  ),
+                  _c("div", { staticClass: "col-4" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.goBack()
+                          }
+                        }
+                      },
+                      [
+                        _c("span", { staticClass: "icon is-small" }, [
+                          _c(
+                            "svg",
+                            {
+                              staticClass: "bi bi-arrow-left",
+                              attrs: {
+                                xmlns: "http://www.w3.org/2000/svg",
+                                width: "16",
+                                height: "16",
+                                fill: "currentColor",
+                                viewBox: "0 0 16 16"
+                              }
+                            },
+                            [
+                              _c("path", {
+                                attrs: {
+                                  "fill-rule": "evenodd",
+                                  d:
+                                    "M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+                                }
+                              })
+                            ]
+                          )
+                        ])
+                      ]
+                    )
+                  ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-4" }, [
                     _c(
@@ -2949,7 +3000,7 @@ var render = function() {
       : this.loaded && this.error
       ? _c("div", [_c("not-found-component")], 1)
       : _c("div", { staticClass: "row justify-content-center" }, [
-          _c("div", { staticClass: "loader" })
+          _c("div", { staticClass: "loader mt-3" })
         ])
   ])
 }

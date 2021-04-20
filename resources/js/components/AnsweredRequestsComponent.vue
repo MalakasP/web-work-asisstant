@@ -135,7 +135,7 @@
       </div>
     </div>
     <div v-else class="row justify-content-center">
-      <div class="loader"></div>
+      <div class="loader mt-3"></div>
     </div>
   </div>
 </template>

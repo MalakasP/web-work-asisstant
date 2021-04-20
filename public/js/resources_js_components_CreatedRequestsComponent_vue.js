@@ -550,8 +550,7 @@ function User(_ref2) {
         }, _callee2);
       }))();
     },
-    update: function update() {},
-    create: function create() {
+    update: function update() {
       var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
@@ -563,15 +562,15 @@ function User(_ref2) {
                 _this4.form.date_from = _this4.range.start;
                 _this4.form.date_to = _this4.range.end;
                 _context3.next = 5;
-                return axios.post("api/" + "requests", _this4.form).then(function (response) {
+                return axios.put("api/" + "requests/" + _this4.edit.id, _this4.form).then(function (response) {
                   if (response.data != null) {
                     _this4.modal = false;
 
-                    if (_this4.createdRequests.data.length < 1) {
-                      _this4.fetchRequestsData();
-                    } else {
-                      _this4.createdRequests.data.push(response.data.new_request);
-                    }
+                    var requestIndex = _this4.createdRequests.data.findIndex(function (request) {
+                      return request.id == _this4.edit.id;
+                    });
+
+                    _this4.createdRequests.data[requestIndex] = response.data.request;
 
                     _this4.$notify({
                       group: "app",
@@ -602,7 +601,7 @@ function User(_ref2) {
         }, _callee3);
       }))();
     },
-    "delete": function _delete(requestId) {
+    create: function create() {
       var _this5 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
@@ -610,20 +609,69 @@ function User(_ref2) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _context4.next = 2;
+                _this5.form.requester_id = _this5.user.id;
+                _this5.form.date_from = _this5.range.start;
+                _this5.form.date_to = _this5.range.end;
+                _context4.next = 5;
+                return axios.post("api/" + "requests", _this5.form).then(function (response) {
+                  if (response.data != null) {
+                    _this5.modal = false;
+
+                    if (_this5.createdRequests.data.length < 1) {
+                      _this5.fetchRequestsData();
+                    } else {
+                      _this5.createdRequests.data.push(response.data.new_request);
+                    }
+
+                    _this5.$notify({
+                      group: "app",
+                      title: "Success!",
+                      type: "success",
+                      text: response.data.message
+                    });
+                  }
+                })["catch"](function (error) {
+                  if (error.response.status == 422) {
+                    _this5.$store.commit("setErrors", error.response.data.errors);
+                  } else if (error.response.status == 403) {
+                    _this5.modal = false;
+
+                    _this5.$alert(error.response.data.message, "Warning", "error");
+                  } else {
+                    _this5.modal = false;
+
+                    _this5.$alert("Something went wrong.", "Warning", "error");
+                  }
+                });
+
+              case 5:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }))();
+    },
+    "delete": function _delete(requestId) {
+      var _this6 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _context5.next = 2;
                 return axios["delete"]("api/" + "requests/" + requestId).then(function (response) {
                   if (response.data != null) {
-                    var requestIndex = _this5.createdRequests.data.findIndex(function (request) {
+                    var requestIndex = _this6.createdRequests.data.findIndex(function (request) {
                       return request.id == requestId;
                     });
 
-                    console.log(requestIndex);
+                    _this6.createdRequests.data.splice(requestIndex, 1);
 
-                    _this5.createdRequests.data.splice(requestIndex, 1);
+                    _this6.$forceUpdate();
 
-                    _this5.$forceUpdate();
-
-                    _this5.$notify({
+                    _this6.$notify({
                       group: "app",
                       title: "Success!",
                       type: "success",
@@ -634,18 +682,18 @@ function User(_ref2) {
                   console.log(error);
 
                   if (error.response.status == 403) {
-                    _this5.$alert(error.response.data.error, "Forbidden", "error");
+                    _this6.$alert(error.response.data.error, "Forbidden", "error");
                   } else {
-                    _this5.$alert(error.response.data.status, "Warning", "error");
+                    _this6.$alert(error.response.data.status, "Warning", "error");
                   }
                 });
 
               case 2:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4);
+        }, _callee5);
       }))();
     },
     startCreate: function startCreate() {
@@ -677,11 +725,11 @@ function User(_ref2) {
       this.form.team_id = request.team_id;
     },
     startDelete: function startDelete(request) {
-      var _this6 = this;
+      var _this7 = this;
 
       this.$store.commit("setErrors", {});
       this.$confirm("Are You sure?", "Confirm Remove", "error").then(function () {
-        _this6["delete"](request.id);
+        _this7["delete"](request.id);
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2517,7 +2565,7 @@ var render = function() {
           ])
         ])
       : _c("div", { staticClass: "row justify-content-center" }, [
-          _c("div", { staticClass: "loader" })
+          _c("div", { staticClass: "loader mt-3" })
         ])
   ])
 }

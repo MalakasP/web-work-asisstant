@@ -300,7 +300,7 @@
       </div>
     </div>
     <div v-else class="row justify-content-center">
-      <div class="loader"></div>
+      <div class="loader mt-3"></div>
     </div>
   </div>
 </template>
@@ -472,7 +472,40 @@ export default {
         });
     },
 
-    update() {},
+    async update() {
+      this.form.requester_id = this.user.id;
+      this.form.date_from = this.range.start;
+      this.form.date_to = this.range.end;
+
+       await axios
+        .put(process.env.MIX_API_URL + "requests/" + this.edit.id, this.form)
+        .then((response) => {
+          if (response.data != null) {
+            this.modal = false;
+             let requestIndex = this.createdRequests.data.findIndex(
+              (request) => request.id == this.edit.id
+            );
+            this.createdRequests.data[requestIndex] = response.data.request;
+            this.$notify({
+              group: "app",
+              title: "Success!",
+              type: "success",
+              text: response.data.message,
+            });
+          }
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.$store.commit("setErrors", error.response.data.errors);
+          } else if (error.response.status == 403) {
+            this.modal = false;
+            this.$alert(error.response.data.message, "Warning", "error");
+          } else {
+            this.modal = false;
+            this.$alert("Something went wrong.", "Warning", "error");
+          }
+        });
+    },
 
     async create() {
       this.form.requester_id = this.user.id;
@@ -518,7 +551,6 @@ export default {
             let requestIndex = this.createdRequests.data.findIndex(
               (request) => request.id == requestId
             );
-            console.log(requestIndex);
             this.createdRequests.data.splice(requestIndex, 1);
             this.$forceUpdate();
             this.$notify({

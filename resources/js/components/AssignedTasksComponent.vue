@@ -5,8 +5,17 @@
       <div class="card p-3 m-b-3">
         <div v-if="!this.noTasks">
           <div v-for="project in projects" :key="project.id">
-            <h5 class="p-1 mt-3 text-left">{{ project.title }}</h5>
-            <div class="card p-3">
+            <div class="card p-3 mt-3">
+              <div class="card-header bg-white justify-content-start">
+                <div class="row">
+                  <div class="col-2">
+                    <h5>{{ project.title }}</h5>
+                  </div>
+                  <div class="col-2">
+                    <h6>{{ teams[project.team_id].name }}</h6>
+                  </div>
+                </div>
+              </div>
               <table class="table-striped w-100 d-block d-md-table">
                 <thead>
                   <tr>
@@ -66,32 +75,6 @@
 import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
 
-function Task({
-  id,
-  title,
-  description,
-  date_till_done,
-  status,
-  priority,
-  project_id,
-  reporter_id,
-  assignee_id,
-  created_at,
-  updated_at,
-}) {
-  this.id = id;
-  this.title = title;
-  this.description = description;
-  this.date_till_done = date_till_done;
-  this.status = status;
-  this.priority = priority;
-  this.project_id = project_id;
-  this.reporter_id = reporter_id;
-  this.assignee_id = assignee_id;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
-
 function Project({
   id,
   title,
@@ -112,11 +95,22 @@ function Project({
   this.tasks = tasks;
 }
 
+function Team({ id, name, description, created_at, updated_at, pivot, users }) {
+  this.id = id;
+  this.name = name;
+  this.description = description;
+  this.created_at = created_at;
+  this.updated_at = updated_at;
+  this.pivot = pivot;
+  this.users = users;
+}
+
 export default {
   data: function () {
     return {
       loaded: false,
       noTasks: false,
+      teams: {},
       projects: [],
     };
   },
@@ -140,12 +134,42 @@ export default {
   methods: {
     async read() {
       await axios
+        .get(process.env.MIX_API_URL + "teams")
+        .then((response) => {
+          if (response.data != null) {
+            this.teams = {};
+            response.data.teams.forEach((team) => {
+              if (team != null) {
+                this.teams[team.id] = new Team(team);
+              }
+            });
+            this.teams[0] = new Team({
+              id: 0,
+              name: "No Team",
+              description: "",
+              created_at: moment(),
+              updated_at: moment(),
+              pivot: {
+                is_admin: true,
+              },
+            });
+            console.log(this.teams);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      await axios
         .get(process.env.MIX_API_URL + "assignedTasks")
         .then((response) => {
           if (response.data != null) {
             this.assignedTasks = [];
             response.data.assignedTasks.forEach((project) => {
               if (project.hasOwnProperty("id")) {
+                if(project.team_id == null) {
+                  project.team_id = 0;
+                }
                 this.projects.push(new Project(project));
               } else if (project[0].project_id === null) {
                 this.projects.push(
@@ -178,4 +202,10 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  min-height: 200px;
+  border: 0;
+  -webkit-box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);
+  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);
+}
 </style>

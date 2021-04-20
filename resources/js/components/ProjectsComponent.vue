@@ -339,7 +339,7 @@
       </div>
     </div>
     <div v-else class="row justify-content-center">
-      <div class="loader"></div>
+      <div class="loader mt-3"></div>
     </div>
     <div class="row justify-content-center" v-if="this.teamProjects.length > 0">
       <div class="col-12 card mt-3">
@@ -475,8 +475,6 @@ export default {
                 is_admin: true,
               },
             });
-
-            console.log(response.data.teams);
           }
         })
         .catch((error) => {

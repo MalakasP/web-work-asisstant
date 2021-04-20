@@ -1991,7 +1991,7 @@ var render = function() {
           ])
         ])
       : _c("div", { staticClass: "row justify-content-center" }, [
-          _c("div", { staticClass: "loader" })
+          _c("div", { staticClass: "loader mt-3" })
         ])
   ])
 }

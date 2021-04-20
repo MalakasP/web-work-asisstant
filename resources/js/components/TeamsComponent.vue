@@ -89,7 +89,7 @@
       <h4 class="p-3 text-center">You are not included in any team.</h4>
     </div>
     <div v-else class="row justify-content-center">
-      <div class="loader"></div>
+      <div class="loader mt-3"></div>
     </div>
   </div>
 </template>
