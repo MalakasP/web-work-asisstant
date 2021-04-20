@@ -98,7 +98,7 @@
     >
       <div class="container">
         <div class="card mt-5">
-          <div class="card-header">
+          <div class="card-header bg-white">
             <div class="row justify-content-between">
               <div class="col-4">
                 <router-link to="/teams">Back</router-link>
@@ -737,6 +737,9 @@ tbody tr {
 
 .card-header {
   border: none;
-  background-color: white;
+  padding-top: .75rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-bottom:0;
 }
 </style>

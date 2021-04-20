@@ -29,7 +29,8 @@ class CreateRequestRequest extends FormRequest
             'description' => ['required', 'string', 'max:191'],
             'type' => ['required', 'string', 'max:191'],
             'requester_id' => ['required', 'integer', 'numeric'],
-            'responser_id' => ['required', 'integer', 'numeric']
+            'responser_id' => ['required', 'integer', 'numeric'],
+            'team_id' => ['required', 'integer', 'numeric']
         ];
     }
 }

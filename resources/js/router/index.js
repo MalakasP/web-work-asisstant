@@ -83,6 +83,13 @@ const routes = [
             import("../components/GottenRequestsComponent.vue")
     },
     {
+        path: "/answeredRequests",
+        name: "AnsweredRequests",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/AnsweredRequestsComponent.vue")
+    },
+    {
         path: "/createdRequests",
         name: "CreatedRequests",
         beforeEnter: auth,

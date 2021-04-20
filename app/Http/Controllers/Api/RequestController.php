@@ -57,16 +57,16 @@ class RequestController extends Controller
      */
     public function getAnsweredRequests()
     {
-        $gottenRequests = Auth::user()->gottenRequests()->whereNotNull('confirmed_at')->paginate(10);
+        $answeredRequests = Auth::user()->gottenRequests()->whereNotNull('confirmed_at')->paginate(10);
 
-        if ($gottenRequests->isEmpty()) {
+        if ($answeredRequests->isEmpty()) {
             return response()->json([
                 'message' => 'No requests found!'
             ], 404);
         }
 
         return response()->json([
-            'gottenRequests' => $gottenRequests
+            'answeredRequests' => $answeredRequests
         ]);
     }
 

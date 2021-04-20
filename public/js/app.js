@@ -2391,6 +2391,13 @@ var routes = [{
     return __webpack_require__.e(/*! import() */ "resources_js_components_GottenRequestsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/GottenRequestsComponent.vue */ "./resources/js/components/GottenRequestsComponent.vue"));
   }
 }, {
+  path: "/answeredRequests",
+  name: "AnsweredRequests",
+  beforeEnter: auth,
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_AnsweredRequestsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/AnsweredRequestsComponent.vue */ "./resources/js/components/AnsweredRequestsComponent.vue"));
+  }
+}, {
   path: "/createdRequests",
   name: "CreatedRequests",
   beforeEnter: auth,
@@ -81329,7 +81336,7 @@ var index = {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_TeamComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_GottenRequestsComponent_vue":1,"resources_js_components_CreatedRequestsComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_TeamComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_GottenRequestsComponent_vue":1,"resources_js_components_AnsweredRequestsComponent_vue":1,"resources_js_components_CreatedRequestsComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

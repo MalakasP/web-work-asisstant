@@ -22,7 +22,8 @@ class Request extends Model
         'is_confirmed',
         'confirmed_at',
         'requester_id',
-        'responser_id'
+        'responser_id',
+        'team_id'
     ];
 
     /**

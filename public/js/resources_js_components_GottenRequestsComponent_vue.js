@@ -156,6 +156,77 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -348,47 +419,32 @@ function User(_ref3) {
         }, _callee2);
       }))();
     },
-    confirm: function confirm(request) {
+    fetchAnsweredRequestsData: function fetchAnsweredRequestsData(page) {
       var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
-        var data;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                data = {
-                  is_confirmed: true,
-                  confirmed_at: moment__WEBPACK_IMPORTED_MODULE_1___default()()
-                };
-                console.log(request.id, data);
-                _context3.next = 4;
-                return axios.put("api/" + "requests/" + request.id, data).then(function (response) {
+                _context3.next = 2;
+                return axios.get("api/" + "getAnsweredRequests?page=" + page).then(function (response) {
                   if (response.data != null) {
-                    var requestIndex = _this3.gottenRequests.data.findIndex(function (gottenRequest) {
-                      gottenRequest.id == request.id;
-                    });
-
-                    _this3.gottenRequests.data.splice(requestIndex, 1);
-
-                    _this3.$notify({
-                      group: "app",
-                      title: "Success!",
-                      type: "success",
-                      text: "Request was confirmed!"
-                    });
+                    _this3.answeredRequests = {};
+                    _this3.answeredRequests = response.data.answeredRequests;
                   }
                 })["catch"](function (error) {
-                  if (error.response) {
-                    if (error.response.status == 403) {
-                      _this3.$alert(error.response.message, "Warning", "error");
-                    } else {
-                      _this3.$alert("Something went wrong", "Warning", "error");
-                    }
+                  if (error.response.status == 404) {
+                    _this3.$notify({
+                      group: "app",
+                      title: "Error!",
+                      type: "error",
+                      text: "You do not have answered requests!"
+                    });
                   }
                 });
 
-              case 4:
+              case 2:
               case "end":
                 return _context3.stop();
             }
@@ -396,7 +452,7 @@ function User(_ref3) {
         }, _callee3);
       }))();
     },
-    reject: function reject(request) {
+    confirm: function confirm(request) {
       var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
@@ -406,7 +462,7 @@ function User(_ref3) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 data = {
-                  is_confirmed: false,
+                  is_confirmed: true,
                   confirmed_at: moment__WEBPACK_IMPORTED_MODULE_1___default()()
                 };
                 console.log(request.id, data);
@@ -423,7 +479,7 @@ function User(_ref3) {
                       group: "app",
                       title: "Success!",
                       type: "success",
-                      text: "Request was rejected!"
+                      text: "Request was confirmed!"
                     });
                   }
                 })["catch"](function (error) {
@@ -442,6 +498,74 @@ function User(_ref3) {
             }
           }
         }, _callee4);
+      }))();
+    },
+    reject: function reject(request) {
+      var _this5 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
+        var data;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                data = {
+                  is_confirmed: false,
+                  confirmed_at: moment__WEBPACK_IMPORTED_MODULE_1___default()()
+                };
+                console.log(request.id, data);
+                _context5.next = 4;
+                return axios.put("api/" + "requests/" + request.id, data).then(function (response) {
+                  if (response.data != null) {
+                    var requestIndex = _this5.gottenRequests.data.findIndex(function (gottenRequest) {
+                      gottenRequest.id == request.id;
+                    });
+
+                    _this5.gottenRequests.data.splice(requestIndex, 1);
+
+                    _this5.$notify({
+                      group: "app",
+                      title: "Success!",
+                      type: "success",
+                      text: "Request was rejected!"
+                    });
+                  }
+                })["catch"](function (error) {
+                  if (error.response) {
+                    if (error.response.status == 403) {
+                      _this5.$alert(error.response.message, "Warning", "error");
+                    } else {
+                      _this5.$alert("Something went wrong", "Warning", "error");
+                    }
+                  }
+                });
+
+              case 4:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5);
+      }))();
+    },
+    history: function history() {
+      var _this6 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _this6.$router.push({
+                  name: "AnsweredRequests"
+                });
+
+              case 1:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6);
       }))();
     }
   }
@@ -466,7 +590,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-480f9626] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-480f9626] {\r\n  width: 100%;\n}\n.input-sm[data-v-480f9626] {\r\n  height: calc(2.15rem + 2px);\n}\n.modal-body[data-v-480f9626] {\r\n  position: relative;\r\n  flex: 1 1 auto;\r\n  padding: 1rem;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-480f9626] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.card-header[data-v-480f9626] {\r\n  border: none;\r\n  padding-top: .75rem;\r\n  padding-left: 1.25rem;\r\n  padding-right: 1.25rem;\r\n  padding-bottom:0;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1552,9 +1676,68 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _vm.gottenRequests.data.length && this.loaded
+    _vm.gottenRequests.data.length > 0 && this.loaded
       ? _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "col-12 card mt-3" }, [
+            _c("div", { staticClass: "card-header bg-white" }, [
+              _c("div", { staticClass: "row justify-content-end" }, [
+                _c("div", { staticClass: "col-4" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary float-right",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          return _vm.history()
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { staticClass: "icon is-small" }, [
+                        _c(
+                          "svg",
+                          {
+                            staticClass: "bi bi-clock-history",
+                            attrs: {
+                              xmlns: "http://www.w3.org/2000/svg",
+                              width: "16",
+                              height: "16",
+                              fill: "currentColor",
+                              viewBox: "0 0 16 16"
+                            }
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"
+                              }
+                            })
+                          ]
+                        )
+                      ]),
+                      _vm._v("\n              History\n            ")
+                    ]
+                  )
+                ])
+              ])
+            ]),
+            _vm._v(" "),
             _c("div", { staticClass: "card-body text-center" }, [
               _c("h3", { staticClass: "card-title" }, [
                 _vm._v("Gotten Requests")
@@ -1743,7 +1926,70 @@ var render = function() {
           ])
         ])
       : this.loaded
-      ? _c("div", { staticClass: "row justify-content-center" }, [_vm._m(1)])
+      ? _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12 card mt-3" }, [
+            _c("div", { staticClass: "card-header bg-white" }, [
+              _c("div", { staticClass: "row justify-content-end" }, [
+                _c("div", { staticClass: "col-4" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary float-right",
+                      staticStyle: { margin: "1px" },
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          return _vm.history()
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { staticClass: "icon is-small" }, [
+                        _c(
+                          "svg",
+                          {
+                            staticClass: "bi bi-clock-history",
+                            attrs: {
+                              xmlns: "http://www.w3.org/2000/svg",
+                              width: "16",
+                              height: "16",
+                              fill: "currentColor",
+                              viewBox: "0 0 16 16"
+                            }
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"
+                              }
+                            })
+                          ]
+                        )
+                      ])
+                    ]
+                  )
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _vm._m(1)
+          ])
+        ])
       : _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "loader" })
         ])
@@ -1774,15 +2020,13 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-12 card mt-3" }, [
-      _c("div", { staticClass: "card-body text-center" }, [
-        _c("h3", { staticClass: "card-title" }, [_vm._v("Gotten Requests")]),
-        _vm._v(" "),
-        _c("h5", { staticClass: "card-text" }, [
-          _vm._v(
-            "\n          You have no active requests from team members.\n        "
-          )
-        ])
+    return _c("div", { staticClass: "card-body text-center" }, [
+      _c("h3", { staticClass: "card-title" }, [_vm._v("Gotten Requests")]),
+      _vm._v(" "),
+      _c("h5", { staticClass: "card-text" }, [
+        _vm._v(
+          "\n          You have no active requests from team members.\n        "
+        )
       ])
     ])
   }

@@ -23,6 +23,7 @@ class CreateRequestsTable extends Migration
             $table->timestamp('confirmed_at')->default(null);
             $table->unsignedBigInteger('requester_id');
             $table->unsignedBigInteger('responser_id');
+            $table->unsignedBigInteger('team_id');
             $table->timestamps();
         });
 
@@ -32,6 +33,9 @@ class CreateRequestsTable extends Migration
             
             $table->foreign('responser_id')
                 ->references('id')->on('users')->onDelete('cascade');
+
+            $table->foreign('team_id')
+            ->references('id')->on('teams')->onDelete('cascade');
         });
     }
 
@@ -45,8 +49,10 @@ class CreateRequestsTable extends Migration
         Schema::table('requests', function (Blueprint $table) {
             $table->dropForeign(['requester_id']);
             $table->dropForeign(['responser_id']);
+            $table->dropForeign(['team_id']);
             $table->dropColumn('requester_id');
             $table->dropColumn('responser_id');
+            $table->dropColumn('team_id');
         });
 
         Schema::dropIfExists('requests');
