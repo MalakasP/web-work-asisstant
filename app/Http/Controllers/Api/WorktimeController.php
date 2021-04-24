@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateWorktimeRequest;
+use App\Http\Requests\GetWorktimesRequest;
 use App\Http\Requests\UpdateWorktimeRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -12,22 +13,27 @@ use App\Models\Team;
 use App\Models\User;
 use App\Services\WorktimeService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
 
 class WorktimeController extends Controller
 {
     /**
      * Display a listing of the worktimes.
      *
-     * @param Illuminate\Http\Request
+     * @param \App\Http\Requests\GetWorktimesRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(GetWorktimesRequest $request)
     {
-        $this->validator($request->all())->validate();
+        $request->validated();
 
         if ($request->has('date')) {
             $worktimes = Auth::user()->worktimes()->whereDate('created_at', date('Y-m-d', strtotime($request->date)))->get();
+        } else if ($request->has('from') && $request->has('to')) {
+            $from = date('Y-m-d', strtotime($request->from));
+            $to = date('Y-m-d', strtotime($request->to));
+            $worktimes = Auth::user()->worktimes()->whereBetween('created_at', [$from, $to])->get()->groupBy(function ($worktime) {
+                return Carbon::parse($worktime->created_at)->format('Y-m-d');
+            });
         } else {
             $worktimes = Auth::user()->worktimes;
         }
@@ -117,7 +123,7 @@ class WorktimeController extends Controller
                 'message' => 'You do not have rights to do this!'
             ], 403);
         }
-        
+
         if (!$request->has('duration')) {
             $endTime = Carbon::parse($request->end_time)->toDateTimeString();
             $duration = WorktimeService::calculateTime($worktime->created_at, $endTime);
@@ -125,7 +131,7 @@ class WorktimeController extends Controller
             $duration = $request->validated()['duration'];
             $duration = gmdate("H:i", $duration);
         }
-        
+
         if (strtotime($duration) - strtotime('TODAY') == 0) {
             return response()->json([
                 'message' => 'You have worked less than 15 minutes after You started working.'
@@ -171,19 +177,6 @@ class WorktimeController extends Controller
         return response()->json([
             'worktime' => $worktime,
             'message' => 'Worktime deleted successfully!'
-        ]);
-    }
-
-    /**
-     * Get a validator for an incoming index worktime request.
-     *
-     * @param  array  $data
-     * @return Illuminate\Support\Facades\Validator;
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'date' => ['date'],
         ]);
     }
 }

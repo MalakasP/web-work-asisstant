@@ -12,6 +12,7 @@ Vue.use(VueSimpleAlert);
 Vue.use(Notifications);
 Vue.use(VCalendar);
 
+
 Vue.config.productionTip = false;
 
 axios.interceptors.response.use(

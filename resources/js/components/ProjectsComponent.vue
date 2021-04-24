@@ -497,9 +497,12 @@ export default {
 
             if (response.data.teamProjects != null) {
               response.data.teamProjects.forEach((project) => {
-                this.teamProjects.push(project);
+                if(project != null) {
+                  this.teamProjects.push(project);
+                }
               });
             }
+            console.log(this.teamProjects);
             this.loaded = true;
           }
         })

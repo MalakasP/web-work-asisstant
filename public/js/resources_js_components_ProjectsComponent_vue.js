@@ -561,10 +561,13 @@ function User(_ref2) {
 
                     if (response.data.teamProjects != null) {
                       response.data.teamProjects.forEach(function (project) {
-                        _this.teamProjects.push(project);
+                        if (project != null) {
+                          _this.teamProjects.push(project);
+                        }
                       });
                     }
 
+                    console.log(_this.teamProjects);
                     _this.loaded = true;
                   }
                 })["catch"](function (error) {

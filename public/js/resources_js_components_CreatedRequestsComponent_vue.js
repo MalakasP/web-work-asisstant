@@ -435,12 +435,10 @@ function User(_ref2) {
       return admins;
     },
     teamsAdmin: function teamsAdmin() {
-      var teamAdmins = Object.keys(this.adminOfTeams); // console.log(teamAdmins);
-
+      var teamAdmins = Object.keys(this.adminOfTeams);
       var adminTeams = Object.values(this.teams).filter(function (team) {
         return teamAdmins.indexOf(team.id.toString()) > -1;
       });
-      console.log(adminTeams);
       return adminTeams;
     }
   }),

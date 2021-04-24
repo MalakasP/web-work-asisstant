@@ -12,10 +12,7 @@
                   <button
                     type="button"
                     class="close"
-                    @click="
-                      editTask = null;
-                      modal = false;
-                    "
+                    @click="closeModal()"
                   >
                     <span aria-hidden="true">&times; </span>
                   </button>
@@ -33,27 +30,18 @@
                       {{ errors.title }}
                     </div>
                   </div>
-                  <div class="form-group">
-                    <label>Enter Description</label>
-                    <textarea
-                      class="form-control"
-                      :class="{ 'is-invalid': errors.description }"
-                      v-model="form.description"
-                      rows="3"
-                    ></textarea>
-                    <div class="invalid-feedback" v-if="errors.description">
-                      {{ errors.description }}
-                    </div>
-                  </div>
                   <div class="form-group row">
                     <div class="form-group col-md-6">
-                      <label>Enter Deadline</label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        :class="{ 'is-invalid': errors.date_till_done }"
-                        v-model="form.date_till_done"
-                      />
+                      <label>Select Deadline</label> <br/>
+                      <v-date-picker v-model="form.date_till_done" mode="date" :masks="masks">
+                        <template v-slot="{ inputValue, inputEvents }">
+                          <input
+                            class="px-2 py-1 border rounded focus:outline-none focus:border-blue-300"
+                            :value="inputValue"
+                            v-on="inputEvents"
+                          />
+                        </template>
+                      </v-date-picker>
                       <div
                         class="invalid-feedback"
                         v-if="errors.date_till_done"
@@ -69,7 +57,7 @@
                         v-model="form.assignee_id"
                       >
                         <option
-                          v-for="user in this.projectsUsers"
+                          v-for="user in this.teams[selectedProjectTeam].users"
                           :value="user.id"
                           :key="user.id"
                         >
@@ -119,6 +107,18 @@
                       <div class="invalid-feedback" v-if="errors.priority">
                         {{ errors.priority }}
                       </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Enter Description</label>
+                    <textarea
+                      class="form-control"
+                      :class="{ 'is-invalid': errors.description }"
+                      v-model="form.description"
+                      rows="3"
+                    ></textarea>
+                    <div class="invalid-feedback" v-if="errors.description">
+                      {{ errors.description }}
                     </div>
                   </div>
                   <div align="center">
@@ -190,7 +190,7 @@
                           type="button"
                           style="margin: 1px"
                           class="btn btn-primary"
-                          @click="startEdit(task)"
+                          @click="startEdit(task, project.team_id)"
                         >
                           <span class="icon is-small">
                             <svg
@@ -351,6 +351,10 @@ export default {
         created_at: null,
         updated_at: null,
       },
+      selectedProjectTeam: null,
+      masks: {
+        input: 'YYYY-MM-DD'
+      }
     };
   },
   computed: {
@@ -409,6 +413,7 @@ export default {
               pivot: {
                 is_admin: true,
               },
+              users: [this.user],
             });
             console.log(this.teams);
           }
@@ -559,10 +564,12 @@ export default {
         .catch((error) => {
           console.log(error);
           if (error.response) {
+            console.log(error);
             if (error.response.status != 422) {
               this.modal = false;
               this.$alert(error.response.data.status, "Warning", "error");
             } else {
+              console.log(error);
               this.$store.commit("setErrors", error.response.data.errors);
             }
           }
@@ -623,19 +630,20 @@ export default {
       this.form.date_till_done = moment().format("YYYY-MM-DD");
       this.form.status = this.statuses[1].val;
       this.form.priority = this.priorities[1].val;
+      this.selectedProjectTeam = project.team_id;
       this.form.project_id = this.projects[project.id].id;
       this.form.reporter_id = this.user.id;
       this.form.assignee_id = this.projectsUsers[1].id;
     },
 
-    startEdit(task) {
+    startEdit(task, projectTeamId) {
       this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "Edit Task";
       this.editTask = task;
       this.form.title = task.title;
       this.form.description = task.description;
-      this.form.date_till_done = task.date_till_done;
+      this.form.date_till_done = moment(task.date_till_done).format("YYYY-MM-DD");
       this.form.status = task.status;
       this.form.priority = task.priority;
       if (task.project_id != null) {
@@ -643,7 +651,7 @@ export default {
       } else {
         this.form.project_id = this.projects[0].id;
       }
-
+      this.selectedProjectTeam = projectTeamId;
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;
     },
@@ -656,6 +664,12 @@ export default {
         })
         .catch();
     },
+
+    closeModal() {
+      this.modal = false;
+      this.editTask = null;
+    },
+
   },
 };
 </script>

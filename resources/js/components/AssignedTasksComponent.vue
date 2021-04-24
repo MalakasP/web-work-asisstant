@@ -1,6 +1,78 @@
 <template>
   <div class="container">
     <h3 class="p-3 text-center">Assigned Tasks</h3>
+    <div v-if="modal">
+      <transition name="model">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">{{ dynamicTitle }}</h4>
+                  <button
+                    type="button"
+                    class="close"
+                    @click="
+                      edit = null;
+                      modal = false;
+                    "
+                  >
+                    <span aria-hidden="true">&times; </span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label>Select Deadline</label> <br/>
+                    <v-date-picker v-model="form.date_till_done" mode="date" :min-date='new Date()' >
+                      <template v-slot="{ inputValue, inputEvents }">
+                        <input
+                          class="px-2 py-1 border rounded focus:outline-none focus:border-blue-300"
+                          :value="inputValue"
+                          v-on="inputEvents"
+                        />
+                      </template>
+                    </v-date-picker>
+                    <div
+                      class="invalid-feedback"
+                      v-if="errors.date_till_done"
+                    >
+                      {{ errors.date_till_done }}
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Choose Status</label>
+                    <select
+                      class="form-control"
+                      :class="{ 'is-invalid': errors.status }"
+                      v-model="form.status"
+                    >
+                      <option
+                        v-for="status in this.statuses"
+                        :value="status.val"
+                        :key="status.val"
+                      >
+                        {{ status.val }}
+                      </option>
+                    </select>
+                    <div class="invalid-feedback" v-if="errors.status">
+                      {{ errors.status }}
+                    </div>
+                  </div>
+                  <div align="center">
+                    <input
+                      type="button"
+                      class="btn btn-primary"
+                      value="Submit"
+                      @click="update"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
     <div class="container">
       <div class="card p-3 m-b-3">
         <div v-if="!this.noTasks">
@@ -112,6 +184,26 @@ export default {
       noTasks: false,
       teams: {},
       projects: [],
+      edit: null,
+      modal: false,
+       statuses: {
+        1: { val: "To Do" },
+        2: { val: "In Progress" },
+        3: { val: "Done" },
+      },
+      form: {
+        title: null,
+        description: null,
+        date_till_done: null,
+        status: null,
+        priority: null,
+        project_id: null,
+        reporter_id: null,
+        assignee_id: null,
+        created_at: null,
+        updated_at: null,
+      },
+      dynamicTitle: null,
     };
   },
   computed: {
@@ -128,7 +220,7 @@ export default {
     monthDay: function (value) {
       if (!value) return "";
       value = value.toString();
-      return value.substring(5);
+      return value.substring(5, 10);
     },
   },
   methods: {
@@ -153,7 +245,6 @@ export default {
                 is_admin: true,
               },
             });
-            console.log(this.teams);
           }
         })
         .catch((error) => {
@@ -196,6 +287,65 @@ export default {
             console.log(this.noTasks, this.loaded);
           }
         });
+    },
+
+    async update() {
+      await axios
+        .put(process.env.MIX_API_URL + "tasks/" + this.edit.id, this.form)
+        .then((response) => {
+          if (response.data != null) {
+            this.modal = false;
+            if (this.edit.project_id != null) {
+              let taskIndex = this.projects[
+                this.edit.project_id
+              ].tasks.findIndex((task) => task.id == this.edit.id);
+              this.projects[this.edit.project_id].tasks.splice(
+                taskIndex,
+                1,
+                response.data.task
+              );
+            } else {
+              let taskIndex = this.projects[0].tasks.findIndex(
+                (task) => task.id == this.edit.id
+              );
+              this.projects[0].tasks.splice(taskIndex, 1, response.data.task);
+            }
+            this.edit = null;
+            this.$notify({
+              group: "app",
+              title: "Success!",
+              type: "success",
+              text: "Task was updated!",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response) {
+            if (error.response.status != 422) {
+              this.modal = false;
+              this.editTask = null;
+              this.$alert("Something went wrong", "Warning", "error");
+            } else {
+              this.$store.commit("setErrors", error.response.data.errors);
+            }
+          }
+        });
+    },
+
+    startEdit(task) {
+      this.$store.commit("setErrors", {});
+      this.dynamicTitle = "Edit task";
+      this.edit = task;
+      this.modal = true;
+       this.form.title = task.title;
+      this.form.description = task.description;
+      this.form.date_till_done = task.date_till_done;
+      this.form.status = task.status;
+      this.form.priority = task.priority;
+      this.form.project_id = task.project_id;
+      this.form.reporter_id = task.reporter_id;
+      this.form.assignee_id = task.assignee_id;
     },
   },
 };

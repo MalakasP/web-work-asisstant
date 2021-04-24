@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTeamUserRequest;
 use App\Http\Requests\UpdateTeamUserRequest;
+use App\Http\Requests\GetWorktimesRequest;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -99,10 +100,44 @@ class AdminController extends Controller
     }
 
     /**
-     * Get team user worktimes
+     * Get team users worktimes
+     * @param \App\Http\Requests\GetWorktimesRequest  $request
+     * @return \Illuminate\Http\Response
      */
-    public function getUserWorktimes(User $user)
+    public function getTeamUsersWorktimes(Team $team, GetWorktimesRequest $request)
     {
+        $request->validated();
+
+        if (!$team->isUserAdmin(Auth::id())) {
+            return response()->json([
+                'message' => 'You are not the admin of this team!'
+            ], 403);
+        }
+
+        if ($request->has('from') && $request->has('to')) {
+            $from = date('Y-m-d', strtotime($request->from));
+            $to = date('Y-m-d', strtotime($request->to));
+            $users = $team->users;
+            foreach ($users as $user) {
+                $worktimes[$user->id] = $user->worktimes()->whereBetween('created_at', [$from, $to])->get()->groupBy(function ($worktime) {
+                    return Carbon::parse($worktime->created_at)->format('Y-m-d');
+                });
+            }
+        } else {
+            return response()->json([
+                'message' => 'No date range given.'
+            ], 422);
+        }
+
+        if (empty($worktimes)) {
+            return response()->json([
+                'message' => 'You do not have saved worktimes.'
+            ], 404);
+        }
+
+        return response()->json([
+            'usersWorktimes' => $worktimes
+        ]);
     }
 
     /**

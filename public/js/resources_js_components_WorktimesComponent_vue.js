@@ -33,6 +33,18 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -60,17 +72,88 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
-function Team(_ref) {
-  var id = _ref.id,
-      name = _ref.name,
-      description = _ref.description,
-      created_at = _ref.created_at,
-      updated_at = _ref.updated_at,
-      pivot = _ref.pivot,
-      users = _ref.users;
+function Day(_ref) {
+  var weekday_name = _ref.weekday_name,
+      month_day = _ref.month_day,
+      full_date = _ref.full_date,
+      worktime = _ref.worktime;
+  this.weekday_name = weekday_name;
+  this.month_day = month_day;
+  this.full_date = full_date;
+  this.worktime = worktime;
+}
+
+function Team(_ref2) {
+  var id = _ref2.id,
+      name = _ref2.name,
+      description = _ref2.description,
+      created_at = _ref2.created_at,
+      updated_at = _ref2.updated_at,
+      pivot = _ref2.pivot,
+      users = _ref2.users;
   this.id = id;
   this.name = name;
   this.description = description;
@@ -85,18 +168,50 @@ function Team(_ref) {
     return {
       loaded: false,
       modal: false,
+      range: {
+        start: new Date(moment__WEBPACK_IMPORTED_MODULE_1___default()().subtract(7, "d")),
+        end: new Date(moment__WEBPACK_IMPORTED_MODULE_1___default()())
+      },
       teams: {},
-      worktimes: {}
+      selectedDays: [],
+      selectedTeamId: 0,
+      columnWidht: null,
+      worktimes: []
     };
   },
-  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])),
+  computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])), {}, {
+    teamsAdmin: function teamsAdmin() {
+      var teamsAdmin = Object.entries(this.teams).filter(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            key = _ref4[0],
+            team = _ref4[1];
+
+        if (team.pivot.is_admin) {
+          return team.pivot.is_admin;
+        } else {
+          return false;
+        }
+      });
+      return Object.fromEntries(teamsAdmin);
+    }
+  }),
   mounted: function mounted() {
     this.$store.commit("setErrors", {});
   },
   created: function created() {
+    this.getDays();
     this.fetchContextData();
   },
-  filters: {},
+  filters: {
+    zeroTime: function zeroTime(value) {
+      if (value != 0 && value != null) {
+        return value;
+      } else {
+        return "00:00";
+      }
+    }
+  },
+  components: {},
   methods: {
     fetchContextData: function fetchContextData() {
       var _this = this;
@@ -123,9 +238,9 @@ function Team(_ref) {
                       updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
                       pivot: {
                         is_admin: true
-                      }
+                      },
+                      users: [_this.user]
                     });
-                    _this.loaded = true;
                   }
                 })["catch"](function (error) {
                   console.log(error);
@@ -138,6 +253,135 @@ function Team(_ref) {
           }
         }, _callee);
       }))();
+    },
+    fetchUserWorktimesData: function fetchUserWorktimesData() {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var format_to, from, to;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                format_to = "YYYY-MM-DD HH:mm:ss";
+                from = moment__WEBPACK_IMPORTED_MODULE_1___default()(_this2.range.start).format(format_to);
+                to = moment__WEBPACK_IMPORTED_MODULE_1___default()(_this2.range.end).add(1, "day").format(format_to);
+
+                if (!(_this2.selectedTeamId > 0)) {
+                  _context2.next = 8;
+                  break;
+                }
+
+                _context2.next = 6;
+                return axios.get("api/" + "teams/" + _this2.selectedTeamId + "/worktimes?from=" + from + "&to=" + to).then(function (response) {
+                  if (response.data != null) {
+                    console.log(response.data.usersWorktimes);
+                    _this2.usersWorktimes = response.data.usersWorktimes; // Object.entries(this.usersWorktimes).forEach(([userId, days]) => {
+                    //   this.teams[this.selectedTeamId].users[userId] = 
+                    //   Object.entries(days).forEach(([day, worktimes]) => {
+                    //     this.calculateDurationOfWorktimes(day, worktimes);
+                    //   });
+                    // });
+                    // this.loaded = true;
+                  }
+                })["catch"](function (error) {
+                  _this2.loaded = true;
+                  console.log(error);
+                });
+
+              case 6:
+                _context2.next = 11;
+                break;
+
+              case 8:
+                if (!(_this2.selectedTeamId == 0)) {
+                  _context2.next = 11;
+                  break;
+                }
+
+                _context2.next = 11;
+                return axios.get("api/" + "worktimes?from=" + from + "&to=" + to).then(function (response) {
+                  if (response.data != null) {
+                    _this2.worktimes = response.data.worktimes;
+                    Object.entries(_this2.worktimes).forEach(function (_ref5) {
+                      var _ref6 = _slicedToArray(_ref5, 2),
+                          day = _ref6[0],
+                          worktimes = _ref6[1];
+
+                      _this2.calculateDurationOfWorktimes(day, worktimes);
+                    });
+                    _this2.loaded = true;
+                  }
+                })["catch"](function (error) {
+                  _this2.loaded = true;
+                  console.log(error);
+                });
+
+              case 11:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    calculateDurationOfWorktimes: function calculateDurationOfWorktimes(day, worktimes) {
+      var _this3 = this;
+
+      var result = 0;
+      this.selectedDays.forEach(function (calendarDay) {
+        if (moment__WEBPACK_IMPORTED_MODULE_1___default()(calendarDay.full_date).isSame(day, "day")) {
+          result = worktimes.reduce(function (total, worktime) {
+            return total + _this3.durationToSeconds(worktime.duration);
+          }, 0);
+          calendarDay.worktime = _this3.readableTimeFromSeconds(result);
+          return result;
+        }
+      });
+      return;
+    },
+    getDays: function getDays() {
+      var days = [];
+      var start = this.range.start;
+
+      while (start <= this.range.end) {
+        days.push(new Day({
+          weekday_name: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("ddd"),
+          month_day: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("MM-DD"),
+          full_date: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("YYYY-MM-DD"),
+          worktimeDuration: "00:00"
+        }));
+        var nextDay = start.setDate(start.getDate() + 1);
+        start = new Date(nextDay);
+      }
+
+      this.range.start = new Date(moment__WEBPACK_IMPORTED_MODULE_1___default()(days[0].full_date));
+      this.selectedDays = days;
+      this.fetchUserWorktimesData();
+    },
+
+    /**
+     * Conditionally pads a number with "0"
+     */
+    padNumber: function padNumber(number) {
+      return number > 9 ? number : "0" + number;
+    },
+
+    /**
+     * Splits seconds into hours, minutes, and seconds.
+     */
+    readableTimeFromSeconds: function readableTimeFromSeconds(seconds) {
+      var hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
+      return this.padNumber(hours) + ":" + this.padNumber(parseInt(seconds / 60, 10) % 60).toString();
+    },
+
+    /**
+     * Converts readable time to seconds.
+     */
+    durationToSeconds: function durationToSeconds(duration) {
+      var timeMeasures = duration.split(":");
+      var seconds = +timeMeasures[0] * 3600 + +timeMeasures[1] * 60 + +timeMeasures[2];
+      return seconds;
     }
   }
 });
@@ -161,7 +405,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-5c4a6f53] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-5c4a6f53] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\ntable[data-v-5c4a6f53] {\r\n  display: block;\r\n  overflow-x: auto;\r\n  white-space: nowrap;\n}\nth[data-v-5c4a6f53] {\r\n  border: 1px solid #dee2e6;\r\n  min-width: 20%;\n}\nth + th[data-v-5c4a6f53] {\r\n  border: 1px solid #dee2e6;\r\n  width: auto;\n}\ntd[data-v-5c4a6f53] {\r\n  border: 1px solid #dee2e6;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1061,7 +1305,181 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
      true && this.loaded
-      ? _c("div", { staticClass: "row justify-content-center" }, [_vm._m(0)])
+      ? _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12 card mt-3" }, [
+            _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Worktimes")]),
+            _vm._v(" "),
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _c(
+                "div",
+                { staticClass: "row justify-content-between" },
+                [
+                  _c("v-date-picker", {
+                    attrs: { "is-range": "", "max-date": new Date() },
+                    on: { input: _vm.getDays },
+                    scopedSlots: _vm._u(
+                      [
+                        {
+                          key: "default",
+                          fn: function(ref) {
+                            var inputValue = ref.inputValue
+                            var inputEvents = ref.inputEvents
+                            return [
+                              _c("div", { staticClass: "form-group row" }, [
+                                _c("div", { staticClass: "col-6" }, [
+                                  _c(
+                                    "input",
+                                    _vm._g(
+                                      {
+                                        staticClass: "form-control",
+                                        domProps: { value: inputValue.start }
+                                      },
+                                      inputEvents.start
+                                    )
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-6" }, [
+                                  _c(
+                                    "input",
+                                    _vm._g(
+                                      {
+                                        staticClass: "form-control",
+                                        domProps: { value: inputValue.end }
+                                      },
+                                      inputEvents.end
+                                    )
+                                  )
+                                ])
+                              ])
+                            ]
+                          }
+                        }
+                      ],
+                      null,
+                      false,
+                      1104178848
+                    ),
+                    model: {
+                      value: _vm.range,
+                      callback: function($$v) {
+                        _vm.range = $$v
+                      },
+                      expression: "range"
+                    }
+                  }),
+                  _vm._v(" "),
+                  Object.keys(_vm.teamsAdmin).length > 0
+                    ? _c("div", { staticClass: "form-group col-2" }, [
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.selectedTeamId,
+                                  expression: "selectedTeamId"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              on: {
+                                change: [
+                                  function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.selectedTeamId = $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  },
+                                  _vm.getDays
+                                ]
+                              }
+                            },
+                            _vm._l(this.teamsAdmin, function(team) {
+                              return _c(
+                                "option",
+                                { key: team.id, domProps: { value: team.id } },
+                                [
+                                  _vm._v(
+                                    "\n                  " +
+                                      _vm._s(team.name) +
+                                      "\n                "
+                                  )
+                                ]
+                              )
+                            }),
+                            0
+                          )
+                        ])
+                      ])
+                    : _vm._e()
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "table-responsive" }, [
+                _c("table", { staticClass: "table w-100 d-block d-md-table" }, [
+                  _vm.selectedDays.length > 0
+                    ? _c("thead", [
+                        _c(
+                          "tr",
+                          [
+                            _c("th", { staticStyle: { width: "20%" } }, [
+                              _vm._v("Users")
+                            ]),
+                            _vm._v(" "),
+                            _vm._l(_vm.selectedDays, function(day) {
+                              return _c("th", { key: day.id }, [
+                                _vm._v(
+                                  "\n                  " +
+                                    _vm._s(day.month_day) +
+                                    "\n                "
+                                )
+                              ])
+                            })
+                          ],
+                          2
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c("tbody", [
+                    _c(
+                      "tr",
+                      [
+                        _c("td", { staticClass: "font-weight-bold" }, [
+                          _vm._v(_vm._s(this.user.name))
+                        ]),
+                        _vm._v(" "),
+                        _vm._l(_vm.selectedDays, function(day) {
+                          return _c("td", { key: day.id }, [
+                            _vm._v(
+                              "\n                  " +
+                                _vm._s(_vm._f("zeroTime")(day.worktime)) +
+                                "\n                "
+                            )
+                          ])
+                        })
+                      ],
+                      2
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ])
       : this.loaded
       ? _c("div", [
           _c("h4", { staticClass: "p-3 text-center" }, [
@@ -1078,8 +1496,10 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-12 card mt-3" }, [
-      _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Worktimes")])
+    return _c("div", { staticClass: "card-header bg-white" }, [
+      _c("div", { staticClass: "row justify-content-end" }, [
+        _c("div", { staticClass: "col-4" })
+      ])
     ])
   }
 ]

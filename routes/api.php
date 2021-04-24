@@ -97,6 +97,7 @@ Route::group(['as' => 'api.'], function () {
 
         Route::delete('teams/{team}/users/{user}', [AdminController::class, 'destroy'])->name('admin.destroy');
 
-        // Route::put('teams/{team}', 'TeamController@update');
+        Route::get('teams/{team}/worktimes', [AdminController::class, 'getTeamUsersWorktimes'])->name('admin.getTeamUsersWorktimes');
+
     });
 });

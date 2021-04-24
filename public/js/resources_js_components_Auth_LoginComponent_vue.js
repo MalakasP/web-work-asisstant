@@ -63,6 +63,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -109,7 +115,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var date = moment__WEBPACK_IMPORTED_MODULE_0___default()().format(format_to);
       axios.get("api/" + "worktimes?date=" + date).then(function (response) {
         _this2.setDuration(response.data.worktimes.reduce(function (total, worktime) {
-          return total + _this2.$parent._durationToSeconds(worktime.duration);
+          return total + _this2.$parent.durationToSeconds(worktime.duration);
         }, 0));
 
         _this2.$parent.initiateTimerAfterLogin();
@@ -214,99 +220,113 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "login mt-5" }, [
-    _c("div", { staticClass: "card" }, [
-      _c("div", { staticClass: "card-header" }, [_vm._v("Login")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-body" }, [
-        _c("form", [
-          _c("div", { staticClass: "form-group" }, [
-            _c("label", { attrs: { for: "email" } }, [_vm._v("Email address")]),
-            _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.details.email,
-                  expression: "details.email"
-                }
-              ],
-              staticClass: "form-control",
-              class: { "is-invalid": _vm.errors.email },
-              attrs: { type: "email", id: "email", placeholder: "Enter email" },
-              domProps: { value: _vm.details.email },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.details, "email", $event.target.value)
-                }
-              }
-            }),
-            _vm._v(" "),
-            _vm.errors.email
-              ? _c("div", { staticClass: "invalid-feedback" }, [
-                  _vm._v(
-                    "\n            " +
-                      _vm._s(_vm.errors.email[0]) +
-                      "\n          "
-                  )
-                ])
-              : _vm._e()
-          ]),
+  return _c("div", { staticClass: "row justify-content-center" }, [
+    _c("div", { staticClass: "col-6" }, [
+      _c("div", { staticClass: "login mt-5" }, [
+        _c("div", { staticClass: "card" }, [
+          _c("div", { staticClass: "card-header" }, [_vm._v("Login")]),
           _vm._v(" "),
-          _c("div", { staticClass: "form-group" }, [
-            _c("label", { attrs: { for: "password" } }, [_vm._v("Password")]),
-            _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.details.password,
-                  expression: "details.password"
-                }
-              ],
-              staticClass: "form-control",
-              class: { "is-invalid": _vm.errors.email },
-              attrs: {
-                type: "password",
-                id: "password",
-                placeholder: "Password"
-              },
-              domProps: { value: _vm.details.password },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
+          _c("div", { staticClass: "card-body" }, [
+            _c("form", [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "email" } }, [
+                  _vm._v("Email address")
+                ]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.details.email,
+                      expression: "details.email"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  class: { "is-invalid": _vm.errors.email },
+                  attrs: {
+                    type: "email",
+                    id: "email",
+                    placeholder: "Enter email"
+                  },
+                  domProps: { value: _vm.details.email },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.details, "email", $event.target.value)
+                    }
                   }
-                  _vm.$set(_vm.details, "password", $event.target.value)
-                }
-              }
-            }),
-            _vm._v(" "),
-            _vm.errors.email
-              ? _c("div", { staticClass: "invalid-feedback" }, [
-                  _vm._v(
-                    "\n            " +
-                      _vm._s(_vm.errors.email[0]) +
-                      "\n          "
-                  )
-                ])
-              : _vm._e()
-          ]),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary",
-              attrs: { type: "button" },
-              on: { click: _vm.login }
-            },
-            [_vm._v("\n          Login\n        ")]
-          )
+                }),
+                _vm._v(" "),
+                _vm.errors.email
+                  ? _c("div", { staticClass: "invalid-feedback" }, [
+                      _vm._v(
+                        "\n                " +
+                          _vm._s(_vm.errors.email[0]) +
+                          "\n              "
+                      )
+                    ])
+                  : _vm._e()
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "password" } }, [
+                  _vm._v("Password")
+                ]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.details.password,
+                      expression: "details.password"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  class: { "is-invalid": _vm.errors.email },
+                  attrs: {
+                    type: "password",
+                    id: "password",
+                    placeholder: "Password"
+                  },
+                  domProps: { value: _vm.details.password },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.details, "password", $event.target.value)
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _vm.errors.email
+                  ? _c("div", { staticClass: "invalid-feedback" }, [
+                      _vm._v(
+                        "\n                " +
+                          _vm._s(_vm.errors.email[0]) +
+                          "\n              "
+                      )
+                    ])
+                  : _vm._e()
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "text-center" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { type: "button" },
+                    on: { click: _vm.login }
+                  },
+                  [_vm._v("\n                Login\n              ")]
+                )
+              ])
+            ])
+          ])
         ])
       ])
     ])

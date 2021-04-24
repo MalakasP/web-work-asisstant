@@ -2024,7 +2024,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         this.counter.ticker = setInterval(function () {
-          var time = _this._readableTimeFromSeconds(++_this.counter.seconds); // console.log(this.counter.seconds);
+          var time = _this.readableTimeFromSeconds(++_this.counter.seconds); // console.log(this.counter.seconds);
           // check if 8 hours is reached
 
 
@@ -2050,6 +2050,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.setDuration(null);
       this.setTimer(0);
       this.setWorktime(null);
+      this.$router.push({
+        name: "Home",
+        params: {
+          teamId: team.id
+        }
+      });
     },
 
     /**
@@ -2095,7 +2101,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }).then(function (response) {
         console.log(response);
 
-        _this2.setDuration(_this2.duration + _this2._durationToSeconds(response.data.worktime.duration));
+        _this2.setDuration(_this2.duration + _this2.durationToSeconds(response.data.worktime.duration));
 
         _this2.setTimerStopped(true);
 
@@ -2121,7 +2127,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         this.counter.ticker = setInterval(function () {
-          var time = _this3._readableTimeFromSeconds(++_this3.counter.seconds); // console.log(this.counter.seconds);
+          var time = _this3.readableTimeFromSeconds(++_this3.counter.seconds); // console.log(this.counter.seconds);
           // check if 8 hours is reached
 
 
@@ -2138,22 +2144,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     /**
      * Conditionally pads a number with "0"
      */
-    _padNumber: function _padNumber(number) {
+    padNumber: function padNumber(number) {
       return number > 9 ? number : "0" + number;
     },
 
     /**
      * Splits seconds into hours, minutes, and seconds.
      */
-    _readableTimeFromSeconds: function _readableTimeFromSeconds(seconds) {
+    readableTimeFromSeconds: function readableTimeFromSeconds(seconds) {
       var hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
       return {
-        hours: this._padNumber(hours),
-        seconds: this._padNumber(seconds % 60),
-        minutes: this._padNumber(parseInt(seconds / 60, 10) % 60)
+        hours: this.padNumber(hours),
+        seconds: this.padNumber(seconds % 60),
+        minutes: this.padNumber(parseInt(seconds / 60, 10) % 60)
       };
     },
-    _durationToSeconds: function _durationToSeconds(duration) {
+
+    /**
+     * Converts readable time to seconds.
+     */
+    durationToSeconds: function durationToSeconds(duration) {
       var timeMeasures = duration.split(":");
       var seconds = +timeMeasures[0] * 3600 + +timeMeasures[1] * 60 + +timeMeasures[2];
       return seconds;
@@ -2165,9 +2175,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     calculateTimeSpent: function calculateTimeSpent(timer) {
       var started = moment__WEBPACK_IMPORTED_MODULE_0___default()(timer.started_at);
       var stopped = moment__WEBPACK_IMPORTED_MODULE_0___default()(timer.stopped_at);
-
-      var time = this._readableTimeFromSeconds(parseInt(moment__WEBPACK_IMPORTED_MODULE_0___default().duration(stopped.diff(started)).asSeconds()));
-
+      var time = this.readableTimeFromSeconds(parseInt(moment__WEBPACK_IMPORTED_MODULE_0___default().duration(stopped.diff(started)).asSeconds()));
       return "".concat(time.hours, ":").concat(time.minutes);
     }
   })

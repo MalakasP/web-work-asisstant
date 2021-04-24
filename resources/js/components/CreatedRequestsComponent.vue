@@ -385,11 +385,11 @@ export default {
 
     teamsAdmin: function () {
       let teamAdmins = Object.keys(this.adminOfTeams);
-      // console.log(teamAdmins);
+
       let adminTeams = Object.values(this.teams).filter((team) => {
         return teamAdmins.indexOf(team.id.toString()) > -1;
       });
-      console.log(adminTeams);
+
       return adminTeams;
     },
   },
@@ -477,12 +477,12 @@ export default {
       this.form.date_from = this.range.start;
       this.form.date_to = this.range.end;
 
-       await axios
+      await axios
         .put(process.env.MIX_API_URL + "requests/" + this.edit.id, this.form)
         .then((response) => {
           if (response.data != null) {
             this.modal = false;
-             let requestIndex = this.createdRequests.data.findIndex(
+            let requestIndex = this.createdRequests.data.findIndex(
               (request) => request.id == this.edit.id
             );
             this.createdRequests.data[requestIndex] = response.data.request;
@@ -583,7 +583,7 @@ export default {
       (this.form.type = null),
         (this.form.description = null),
         console.log(this.teamsAdmin);
-        (this.form.team_id = Object.values(this.teamsAdmin)[0].id);
+      this.form.team_id = Object.values(this.teamsAdmin)[0].id;
       this.loadAdmins();
     },
 

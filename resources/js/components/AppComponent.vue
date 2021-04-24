@@ -179,7 +179,7 @@ export default {
         }
 
         this.counter.ticker = setInterval(() => {
-          const time = this._readableTimeFromSeconds(++this.counter.seconds);
+          const time = this.readableTimeFromSeconds(++this.counter.seconds);
           // console.log(this.counter.seconds);
           // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
@@ -213,6 +213,7 @@ export default {
       this.setDuration(null);
       this.setTimer(0);
       this.setWorktime(null);
+      this.$router.push({ name: "Home", params: { teamId: team.id } });
     },
 
     /**
@@ -258,7 +259,7 @@ export default {
       })
         .then((response) => {
           console.log(response);
-          this.setDuration(this.duration + this._durationToSeconds(response.data.worktime.duration));
+          this.setDuration(this.duration + this.durationToSeconds(response.data.worktime.duration));
           this.setTimerStopped(true);
           clearInterval(this.counter.ticker);
         })
@@ -280,7 +281,7 @@ export default {
         }
 
         this.counter.ticker = setInterval(() => {
-          const time = this._readableTimeFromSeconds(++this.counter.seconds);
+          const time = this.readableTimeFromSeconds(++this.counter.seconds);
           // console.log(this.counter.seconds);
           // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
@@ -295,23 +296,26 @@ export default {
     /**
      * Conditionally pads a number with "0"
      */
-    _padNumber(number) {
+    padNumber(number) {
       return number > 9 ? number : "0" + number;
     },
 
     /**
      * Splits seconds into hours, minutes, and seconds.
      */
-    _readableTimeFromSeconds(seconds) {
+    readableTimeFromSeconds(seconds) {
       const hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
       return {
-        hours: this._padNumber(hours),
-        seconds: this._padNumber(seconds % 60),
-        minutes: this._padNumber(parseInt(seconds / 60, 10) % 60),
+        hours: this.padNumber(hours),
+        seconds: this.padNumber(seconds % 60),
+        minutes: this.padNumber(parseInt(seconds / 60, 10) % 60),
       };
     },
 
-    _durationToSeconds(duration) {
+    /**
+     * Converts readable time to seconds.
+     */
+    durationToSeconds(duration) {
       var timeMeasures = duration.split(":");
       var seconds =
         +timeMeasures[0] * 3600 + +timeMeasures[1] * 60 + +timeMeasures[2];
@@ -324,7 +328,7 @@ export default {
     calculateTimeSpent(timer) {
       const started = moment(timer.started_at);
       const stopped = moment(timer.stopped_at);
-      const time = this._readableTimeFromSeconds(
+      const time = this.readableTimeFromSeconds(
         parseInt(moment.duration(stopped.diff(started)).asSeconds())
       );
       return `${time.hours}:${time.minutes}`;

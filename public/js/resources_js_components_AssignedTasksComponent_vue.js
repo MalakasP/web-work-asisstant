@@ -112,6 +112,78 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -157,7 +229,33 @@ function Team(_ref2) {
       loaded: false,
       noTasks: false,
       teams: {},
-      projects: []
+      projects: [],
+      edit: null,
+      modal: false,
+      statuses: {
+        1: {
+          val: "To Do"
+        },
+        2: {
+          val: "In Progress"
+        },
+        3: {
+          val: "Done"
+        }
+      },
+      form: {
+        title: null,
+        description: null,
+        date_till_done: null,
+        status: null,
+        priority: null,
+        project_id: null,
+        reporter_id: null,
+        assignee_id: null,
+        created_at: null,
+        updated_at: null
+      },
+      dynamicTitle: null
     };
   },
   computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])),
@@ -171,7 +269,7 @@ function Team(_ref2) {
     monthDay: function monthDay(value) {
       if (!value) return "";
       value = value.toString();
-      return value.substring(5);
+      return value.substring(5, 10);
     }
   },
   methods: {
@@ -202,7 +300,6 @@ function Team(_ref2) {
                         is_admin: true
                       }
                     });
-                    console.log(_this.teams);
                   }
                 })["catch"](function (error) {
                   console.log(error);
@@ -251,6 +348,79 @@ function Team(_ref2) {
           }
         }, _callee);
       }))();
+    },
+    update: function update() {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return axios.put("api/" + "tasks/" + _this2.edit.id, _this2.form).then(function (response) {
+                  if (response.data != null) {
+                    _this2.modal = false;
+
+                    if (_this2.edit.project_id != null) {
+                      var taskIndex = _this2.projects[_this2.edit.project_id].tasks.findIndex(function (task) {
+                        return task.id == _this2.edit.id;
+                      });
+
+                      _this2.projects[_this2.edit.project_id].tasks.splice(taskIndex, 1, response.data.task);
+                    } else {
+                      var _taskIndex = _this2.projects[0].tasks.findIndex(function (task) {
+                        return task.id == _this2.edit.id;
+                      });
+
+                      _this2.projects[0].tasks.splice(_taskIndex, 1, response.data.task);
+                    }
+
+                    _this2.edit = null;
+
+                    _this2.$notify({
+                      group: "app",
+                      title: "Success!",
+                      type: "success",
+                      text: "Task was updated!"
+                    });
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+
+                  if (error.response) {
+                    if (error.response.status != 422) {
+                      _this2.modal = false;
+                      _this2.editTask = null;
+
+                      _this2.$alert("Something went wrong", "Warning", "error");
+                    } else {
+                      _this2.$store.commit("setErrors", error.response.data.errors);
+                    }
+                  }
+                });
+
+              case 2:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    startEdit: function startEdit(task) {
+      this.$store.commit("setErrors", {});
+      this.dynamicTitle = "Edit task";
+      this.edit = task;
+      this.modal = true;
+      this.form.title = task.title;
+      this.form.description = task.description;
+      this.form.date_till_done = task.date_till_done;
+      this.form.status = task.status;
+      this.form.priority = task.priority;
+      this.form.project_id = task.project_id;
+      this.form.reporter_id = task.reporter_id;
+      this.form.assignee_id = task.assignee_id;
     }
   }
 });
@@ -1174,6 +1344,185 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
     _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Assigned Tasks")]),
+    _vm._v(" "),
+    _vm.modal
+      ? _c(
+          "div",
+          [
+            _c("transition", { attrs: { name: "model" } }, [
+              _c("div", { staticClass: "modal-mask" }, [
+                _c("div", { staticClass: "modal-wrapper" }, [
+                  _c("div", { staticClass: "modal-dialog" }, [
+                    _c("div", { staticClass: "modal-content" }, [
+                      _c("div", { staticClass: "modal-header" }, [
+                        _c("h4", { staticClass: "modal-title" }, [
+                          _vm._v(_vm._s(_vm.dynamicTitle))
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "close",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                _vm.edit = null
+                                _vm.modal = false
+                              }
+                            }
+                          },
+                          [
+                            _c("span", { attrs: { "aria-hidden": "true" } }, [
+                              _vm._v("× ")
+                            ])
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "modal-body" }, [
+                        _c(
+                          "div",
+                          { staticClass: "form-group" },
+                          [
+                            _c("label", [_vm._v("Select Deadline")]),
+                            _vm._v(" "),
+                            _c("br"),
+                            _vm._v(" "),
+                            _c("v-date-picker", {
+                              attrs: { mode: "date", "min-date": new Date() },
+                              scopedSlots: _vm._u(
+                                [
+                                  {
+                                    key: "default",
+                                    fn: function(ref) {
+                                      var inputValue = ref.inputValue
+                                      var inputEvents = ref.inputEvents
+                                      return [
+                                        _c(
+                                          "input",
+                                          _vm._g(
+                                            {
+                                              staticClass:
+                                                "px-2 py-1 border rounded focus:outline-none focus:border-blue-300",
+                                              domProps: { value: inputValue }
+                                            },
+                                            inputEvents
+                                          )
+                                        )
+                                      ]
+                                    }
+                                  }
+                                ],
+                                null,
+                                false,
+                                666616994
+                              ),
+                              model: {
+                                value: _vm.form.date_till_done,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.form, "date_till_done", $$v)
+                                },
+                                expression: "form.date_till_done"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _vm.errors.date_till_done
+                              ? _c("div", { staticClass: "invalid-feedback" }, [
+                                  _vm._v(
+                                    "\n                    " +
+                                      _vm._s(_vm.errors.date_till_done) +
+                                      "\n                  "
+                                  )
+                                ])
+                              : _vm._e()
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", [_vm._v("Choose Status")]),
+                          _vm._v(" "),
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.form.status,
+                                  expression: "form.status"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              class: { "is-invalid": _vm.errors.status },
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.form,
+                                    "status",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                }
+                              }
+                            },
+                            _vm._l(this.statuses, function(status) {
+                              return _c(
+                                "option",
+                                {
+                                  key: status.val,
+                                  domProps: { value: status.val }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                      " +
+                                      _vm._s(status.val) +
+                                      "\n                    "
+                                  )
+                                ]
+                              )
+                            }),
+                            0
+                          ),
+                          _vm._v(" "),
+                          _vm.errors.status
+                            ? _c("div", { staticClass: "invalid-feedback" }, [
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(_vm.errors.status) +
+                                    "\n                  "
+                                )
+                              ])
+                            : _vm._e()
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { attrs: { align: "center" } }, [
+                          _c("input", {
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "button", value: "Submit" },
+                            on: { click: _vm.update }
+                          })
+                        ])
+                      ])
+                    ])
+                  ])
+                ])
+              ])
+            ])
+          ],
+          1
+        )
+      : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "container" }, [
       _c("div", { staticClass: "card p-3 m-b-3" }, [

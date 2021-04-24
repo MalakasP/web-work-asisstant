@@ -412,6 +412,10 @@ function Team(_ref2) {
         assignee_id: null,
         created_at: null,
         updated_at: null
+      },
+      selectedProjectTeam: null,
+      masks: {
+        input: 'YYYY-MM-DD'
       }
     };
   },
@@ -470,7 +474,8 @@ function Team(_ref2) {
                       updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
                       pivot: {
                         is_admin: true
-                      }
+                      },
+                      users: [_this.user]
                     });
                     console.log(_this.teams);
                   }
@@ -647,11 +652,15 @@ function Team(_ref2) {
                   console.log(error);
 
                   if (error.response) {
+                    console.log(error);
+
                     if (error.response.status != 422) {
                       _this3.modal = false;
 
                       _this3.$alert(error.response.data.status, "Warning", "error");
                     } else {
+                      console.log(error);
+
                       _this3.$store.commit("setErrors", error.response.data.errors);
                     }
                   }
@@ -726,18 +735,19 @@ function Team(_ref2) {
       this.form.date_till_done = moment__WEBPACK_IMPORTED_MODULE_1___default()().format("YYYY-MM-DD");
       this.form.status = this.statuses[1].val;
       this.form.priority = this.priorities[1].val;
+      this.selectedProjectTeam = project.team_id;
       this.form.project_id = this.projects[project.id].id;
       this.form.reporter_id = this.user.id;
       this.form.assignee_id = this.projectsUsers[1].id;
     },
-    startEdit: function startEdit(task) {
+    startEdit: function startEdit(task, projectTeamId) {
       this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "Edit Task";
       this.editTask = task;
       this.form.title = task.title;
       this.form.description = task.description;
-      this.form.date_till_done = task.date_till_done;
+      this.form.date_till_done = moment__WEBPACK_IMPORTED_MODULE_1___default()(task.date_till_done).format("YYYY-MM-DD");
       this.form.status = task.status;
       this.form.priority = task.priority;
 
@@ -747,6 +757,7 @@ function Team(_ref2) {
         this.form.project_id = this.projects[0].id;
       }
 
+      this.selectedProjectTeam = projectTeamId;
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;
     },
@@ -757,6 +768,10 @@ function Team(_ref2) {
       this.$confirm("Are You sure?", "Confirm Delete", "error").then(function () {
         _this5["delete"](task);
       })["catch"]();
+    },
+    closeModal: function closeModal() {
+      this.modal = false;
+      this.editTask = null;
     }
   })
 });
@@ -1702,8 +1717,7 @@ var render = function() {
                             attrs: { type: "button" },
                             on: {
                               click: function($event) {
-                                _vm.editTask = null
-                                _vm.modal = false
+                                return _vm.closeModal()
                               }
                             }
                           },
@@ -1753,90 +1767,69 @@ var render = function() {
                             : _vm._e()
                         ]),
                         _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", [_vm._v("Enter Description")]),
-                          _vm._v(" "),
-                          _c("textarea", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.form.description,
-                                expression: "form.description"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            class: { "is-invalid": _vm.errors.description },
-                            attrs: { rows: "3" },
-                            domProps: { value: _vm.form.description },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(
-                                  _vm.form,
-                                  "description",
-                                  $event.target.value
-                                )
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _vm.errors.description
-                            ? _c("div", { staticClass: "invalid-feedback" }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(_vm.errors.description) +
-                                    "\n                  "
-                                )
-                              ])
-                            : _vm._e()
-                        ]),
-                        _vm._v(" "),
                         _c("div", { staticClass: "form-group row" }, [
-                          _c("div", { staticClass: "form-group col-md-6" }, [
-                            _c("label", [_vm._v("Enter Deadline")]),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
+                          _c(
+                            "div",
+                            { staticClass: "form-group col-md-6" },
+                            [
+                              _c("label", [_vm._v("Select Deadline")]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("v-date-picker", {
+                                attrs: { mode: "date", masks: _vm.masks },
+                                scopedSlots: _vm._u(
+                                  [
+                                    {
+                                      key: "default",
+                                      fn: function(ref) {
+                                        var inputValue = ref.inputValue
+                                        var inputEvents = ref.inputEvents
+                                        return [
+                                          _c(
+                                            "input",
+                                            _vm._g(
+                                              {
+                                                staticClass:
+                                                  "px-2 py-1 border rounded focus:outline-none focus:border-blue-300",
+                                                domProps: { value: inputValue }
+                                              },
+                                              inputEvents
+                                            )
+                                          )
+                                        ]
+                                      }
+                                    }
+                                  ],
+                                  null,
+                                  false,
+                                  666616994
+                                ),
+                                model: {
                                   value: _vm.form.date_till_done,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.form, "date_till_done", $$v)
+                                  },
                                   expression: "form.date_till_done"
                                 }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.errors.date_till_done
-                              },
-                              attrs: { type: "date" },
-                              domProps: { value: _vm.form.date_till_done },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "date_till_done",
-                                    $event.target.value
+                              }),
+                              _vm._v(" "),
+                              _vm.errors.date_till_done
+                                ? _c(
+                                    "div",
+                                    { staticClass: "invalid-feedback" },
+                                    [
+                                      _vm._v(
+                                        "\n                      " +
+                                          _vm._s(_vm.errors.date_till_done) +
+                                          "\n                    "
+                                      )
+                                    ]
                                   )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _vm.errors.date_till_done
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(_vm.errors.date_till_done) +
-                                      "\n                    "
-                                  )
-                                ])
-                              : _vm._e()
-                          ]),
+                                : _vm._e()
+                            ],
+                            1
+                          ),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group col-md-6" }, [
                             _c("label", [_vm._v("Choose Assignee")]),
@@ -1875,22 +1868,25 @@ var render = function() {
                                   }
                                 }
                               },
-                              _vm._l(this.projectsUsers, function(user) {
-                                return _c(
-                                  "option",
-                                  {
-                                    key: user.id,
-                                    domProps: { value: user.id }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                        " +
-                                        _vm._s(user.name) +
-                                        "\n                      "
-                                    )
-                                  ]
-                                )
-                              }),
+                              _vm._l(
+                                this.teams[_vm.selectedProjectTeam].users,
+                                function(user) {
+                                  return _c(
+                                    "option",
+                                    {
+                                      key: user.id,
+                                      domProps: { value: user.id }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                        " +
+                                          _vm._s(user.name) +
+                                          "\n                      "
+                                      )
+                                    ]
+                                  )
+                                }
+                              ),
                               0
                             ),
                             _vm._v(" "),
@@ -2042,6 +2038,47 @@ var render = function() {
                           ])
                         ]),
                         _vm._v(" "),
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", [_vm._v("Enter Description")]),
+                          _vm._v(" "),
+                          _c("textarea", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.description,
+                                expression: "form.description"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: { "is-invalid": _vm.errors.description },
+                            attrs: { rows: "3" },
+                            domProps: { value: _vm.form.description },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form,
+                                  "description",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.errors.description
+                            ? _c("div", { staticClass: "invalid-feedback" }, [
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(_vm.errors.description) +
+                                    "\n                  "
+                                )
+                              ])
+                            : _vm._e()
+                        ]),
+                        _vm._v(" "),
                         _c("div", { attrs: { align: "center" } }, [
                           _vm.editTask == null
                             ? _c("input", {
@@ -2167,7 +2204,10 @@ var render = function() {
                                         attrs: { type: "button" },
                                         on: {
                                           click: function($event) {
-                                            return _vm.startEdit(task)
+                                            return _vm.startEdit(
+                                              task,
+                                              project.team_id
+                                            )
                                           }
                                         }
                                       },
