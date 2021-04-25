@@ -166,6 +166,7 @@
                     />
                   </svg>
                 </span>
+                History
               </button>
             </div>
           </div>
@@ -372,7 +373,7 @@ export default {
         is_confirmed: true,
         confirmed_at: moment(),
       };
-      console.log(request.id, data);
+
       await axios
         .put(process.env.MIX_API_URL + "requests/" + request.id, data)
         .then((response) => {

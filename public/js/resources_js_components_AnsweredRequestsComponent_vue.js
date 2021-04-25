@@ -344,12 +344,46 @@ function User(_ref2) {
         }, _callee2);
       }))();
     },
-    roleback: function roleback(request) {
+    rollback: function rollback(request) {
+      var _this3 = this;
+
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        var data;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                data = {
+                  is_confirmed: false,
+                  confirmed_at: null
+                };
+                _context3.next = 3;
+                return axios.put("api/" + "requests/" + request.id, data).then(function (response) {
+                  if (response.data != null) {
+                    var requestIndex = _this3.answeredRequests.data.findIndex(function (answeredRequest) {
+                      answeredRequest.id == request.id;
+                    });
+
+                    _this3.answeredRequests.data.splice(requestIndex, 1);
+
+                    _this3.$notify({
+                      group: "app",
+                      title: "Success!",
+                      type: "success",
+                      text: "Request was restored!"
+                    });
+                  }
+                })["catch"](function (error) {
+                  if (error.response) {
+                    if (error.response.status == 403) {
+                      _this3.$alert(error.response.message, "Warning", "error");
+                    } else {
+                      _this3.$alert("Something went wrong", "Warning", "error");
+                    }
+                  }
+                });
+
+              case 3:
               case "end":
                 return _context3.stop();
             }

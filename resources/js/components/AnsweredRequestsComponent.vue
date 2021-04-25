@@ -267,7 +267,40 @@ export default {
         });
     },
 
-    async roleback(request) {},
+    async rollback(request) {
+      let data = {
+        is_confirmed: false,
+        confirmed_at: null,
+      };
+
+      await axios
+        .put(process.env.MIX_API_URL + "requests/" + request.id, data)
+        .then((response) => {
+          if (response.data != null) {
+            let requestIndex = this.answeredRequests.data.findIndex(
+              (answeredRequest) => {
+                answeredRequest.id == request.id;
+              }
+            );
+            this.answeredRequests.data.splice(requestIndex, 1);
+            this.$notify({
+              group: "app",
+              title: "Success!",
+              type: "success",
+              text: "Request was restored!",
+            });
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+            if (error.response.status == 403) {
+              this.$alert(error.response.message, "Warning", "error");
+            } else {
+              this.$alert("Something went wrong", "Warning", "error");
+            }
+          }
+        });
+    },
 
     goBack() {
       this.$router.push({ name: "GottenRequests" });

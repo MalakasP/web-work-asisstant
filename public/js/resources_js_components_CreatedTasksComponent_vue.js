@@ -415,7 +415,7 @@ function Team(_ref2) {
       },
       selectedProjectTeam: null,
       masks: {
-        input: 'YYYY-MM-DD'
+        input: "YYYY-MM-DD"
       }
     };
   },
@@ -430,7 +430,7 @@ function Team(_ref2) {
     monthDay: function monthDay(value) {
       if (!value) return "";
       value = value.toString();
-      return value.substring(5);
+      return value.substring(5, 10);
     }
   },
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)("worktime", [])), {}, {
@@ -527,8 +527,17 @@ function Team(_ref2) {
                     response.data.createdTasks.forEach(function (project) {
                       if (project.hasOwnProperty("id")) {
                         _this.projects[project.id].tasks = project.tasks;
-                      } else if (project[0].project_id === null) {
-                        _this.projects[0].tasks = project;
+                      } else if (Array.isArray(project)) {
+                        _this.projects[0] = new Project({
+                          id: 0,
+                          title: "No Project",
+                          description: "Tasks without project",
+                          author_id: _this.user.id,
+                          team_id: 0,
+                          created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                          updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                          tasks: project
+                        });
                       }
                     });
                     _this.loaded = true;

@@ -227,6 +227,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 
@@ -465,8 +466,7 @@ function User(_ref3) {
                   is_confirmed: true,
                   confirmed_at: moment__WEBPACK_IMPORTED_MODULE_1___default()()
                 };
-                console.log(request.id, data);
-                _context4.next = 4;
+                _context4.next = 3;
                 return axios.put("api/" + "requests/" + request.id, data).then(function (response) {
                   if (response.data != null) {
                     var requestIndex = _this4.gottenRequests.data.findIndex(function (gottenRequest) {
@@ -492,7 +492,7 @@ function User(_ref3) {
                   }
                 });
 
-              case 4:
+              case 3:
               case "end":
                 return _context4.stop();
             }
@@ -1980,7 +1980,8 @@ var render = function() {
                             })
                           ]
                         )
-                      ])
+                      ]),
+                      _vm._v("\n              History\n            ")
                     ]
                   )
                 ])

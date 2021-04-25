@@ -132,6 +132,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -173,10 +187,9 @@ function Team(_ref2) {
         end: new Date(moment__WEBPACK_IMPORTED_MODULE_1___default()())
       },
       teams: {},
-      selectedDays: [],
       selectedTeamId: 0,
-      columnWidht: null,
-      worktimes: []
+      worktimes: [],
+      loadedWorktimes: false
     };
   },
   computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])), {}, {
@@ -199,12 +212,11 @@ function Team(_ref2) {
     this.$store.commit("setErrors", {});
   },
   created: function created() {
-    this.getDays();
     this.fetchContextData();
   },
   filters: {
     zeroTime: function zeroTime(value) {
-      if (value != 0 && value != null) {
+      if (value != 0 && value != null && value !== undefined) {
         return value;
       } else {
         return "00:00";
@@ -241,6 +253,8 @@ function Team(_ref2) {
                       },
                       users: [_this.user]
                     });
+
+                    _this.getDays();
                   }
                 })["catch"](function (error) {
                   console.log(error);
@@ -275,17 +289,29 @@ function Team(_ref2) {
                 _context2.next = 6;
                 return axios.get("api/" + "teams/" + _this2.selectedTeamId + "/worktimes?from=" + from + "&to=" + to).then(function (response) {
                   if (response.data != null) {
-                    console.log(response.data.usersWorktimes);
-                    _this2.usersWorktimes = response.data.usersWorktimes; // Object.entries(this.usersWorktimes).forEach(([userId, days]) => {
-                    //   this.teams[this.selectedTeamId].users[userId] = 
-                    //   Object.entries(days).forEach(([day, worktimes]) => {
-                    //     this.calculateDurationOfWorktimes(day, worktimes);
-                    //   });
-                    // });
-                    // this.loaded = true;
+                    _this2.usersWorktimes = response.data.usersWorktimes;
+                    Object.entries(_this2.usersWorktimes).forEach(function (_ref5) {
+                      var _ref6 = _slicedToArray(_ref5, 2),
+                          userId = _ref6[0],
+                          days = _ref6[1];
+
+                      Object.entries(days).forEach(function (_ref7) {
+                        var _ref8 = _slicedToArray(_ref7, 2),
+                            day = _ref8[0],
+                            worktimes = _ref8[1];
+
+                        _this2.calculateDurationOfWorktimes(userId, day, worktimes);
+                      });
+                    });
+
+                    _this2.$forceUpdate();
+
+                    _this2.loaded = true;
+                    _this2.loadedWorktimes = true;
                   }
                 })["catch"](function (error) {
                   _this2.loaded = true;
+                  _this2.loadedWorktimes = true;
                   console.log(error);
                 });
 
@@ -303,17 +329,19 @@ function Team(_ref2) {
                 return axios.get("api/" + "worktimes?from=" + from + "&to=" + to).then(function (response) {
                   if (response.data != null) {
                     _this2.worktimes = response.data.worktimes;
-                    Object.entries(_this2.worktimes).forEach(function (_ref5) {
-                      var _ref6 = _slicedToArray(_ref5, 2),
-                          day = _ref6[0],
-                          worktimes = _ref6[1];
+                    Object.entries(_this2.worktimes).forEach(function (_ref9) {
+                      var _ref10 = _slicedToArray(_ref9, 2),
+                          day = _ref10[0],
+                          worktimes = _ref10[1];
 
-                      _this2.calculateDurationOfWorktimes(day, worktimes);
+                      _this2.calculateDurationOfWorktimes(_this2.user.id, day, worktimes);
                     });
                     _this2.loaded = true;
+                    _this2.loadedWorktimes = true;
                   }
                 })["catch"](function (error) {
                   _this2.loaded = true;
+                  _this2.loadedWorktimes = true;
                   console.log(error);
                 });
 
@@ -325,38 +353,49 @@ function Team(_ref2) {
         }, _callee2);
       }))();
     },
-    calculateDurationOfWorktimes: function calculateDurationOfWorktimes(day, worktimes) {
+    calculateDurationOfWorktimes: function calculateDurationOfWorktimes(userId, day, worktimes) {
       var _this3 = this;
 
       var result = 0;
-      this.selectedDays.forEach(function (calendarDay) {
+      var user = this.teams[this.selectedTeamId].users.find(function (user) {
+        if (user.id == userId) {
+          return true;
+        }
+      });
+      user.selectedDays.forEach(function (calendarDay) {
         if (moment__WEBPACK_IMPORTED_MODULE_1___default()(calendarDay.full_date).isSame(day, "day")) {
           result = worktimes.reduce(function (total, worktime) {
             return total + _this3.durationToSeconds(worktime.duration);
           }, 0);
           calendarDay.worktime = _this3.readableTimeFromSeconds(result);
-          return result;
+          return;
         }
       });
-      return;
     },
     getDays: function getDays() {
-      var days = [];
-      var start = this.range.start;
+      var _this4 = this;
 
-      while (start <= this.range.end) {
-        days.push(new Day({
-          weekday_name: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("ddd"),
-          month_day: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("MM-DD"),
-          full_date: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("YYYY-MM-DD"),
-          worktimeDuration: "00:00"
-        }));
-        var nextDay = start.setDate(start.getDate() + 1);
-        start = new Date(nextDay);
-      }
+      this.loadedWorktimes = false;
+      this.teams[this.selectedTeamId].users.forEach(function (user) {
+        user.selectedDays = [];
+        var days = [];
+        var start = _this4.range.start;
 
-      this.range.start = new Date(moment__WEBPACK_IMPORTED_MODULE_1___default()(days[0].full_date));
-      this.selectedDays = days;
+        while (start <= _this4.range.end) {
+          days.push(new Day({
+            weekday_name: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("ddd"),
+            month_day: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("MM-DD"),
+            full_date: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("YYYY-MM-DD"),
+            worktime: "00:00"
+          }));
+          var nextDay = start.setDate(start.getDate() + 1);
+          start = new Date(nextDay);
+        }
+
+        user.selectedDays = [];
+        user.selectedDays = days;
+        _this4.range.start = new Date(moment__WEBPACK_IMPORTED_MODULE_1___default()(days[0].full_date));
+      });
       this.fetchUserWorktimesData();
     },
 
@@ -1430,7 +1469,7 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "table-responsive" }, [
                 _c("table", { staticClass: "table w-100 d-block d-md-table" }, [
-                  _vm.selectedDays.length > 0
+                  _vm.teams[_vm.selectedTeamId].users[0].selectedDays.length > 0
                     ? _c("thead", [
                         _c(
                           "tr",
@@ -1439,42 +1478,55 @@ var render = function() {
                               _vm._v("Users")
                             ]),
                             _vm._v(" "),
-                            _vm._l(_vm.selectedDays, function(day) {
-                              return _c("th", { key: day.id }, [
-                                _vm._v(
-                                  "\n                  " +
-                                    _vm._s(day.month_day) +
-                                    "\n                "
-                                )
-                              ])
-                            })
+                            _vm._l(
+                              _vm.teams[_vm.selectedTeamId].users[0]
+                                .selectedDays,
+                              function(day) {
+                                return _c("th", { key: day.id }, [
+                                  _vm._v(
+                                    "\n                  " +
+                                      _vm._s(day.month_day) +
+                                      "\n                "
+                                  )
+                                ])
+                              }
+                            )
                           ],
                           2
                         )
                       ])
                     : _vm._e(),
                   _vm._v(" "),
-                  _c("tbody", [
-                    _c(
-                      "tr",
-                      [
-                        _c("td", { staticClass: "font-weight-bold" }, [
-                          _vm._v(_vm._s(this.user.name))
-                        ]),
-                        _vm._v(" "),
-                        _vm._l(_vm.selectedDays, function(day) {
-                          return _c("td", { key: day.id }, [
-                            _vm._v(
-                              "\n                  " +
-                                _vm._s(_vm._f("zeroTime")(day.worktime)) +
-                                "\n                "
-                            )
-                          ])
-                        })
-                      ],
-                      2
-                    )
-                  ])
+                  _vm.loadedWorktimes
+                    ? _c(
+                        "tbody",
+                        _vm._l(_vm.teams[_vm.selectedTeamId].users, function(
+                          user
+                        ) {
+                          return _c(
+                            "tr",
+                            { key: user.id },
+                            [
+                              _c("td", { staticClass: "font-weight-bold" }, [
+                                _vm._v(_vm._s(user.name))
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(user.selectedDays, function(day) {
+                                return _c("td", { key: day.id }, [
+                                  _vm._v(
+                                    "\n                  " +
+                                      _vm._s(_vm._f("zeroTime")(day.worktime)) +
+                                      "\n                "
+                                  )
+                                ])
+                              })
+                            ],
+                            2
+                          )
+                        }),
+                        0
+                      )
+                    : _vm._e()
                 ])
               ])
             ])

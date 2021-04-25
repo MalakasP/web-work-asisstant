@@ -10,7 +10,12 @@
         </div>
         <div class="card-body">
           <div class="row justify-content-between">
-            <v-date-picker v-model="range" @input="getDays" is-range :max-date='new Date()'>
+            <v-date-picker
+              v-model="range"
+              @input="getDays"
+              is-range
+              :max-date="new Date()"
+            >
               <template v-slot="{ inputValue, inputEvents }">
                 <div class="form-group row">
                   <div class="col-6">
@@ -35,7 +40,11 @@
               v-if="Object.keys(teamsAdmin).length > 0"
             >
               <div class="form-group row">
-                <select class="form-control" v-model="selectedTeamId" @change="getDays">
+                <select
+                  class="form-control"
+                  v-model="selectedTeamId"
+                  @change="getDays"
+                >
                   <option
                     v-for="team in this.teamsAdmin"
                     :value="team.id"
@@ -49,18 +58,23 @@
           </div>
           <div class="table-responsive">
             <table class="table w-100 d-block d-md-table">
-              <thead v-if="selectedDays.length > 0">
+              <thead
+                v-if="teams[selectedTeamId].users[0].selectedDays.length > 0"
+              >
                 <tr>
                   <th style="width: 20%">Users</th>
-                  <th v-for="day in selectedDays" :key="day.id">
+                  <th
+                    v-for="day in teams[selectedTeamId].users[0].selectedDays"
+                    :key="day.id"
+                  >
                     {{ day.month_day }}
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td class="font-weight-bold">{{ this.user.name }}</td>
-                  <td v-for="day in selectedDays" :key="day.id">
+              <tbody v-if="loadedWorktimes">
+                <tr v-for="user in teams[selectedTeamId].users" :key="user.id">
+                  <td class="font-weight-bold">{{ user.name }}</td>
+                  <td v-for="day in user.selectedDays" :key="day.id">
                     {{ day.worktime | zeroTime }}
                   </td>
                 </tr>
@@ -110,10 +124,9 @@ export default {
         end: new Date(moment()),
       },
       teams: {},
-      selectedDays: [],
       selectedTeamId: 0,
-      columnWidht: null,
       worktimes: [],
+      loadedWorktimes: false,
     };
   },
   computed: {
@@ -138,17 +151,16 @@ export default {
     this.$store.commit("setErrors", {});
   },
   created() {
-    this.getDays();
     this.fetchContextData();
   },
   filters: {
     zeroTime(value) {
-      if (value != 0 && value != null) {
+      if (value != 0 && value != null && value !== undefined) {
         return value;
       } else {
         return "00:00";
       }
-    }
+    },
   },
   components: {},
   methods: {
@@ -174,6 +186,7 @@ export default {
               },
               users: [this.user],
             });
+            this.getDays();
           }
         })
         .catch((error) => {
@@ -187,47 +200,64 @@ export default {
       let to = moment(this.range.end).add(1, "day").format(format_to);
       if (this.selectedTeamId > 0) {
         await axios
-        .get(process.env.MIX_API_URL + "teams/" + this.selectedTeamId + "/worktimes?from=" + from + "&to=" + to)
-        .then((response) => {
-          if (response.data != null) {
-            console.log(response.data.usersWorktimes);
-            this.usersWorktimes = response.data.usersWorktimes;
-            // Object.entries(this.usersWorktimes).forEach(([userId, days]) => {
-            //   this.teams[this.selectedTeamId].users[userId] = 
-            //   Object.entries(days).forEach(([day, worktimes]) => {
-            //     this.calculateDurationOfWorktimes(day, worktimes);
-            //   });
-            // });
-            // this.loaded = true;
-          }
-        })
-        .catch((error) => {
-          this.loaded = true;
-          console.log(error);
-        });
-      } else if (this.selectedTeamId == 0){
-        await axios
-        .get(process.env.MIX_API_URL + "worktimes?from=" + from + "&to=" + to)
-        .then((response) => {
-          if (response.data != null) {
-            this.worktimes = response.data.worktimes;
-            Object.entries(this.worktimes).forEach(([day, worktimes]) => {
-              this.calculateDurationOfWorktimes(day, worktimes);
-            });
+          .get(
+            process.env.MIX_API_URL +
+              "teams/" +
+              this.selectedTeamId +
+              "/worktimes?from=" +
+              from +
+              "&to=" +
+              to
+          )
+          .then((response) => {
+            if (response.data != null) {
+              this.usersWorktimes = response.data.usersWorktimes;
+              Object.entries(this.usersWorktimes).forEach(([userId, days]) => {
+                Object.entries(days).forEach(([day, worktimes]) => {
+                  this.calculateDurationOfWorktimes(userId, day, worktimes);
+                });
+              });
+              this.$forceUpdate();
+              this.loaded = true;
+              this.loadedWorktimes = true;
+            }
+          })
+          .catch((error) => {
             this.loaded = true;
-          }
-        })
-        .catch((error) => {
-          this.loaded = true;
-          console.log(error);
-        });
+            this.loadedWorktimes = true;
+            console.log(error);
+          });
+      } else if (this.selectedTeamId == 0) {
+        await axios
+          .get(process.env.MIX_API_URL + "worktimes?from=" + from + "&to=" + to)
+          .then((response) => {
+            if (response.data != null) {
+              this.worktimes = response.data.worktimes;
+              Object.entries(this.worktimes).forEach(([day, worktimes]) => {
+                this.calculateDurationOfWorktimes(this.user.id, day, worktimes);
+              });
+              this.loaded = true;
+              this.loadedWorktimes = true;
+            }
+          })
+          .catch((error) => {
+            this.loaded = true;
+            this.loadedWorktimes = true;
+            console.log(error);
+          });
       }
-      
     },
 
-    calculateDurationOfWorktimes(day, worktimes) {
+    calculateDurationOfWorktimes(userId, day, worktimes) {
       let result = 0;
-      this.selectedDays.forEach((calendarDay) => {
+
+      let user = this.teams[this.selectedTeamId].users.find((user) => {
+        if (user.id == userId) {
+          return true;
+        }
+      });
+
+      user.selectedDays.forEach((calendarDay) => {
         if (moment(calendarDay.full_date).isSame(day, "day")) {
           result = worktimes.reduce(
             (total, worktime) =>
@@ -235,31 +265,36 @@ export default {
             0
           );
           calendarDay.worktime = this.readableTimeFromSeconds(result);
-          return result;
-        }
+          return;
+        } 
+
       });
-      return;
+
     },
 
     getDays() {
-      let days = [];
-      let start = this.range.start;
+      this.loadedWorktimes = false;
+      this.teams[this.selectedTeamId].users.forEach((user) => {
+        user.selectedDays = [];
+        let days = [];
+        let start = this.range.start;
+        while (start <= this.range.end) {
+          days.push(
+            new Day({
+              weekday_name: moment(start).format("ddd"),
+              month_day: moment(start).format("MM-DD"),
+              full_date: moment(start).format("YYYY-MM-DD"),
+              worktime: "00:00",
+            })
+          );
+          let nextDay = start.setDate(start.getDate() + 1);
+          start = new Date(nextDay);
+        }
+        user.selectedDays = [];
+        user.selectedDays = days;
+        this.range.start = new Date(moment(days[0].full_date));
+      });
 
-      while (start <= this.range.end) {
-        days.push(
-          new Day({
-            weekday_name: moment(start).format("ddd"),
-            month_day: moment(start).format("MM-DD"),
-            full_date: moment(start).format("YYYY-MM-DD"),
-            worktimeDuration: "00:00",
-          })
-        );
-        let nextDay = start.setDate(start.getDate() + 1);
-        start = new Date(nextDay);
-      }
-
-      this.range.start = new Date(moment(days[0].full_date));
-      this.selectedDays = days;
       this.fetchUserWorktimesData();
     },
 

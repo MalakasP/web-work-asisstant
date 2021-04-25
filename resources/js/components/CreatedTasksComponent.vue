@@ -9,11 +9,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h4 class="modal-title">{{ dynamicTitle }}</h4>
-                  <button
-                    type="button"
-                    class="close"
-                    @click="closeModal()"
-                  >
+                  <button type="button" class="close" @click="closeModal()">
                     <span aria-hidden="true">&times; </span>
                   </button>
                 </div>
@@ -32,8 +28,12 @@
                   </div>
                   <div class="form-group row">
                     <div class="form-group col-md-6">
-                      <label>Select Deadline</label> <br/>
-                      <v-date-picker v-model="form.date_till_done" mode="date" :masks="masks">
+                      <label>Select Deadline</label> <br />
+                      <v-date-picker
+                        v-model="form.date_till_done"
+                        mode="date"
+                        :masks="masks"
+                      >
                         <template v-slot="{ inputValue, inputEvents }">
                           <input
                             class="px-2 py-1 border rounded focus:outline-none focus:border-blue-300"
@@ -353,8 +353,8 @@ export default {
       },
       selectedProjectTeam: null,
       masks: {
-        input: 'YYYY-MM-DD'
-      }
+        input: "YYYY-MM-DD",
+      },
     };
   },
   computed: {
@@ -371,7 +371,7 @@ export default {
     monthDay: function (value) {
       if (!value) return "";
       value = value.toString();
-      return value.substring(5);
+      return value.substring(5, 10);
     },
   },
   methods: {
@@ -441,7 +441,7 @@ export default {
                 tasks: [],
               });
               response.data.createdProjects.forEach((project) => {
-                if(project.team_id == null) {
+                if (project.team_id == null) {
                   project.team_id = 0;
                 }
                 this.projects[project.id] = new Project(project);
@@ -468,8 +468,17 @@ export default {
             response.data.createdTasks.forEach((project) => {
               if (project.hasOwnProperty("id")) {
                 this.projects[project.id].tasks = project.tasks;
-              } else if (project[0].project_id === null) {
-                this.projects[0].tasks = project;
+              } else if (Array.isArray(project)) {
+                this.projects[0] = new Project({
+                  id: 0,
+                  title: "No Project",
+                  description: "Tasks without project",
+                  author_id: this.user.id,
+                  team_id: 0,
+                  created_at: moment().format(),
+                  updated_at: moment().format(),
+                  tasks: project,
+                });
               }
             });
             this.loaded = true;
@@ -643,7 +652,9 @@ export default {
       this.editTask = task;
       this.form.title = task.title;
       this.form.description = task.description;
-      this.form.date_till_done = moment(task.date_till_done).format("YYYY-MM-DD");
+      this.form.date_till_done = moment(task.date_till_done).format(
+        "YYYY-MM-DD"
+      );
       this.form.status = task.status;
       this.form.priority = task.priority;
       if (task.project_id != null) {
@@ -669,7 +680,6 @@ export default {
       this.modal = false;
       this.editTask = null;
     },
-
   },
 };
 </script>

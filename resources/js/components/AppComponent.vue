@@ -208,12 +208,12 @@ export default {
      * Logout user.
      */
     logout() {
+      this.$router.push({ name: "Home"});
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
       this.setTimer(0);
       this.setWorktime(null);
-      this.$router.push({ name: "Home", params: { teamId: team.id } });
     },
 
     /**

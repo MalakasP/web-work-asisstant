@@ -310,6 +310,7 @@ function Team(_ref2) {
                 return axios.get("api/" + "assignedTasks").then(function (response) {
                   if (response.data != null) {
                     _this.assignedTasks = [];
+                    console.log(response.data.assignedTasks);
                     response.data.assignedTasks.forEach(function (project) {
                       if (project.hasOwnProperty("id")) {
                         if (project.team_id == null) {
@@ -317,23 +318,27 @@ function Team(_ref2) {
                         }
 
                         _this.projects.push(new Project(project));
-                      } else if (project[0].project_id === null) {
-                        _this.projects.push(new Project({
-                          id: 0,
-                          title: "No Project",
-                          description: "Tasks without project",
-                          author_id: _this.user.id,
-                          team_id: 0,
-                          created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                          updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                          tasks: project
-                        }));
+                      } else if (Array.isArray(project)) {
+                        if (project.length > 0) {
+                          _this.projects.push(new Project({
+                            id: 0,
+                            title: "No Project",
+                            description: "Tasks without project",
+                            author_id: _this.user.id,
+                            team_id: 0,
+                            created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                            updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                            tasks: project
+                          }));
+                        }
                       }
 
                       _this.loaded = true;
                     });
                   }
                 })["catch"](function (error) {
+                  console.log(error);
+
                   if (error.response.status == 404) {
                     _this.noTasks = true;
                     _this.loaded = true;

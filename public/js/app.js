@@ -2045,17 +2045,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * Logout user.
      */
     logout: function logout() {
+      this.$router.push({
+        name: "Home"
+      });
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
       this.setTimer(0);
       this.setWorktime(null);
-      this.$router.push({
-        name: "Home",
-        params: {
-          teamId: team.id
-        }
-      });
     },
 
     /**

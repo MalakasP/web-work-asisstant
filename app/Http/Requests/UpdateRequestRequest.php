@@ -29,7 +29,7 @@ class UpdateRequestRequest extends FormRequest
             'description' => ['string', 'max:191'],
             'type' => ['string', 'max:191'],
             'is_confirmed' => ['boolean'],
-            'confirmed_at' => ['date'],
+            'confirmed_at' => ['nullable', 'date'],
             'requester_id' => ['integer', 'numeric'],
             'responser_id' => ['integer', 'numeric']
         ];
