@@ -116,9 +116,26 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return response()->json([
-            'project' => $project
-        ]);
+        if ($project->team != null) {
+            $isAdmin = $project->team->isUserAdmin(Auth::id());
+            $isAuthor = false;
+        } else if ($project->author_id != null) {
+            $isAuthor = $project->author_id == Auth::id();
+            $isAdmin = false;
+        }  else {
+            $isAdmin = false;
+            $isAuthor = false;
+        }
+
+        if ($isAdmin || $isAuthor) {
+            return response()->json([
+                'project' => $project
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'You do not have rights to do this!',
+            ], 403);
+        }
     }
 
     /**
@@ -156,7 +173,10 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        if ($project->author_id != Auth::user()->id) {
+        if (
+            $project->author_id != Auth::user()->id
+            && ($project->team != null && $project->team->isUserAdmin(Auth::id()))
+        ) {
             return response()->json([
                 'message' => 'You do not have rights to do this!'
             ], 403);

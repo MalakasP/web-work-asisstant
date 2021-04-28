@@ -36,7 +36,7 @@ export default {
         },
 
         sendLoginRequest({ commit }, data) {
-            commit("setErrors", {}, { root: true }); 
+            commit("setErrors", {}, { root: true });
             return axios
                 .post(process.env.MIX_API_URL + "login", data)
                 .then(response => {
@@ -60,7 +60,11 @@ export default {
         },
 
         sendLogoutRequest({ commit }) {
-            axios.post(process.env.MIX_API_URL + "logout").then(() => {
+            axios({
+                method: "post",
+                url: process.env.MIX_API_URL + "logout",
+                base_url: "/",
+            }).then(() => {
                 commit("setUserData", null);
                 commit("setAuthToken", null);
                 // localStorage.removeItem("authToken");

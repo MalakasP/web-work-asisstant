@@ -2,7 +2,7 @@
   <div class="container">
     <div
       class="row justify-content-center"
-      v-if="gottenRequests.data.length > 0 && this.loaded"
+      v-if="gottenRequests.data.length > 0 && this.loaded && !noTeam"
     >
       <div class="col-12 card mt-3">
         <div class="card-header bg-white">
@@ -135,7 +135,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="this.loaded" class="row justify-content-center">
+    <div v-else-if="this.loaded && !noTeam" class="row justify-content-center">
       <div class="col-12 card mt-3">
         <div class="card-header bg-white">
           <div class="row justify-content-end">
@@ -147,7 +147,7 @@
                 @click="history()"
               >
                 <span class="icon is-small">
-                   <svg
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
@@ -179,6 +179,12 @@
         </div>
       </div>
     </div>
+    <div v-else-if="loaded && noTeam" class="col-12 card mt-3">
+      <div class="card-body text-center">
+        <h3 class="card-title">Gotten Requests</h3>
+        <h5 class="card-text">You do not have a team. Start one.</h5>
+      </div>
+    </div>
     <div v-else class="row justify-content-center">
       <div class="loader mt-3"></div>
     </div>
@@ -200,32 +206,6 @@ function Team({ id, name, description, created_at, updated_at, pivot, users }) {
   this.users = users;
 }
 
-function Request({
-  id,
-  date_from,
-  date_to,
-  description,
-  type,
-  is_confirmed,
-  confirmed_at,
-  requester_id,
-  responser_id,
-  created_at,
-  updated_at,
-}) {
-  this.id = id;
-  this.date_from = date_from;
-  this.date_to = date_to;
-  this.description = description;
-  this.type = type;
-  this.is_confirmed = is_confirmed;
-  this.confirmed_at = confirmed_at;
-  this.requester_id = requester_id;
-  this.responser_id = responser_id;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
-
 function User({ id, name, email, created_at, updated_at }) {
   this.id = id;
   this.name = name;
@@ -237,6 +217,7 @@ function User({ id, name, email, created_at, updated_at }) {
 export default {
   data: function () {
     return {
+      noTeam: false,
       loaded: false,
       modal: false,
       edit: null,
@@ -330,6 +311,10 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          if (error.response.status == 404) {
+            this.noTeam = true;
+            this.loaded = true;
+          }
         });
     },
 
@@ -347,7 +332,7 @@ export default {
         });
     },
 
-    async fetchAnsweredRequestsData(page) {
+    async fetchAnsweredRequestsData(page = 1) {
       await axios
         .get(process.env.MIX_API_URL + "getAnsweredRequests?page=" + page)
         .then((response) => {
@@ -455,9 +440,9 @@ export default {
 
 .card-header {
   border: none;
-  padding-top: .75rem;
+  padding-top: 0.75rem;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
-  padding-bottom:0;
+  padding-bottom: 0;
 }
 </style>

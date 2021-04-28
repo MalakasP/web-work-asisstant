@@ -204,11 +204,12 @@ export default {
       "setWorktime",
       "setTimer",
     ]),
+
     /**
      * Logout user.
      */
     logout() {
-      this.$router.push({ name: "Home"});
+      this.$router.push('/');
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);

@@ -425,6 +425,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -657,6 +679,7 @@ function User(_ref2) {
                 _context3.next = 4;
                 return axios.post("api/" + "projects", _this3.form).then(function (response) {
                   if (response.data != null) {
+                    _this3.modal = false;
                     _this3.createForm = false;
 
                     _this3.createdProjects.push(response.data.project);
@@ -676,6 +699,7 @@ function User(_ref2) {
                   if (error.response) {
                     if (error.response.status != 422) {
                       _this3.createForm = false;
+                      _this3.modal = false;
 
                       _this3.$alert(error.response.data.status, "Warning", "error");
                     } else {
@@ -742,6 +766,7 @@ function User(_ref2) {
       });
     },
     startEdit: function startEdit(project) {
+      this.$store.commit("setErrors", {});
       this.modal = true;
       this.edit = project;
       this.dynamicTitle = "Edit Project";
@@ -757,12 +782,14 @@ function User(_ref2) {
       this.form.author = project.author_id;
     },
     startCreate: function startCreate() {
+      this.$store.commit("setErrors", {});
       this.createForm = true;
       this.form.title = null;
       this.form.description = null;
       this.form.team_id = 0;
     },
     startProject: function startProject() {
+      this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "New Project";
       this.form.title = null;
@@ -795,7 +822,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-20cb5d70] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-20cb5d70] {\r\n  width: 100%;\n}\n.input-sm[data-v-20cb5d70] {\r\n  height: calc(2.15rem + 2px);\n}\n.modal-body[data-v-20cb5d70] {\r\n  height: 40vh;\r\n  overflow-y: auto;\n}\nthead tr[data-v-20cb5d70],\r\ntbody tr[data-v-20cb5d70] {\r\n  line-height: 40px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-20cb5d70] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.full-width[data-v-20cb5d70] {\r\n  width: 100%;\n}\n.input-sm[data-v-20cb5d70] {\r\n  height: calc(2.15rem + 2px);\n}\n.modal-body[data-v-20cb5d70] {\r\n  height: 40vh;\r\n  overflow-y: auto;\n}\nthead tr[data-v-20cb5d70],\r\ntbody tr[data-v-20cb5d70] {\r\n  line-height: 40px;\n}\n.link[data-v-20cb5d70]:hover {\r\n  color: #007bff;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1926,9 +1953,30 @@ var render = function() {
                       [
                         _vm._l(_vm.createdProjects, function(project) {
                           return _c("tr", { key: project.id }, [
-                            _c("td", { staticStyle: { width: "25%" } }, [
-                              _vm._v(_vm._s(project.title))
-                            ]),
+                            project.id > 0
+                              ? _c(
+                                  "td",
+                                  {
+                                    staticClass: "link",
+                                    staticStyle: { width: "25%" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.$router.push({
+                                          name: "Project",
+                                          params: { projectId: project.id }
+                                        })
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                  " +
+                                        _vm._s(project.title) +
+                                        "\n                "
+                                    )
+                                  ]
+                                )
+                              : _vm._e(),
                             _vm._v(" "),
                             project.description != null
                               ? _c("td", { staticStyle: { width: "40%" } }, [
@@ -1942,14 +1990,31 @@ var render = function() {
                                   _vm._v("-")
                                 ]),
                             _vm._v(" "),
-                            project.team_id != null
-                              ? _c("td", { staticStyle: { width: "25%" } }, [
-                                  _vm._v(
-                                    "\n                  " +
-                                      _vm._s(_vm.teams[project.team_id].name) +
-                                      "\n                "
-                                  )
-                                ])
+                            project.team_id != null && project.team_id > 0
+                              ? _c(
+                                  "td",
+                                  {
+                                    staticClass: "link",
+                                    staticStyle: { width: "25%" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.$router.push({
+                                          name: "Team",
+                                          params: { teamId: project.team_id }
+                                        })
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                  " +
+                                        _vm._s(
+                                          _vm.teams[project.team_id].name
+                                        ) +
+                                        "\n                "
+                                    )
+                                  ]
+                                )
                               : _c("td", { staticStyle: { width: "25%" } }, [
                                   _vm._v("No Team")
                                 ]),

@@ -25,7 +25,7 @@
                     <input
                       type="text"
                       class="form-control"
-                      :class="{ 'is-invalid': errors.title }"
+                      :class="{ 'is-invalid' : errors.title}"
                       v-model="form.title"
                     />
                     <div class="invalid-feedback" v-if="errors.title">
@@ -44,7 +44,10 @@
                       {{ errors.description }}
                     </div>
                   </div>
-                  <div class="form-group" v-if="Object.keys(this.teamsAdmin).lenght > 1">
+                  <div
+                    class="form-group"
+                    v-if="Object.keys(this.teamsAdmin).lenght > 1"
+                  >
                     <label>Choose Team</label>
                     <select
                       class="form-control"
@@ -106,12 +109,31 @@
               </thead>
               <tbody>
                 <tr v-for="project in createdProjects" :key="project.id">
-                  <td style="width: 25%">{{ project.title }}</td>
+                  <td
+                    style="width: 25%"
+                    v-if="project.id > 0"
+                    class="link"
+                    @click="
+                      $router.push({
+                        name: 'Project',
+                        params: { projectId: project.id },
+                      })
+                    "
+                  >
+                    {{ project.title }}
+                  </td>
                   <td style="width: 40%" v-if="project.description != null">
                     {{ project.description }}
                   </td>
                   <td style="width: 40%" v-else>-</td>
-                  <td style="width: 25%" v-if="project.team_id != null">
+                  <td style="width: 25%" v-if="project.team_id != null && project.team_id > 0"
+                      class="link"
+                      @click="
+                        $router.push({
+                          name: 'Team',
+                          params: { teamId: project.team_id },
+                        })
+                      ">
                     {{ teams[project.team_id].name }}
                   </td>
                   <td style="width: 25%" v-else>No Team</td>
@@ -497,7 +519,7 @@ export default {
 
             if (response.data.teamProjects != null) {
               response.data.teamProjects.forEach((project) => {
-                if(project != null) {
+                if (project != null) {
                   this.teamProjects.push(project);
                 }
               });
@@ -560,6 +582,7 @@ export default {
         .post(process.env.MIX_API_URL + "projects", this.form)
         .then((response) => {
           if (response.data != null) {
+            this.modal = false;
             this.createForm = false;
             this.createdProjects.push(response.data.project);
             this.$notify({
@@ -576,6 +599,7 @@ export default {
           if (error.response) {
             if (error.response.status != 422) {
               this.createForm = false;
+              this.modal = false;
               this.$alert(error.response.data.status, "Warning", "error");
             } else {
               if (this.form.team_id == null) {
@@ -618,6 +642,7 @@ export default {
     },
 
     startEdit(project) {
+      this.$store.commit("setErrors", {});
       this.modal = true;
       this.edit = project;
       this.dynamicTitle = "Edit Project";
@@ -632,6 +657,7 @@ export default {
     },
 
     startCreate() {
+      this.$store.commit("setErrors", {});
       this.createForm = true;
       this.form.title = null;
       this.form.description = null;
@@ -639,6 +665,7 @@ export default {
     },
 
     startProject() {
+      this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "New Project";
       this.form.title = null;
@@ -678,5 +705,9 @@ export default {
 thead tr,
 tbody tr {
   line-height: 40px;
+}
+
+.link:hover {
+  color: #007bff;
 }
 </style>

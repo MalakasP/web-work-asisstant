@@ -248,7 +248,7 @@ function User(_ref2) {
                       text: response.data.message
                     });
 
-                    _this2.loadRouterLink(_this2.teams[response.data.team.id]);
+                    _this2.goRouter(_this2.teams[response.data.team.id]);
                   }
                 })["catch"](function (error) {
                   if (error.response.status == 422) {
@@ -275,7 +275,7 @@ function User(_ref2) {
         }, _callee2);
       }))();
     },
-    loadRouterLink: function loadRouterLink(team) {
+    goRouter: function goRouter(team) {
       this.$router.push({
         name: "Team",
         params: {
@@ -1362,7 +1362,7 @@ var render = function() {
                         staticClass: "card ripple",
                         on: {
                           click: function($event) {
-                            return _vm.loadRouterLink(team)
+                            return _vm.goRouter(team)
                           }
                         }
                       },

@@ -2045,9 +2045,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * Logout user.
      */
     logout: function logout() {
-      this.$router.push({
-        name: "Home"
-      });
+      this.$router.push('/');
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
@@ -2361,6 +2359,13 @@ var routes = [{
     return __webpack_require__.e(/*! import() */ "resources_js_components_ProjectsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/ProjectsComponent.vue */ "./resources/js/components/ProjectsComponent.vue"));
   }
 }, {
+  path: "/project/:projectId",
+  name: "Project",
+  beforeEnter: auth,
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_ProjectComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/ProjectComponent.vue */ "./resources/js/components/ProjectComponent.vue"));
+  }
+}, {
   path: "/teams",
   name: "Teams",
   beforeEnter: auth,
@@ -2551,7 +2556,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     sendLogoutRequest: function sendLogoutRequest(_ref4) {
       var commit = _ref4.commit;
-      axios.post("api/" + "logout").then(function () {
+      axios({
+        method: "post",
+        url: "api/" + "logout",
+        base_url: "/"
+      }).then(function () {
         commit("setUserData", null);
         commit("setAuthToken", null); // localStorage.removeItem("authToken");
         // localStorage.removeItem("userData");
@@ -81351,7 +81360,7 @@ var index = {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_TeamComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_GottenRequestsComponent_vue":1,"resources_js_components_AnsweredRequestsComponent_vue":1,"resources_js_components_CreatedRequestsComponent_vue":1,"resources_js_components_WorktimesComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_ProjectComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_TeamComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_GottenRequestsComponent_vue":1,"resources_js_components_AnsweredRequestsComponent_vue":1,"resources_js_components_CreatedRequestsComponent_vue":1,"resources_js_components_WorktimesComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

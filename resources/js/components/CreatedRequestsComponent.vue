@@ -142,7 +142,7 @@
     </div>
     <div
       class="row justify-content-center"
-      v-if="this.createdRequests.data.length > 0 && this.loaded"
+      v-if="this.createdRequests.data.length > 0 && this.loaded && !noTeam"
     >
       <div class="col-12 card mt-3">
         <div class="card-header bg-white">
@@ -272,7 +272,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="this.loaded" class="row justify-content-center">
+    <div v-else-if="loaded && !noTeam" class="row justify-content-center">
       <div class="col-12 card mt-3">
         <div class="card-body text-center">
           <h3 class="card-title">Created Requests</h3>
@@ -299,6 +299,12 @@
         </div>
       </div>
     </div>
+    <div v-else-if="loaded && noTeam" class="col-12 card mt-3">
+      <div class="card-body text-center">
+        <h3 class="card-title">Created Requests</h3>
+        <h5 class="card-text">You do not have a team. Start or join one.</h5>
+      </div>
+    </div>
     <div v-else class="row justify-content-center">
       <div class="loader mt-3"></div>
     </div>
@@ -306,7 +312,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters} from "vuex";
 import moment from "moment";
 import Pagination from "vue-pagination-2";
 
@@ -447,7 +453,10 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-          this.loaded = true;
+          if (error.response.status == 404) {
+            this.noTeam = true;
+            this.loaded = true;
+          }
         });
     },
 

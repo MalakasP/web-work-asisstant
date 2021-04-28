@@ -258,6 +258,22 @@ function Team(_ref2) {
                   }
                 })["catch"](function (error) {
                   console.log(error);
+
+                  if (error.response.status == 404) {
+                    _this.teams[0] = new Team({
+                      id: 0,
+                      name: "No Team",
+                      description: "",
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      pivot: {
+                        is_admin: true
+                      },
+                      users: [_this.user]
+                    });
+
+                    _this.getDays();
+                  }
                 });
 
               case 2:

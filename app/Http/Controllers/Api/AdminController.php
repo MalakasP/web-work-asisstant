@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateTeamUserRequest;
 use App\Http\Requests\GetWorktimesRequest;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Project;
+use App\Models\TaskStatus;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -101,6 +103,8 @@ class AdminController extends Controller
 
     /**
      * Get team users worktimes
+     * 
+     * @param \App\Models\Team $team
      * @param \App\Http\Requests\GetWorktimesRequest  $request
      * @return \Illuminate\Http\Response
      */
@@ -141,10 +145,50 @@ class AdminController extends Controller
     }
 
     /**
-     * Gets users of the team
+     * Gets tasks grouped by status
+     * 
+     * @param \App\Models\Project $project
+     * @return \Illuminate\Http\Response
      */
-    public function getTeamUsers(Team $team)
+    public function getProjectTaskByStatus(Project $project)
     {
+        if ($project->team != null) {
+            $isAdmin = $project->team->isUserAdmin(Auth::id());
+            $isAuthor = false;
+        } else if ($project->author_id != null) {
+            $isAuthor = $project->author_id == Auth::id();
+            $isAdmin = false;
+        } else {
+            $isAdmin = false;
+            $isAuthor = false;
+        }
+
+        if (!$isAdmin && !$isAuthor) {
+            return response()->json([
+                'message' => 'You do not have rights to do this!',
+            ], 403);
+        }
+
+        $empty = true;
+
+        $statuses = TaskStatus::get();
+        
+        foreach ($statuses as $status) {
+          $tasks[$status->name] = $project->tasks()->where('status_id', $status->id)->get();
+          if (!$tasks[$status->name]->isEmpty()) {
+            $empty = false;
+          }
+        }
+
+        if ($empty) {
+            return response()->json([
+                'message' => 'You do not have tasks in project'
+            ], 404);
+        }
+
+        return response()->json([
+            'tasks' => $tasks
+        ]);
     }
 
     // /**

@@ -64,7 +64,7 @@
       <div class="container">
         <div class="row">
           <div class="col-4 p-1" v-for="team in teams" :key="team.id">
-            <div class="card ripple" @click="loadRouterLink(team)">
+            <div class="card ripple" @click="goRouter(team)">
               <div class="card-body">
                 <h5 class="card-title">{{ team.name }}</h5>
                 <p class="card-text" v-if="team.description">
@@ -183,7 +183,7 @@ export default {
               type: "success",
               text: response.data.message,
             });
-            this.loadRouterLink(this.teams[response.data.team.id]);
+            this.goRouter(this.teams[response.data.team.id]);
           }
         })
         .catch((error) => {
@@ -204,7 +204,7 @@ export default {
         });
     },
 
-    loadRouterLink(team) {
+    goRouter(team) {
       this.$router.push({ name: "Team", params: { teamId: team.id } });
     },
 

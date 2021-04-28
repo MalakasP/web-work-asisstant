@@ -706,7 +706,7 @@ export default {
     },
 
     startDelete() {
-      this.$confirm("Are You sure?", "Confirm Remove", "error")
+      this.$confirm("Are You sure?", "Confirm Delete", "error")
         .then(() => {
           this.delete();
         })

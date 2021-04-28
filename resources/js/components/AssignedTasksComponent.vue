@@ -22,8 +22,12 @@
                 </div>
                 <div class="modal-body">
                   <div class="form-group">
-                    <label>Select Deadline</label> <br/>
-                    <v-date-picker v-model="form.date_till_done" mode="date" :min-date='new Date()' >
+                    <label>Select Deadline</label> <br />
+                    <v-date-picker
+                      v-model="form.date_till_done"
+                      mode="date"
+                      :min-date="new Date()"
+                    >
                       <template v-slot="{ inputValue, inputEvents }">
                         <input
                           class="px-2 py-1 border rounded focus:outline-none focus:border-blue-300"
@@ -32,10 +36,7 @@
                         />
                       </template>
                     </v-date-picker>
-                    <div
-                      class="invalid-feedback"
-                      v-if="errors.date_till_done"
-                    >
+                    <div class="invalid-feedback" v-if="errors.date_till_done">
                       {{ errors.date_till_done }}
                     </div>
                   </div>
@@ -47,11 +48,11 @@
                       v-model="form.status"
                     >
                       <option
-                        v-for="status in this.statuses"
-                        :value="status.val"
-                        :key="status.val"
+                        v-for="status in statuses"
+                        :value="status.id"
+                        :key="status.id"
                       >
-                        {{ status.val }}
+                        {{ status.name }}
                       </option>
                     </select>
                     <div class="invalid-feedback" v-if="errors.status">
@@ -104,8 +105,12 @@
                     <td style="width: 20%">
                       {{ task.date_till_done | monthDay }}
                     </td>
-                    <td style="width: 20%">{{ task.status }}</td>
-                    <td style="width: 20%">{{ task.priority }}</td>
+                    <td style="width: 20%">
+                      {{ statuses[task.status_id].name }}
+                    </td>
+                    <td style="width: 20%">
+                      {{ priorities[task.priority_id].name }}
+                    </td>
                     <td style="width: 10%">
                       <button
                         type="button"
@@ -186,17 +191,14 @@ export default {
       projects: [],
       edit: null,
       modal: false,
-       statuses: {
-        1: { val: "To Do" },
-        2: { val: "In Progress" },
-        3: { val: "Done" },
-      },
+      statuses: {},
+      priorities: {},
       form: {
         title: null,
         description: null,
         date_till_done: null,
-        status: null,
-        priority: null,
+        status_id: null,
+        priority_id: null,
         project_id: null,
         reporter_id: null,
         assignee_id: null,
@@ -225,6 +227,35 @@ export default {
   },
   methods: {
     async read() {
+      console.log("here");
+      await axios
+        .get(process.env.MIX_API_URL + "taskStatuses")
+        .then((response) => {
+          if (response.data != null) {
+            this.statuses = {};
+            response.data.taskStatuses.forEach((status) => {
+              this.statuses[status.id] = status;
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      await axios
+        .get(process.env.MIX_API_URL + "taskPriorities")
+        .then((response) => {
+          if (response.data != null) {
+            this.priorities = {};
+            response.data.taskPriorities.forEach((priority) => {
+              this.priorities[priority.id] = priority;
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       await axios
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
@@ -248,7 +279,19 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error);
+          if (error.response.status == 404) {
+            this.teams[0] = new Team({
+              id: 0,
+              name: "No Team",
+              description: "",
+              created_at: moment(),
+              updated_at: moment(),
+              pivot: {
+                is_admin: true,
+              },
+              users: [this.user],
+            });
+          }
         });
 
       await axios
@@ -259,7 +302,7 @@ export default {
             console.log(response.data.assignedTasks);
             response.data.assignedTasks.forEach((project) => {
               if (project.hasOwnProperty("id")) {
-                if(project.team_id == null) {
+                if (project.team_id == null) {
                   project.team_id = 0;
                 }
                 this.projects.push(new Project(project));
@@ -277,7 +320,7 @@ export default {
                       tasks: project,
                     })
                   );
-                } 
+                }
               }
               this.loaded = true;
             });
@@ -342,11 +385,11 @@ export default {
       this.dynamicTitle = "Edit task";
       this.edit = task;
       this.modal = true;
-       this.form.title = task.title;
+      this.form.title = task.title;
       this.form.description = task.description;
       this.form.date_till_done = task.date_till_done;
-      this.form.status = task.status;
-      this.form.priority = task.priority;
+      this.form.status_id = task.status_id;
+      this.form.priority_id = task.priority_id;
       this.form.project_id = task.project_id;
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;

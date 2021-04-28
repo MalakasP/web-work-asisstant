@@ -322,6 +322,32 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -368,34 +394,8 @@ function Team(_ref2) {
       noTasks: false,
       dynamicTitle: null,
       modal: false,
-      statuses: {
-        1: {
-          val: "To Do"
-        },
-        2: {
-          val: "In Progress"
-        },
-        3: {
-          val: "Done"
-        }
-      },
-      priorities: {
-        1: {
-          val: "lowest"
-        },
-        2: {
-          val: "low"
-        },
-        3: {
-          val: "medium"
-        },
-        4: {
-          val: "high"
-        },
-        5: {
-          val: "critical"
-        }
-      },
+      statuses: {},
+      priorities: {},
       editTask: null,
       taskProject: null,
       projects: {},
@@ -405,8 +405,8 @@ function Team(_ref2) {
         title: null,
         description: null,
         date_till_done: null,
-        status: null,
-        priority: null,
+        status_id: null,
+        priority_id: null,
         project_id: null,
         reporter_id: null,
         assignee_id: null,
@@ -454,10 +454,38 @@ function Team(_ref2) {
                   }
                 })["catch"](function (error) {
                   console.log(error);
+                  _this.projectsUsers = {};
+                  _this.projectsUsers[_this.user.id] = _this.user;
                 });
 
               case 2:
                 _context.next = 4;
+                return axios.get("api/" + "taskStatuses").then(function (response) {
+                  if (response.data != null) {
+                    _this.statuses = {};
+                    response.data.taskStatuses.forEach(function (status) {
+                      _this.statuses[status.id] = status;
+                    });
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 4:
+                _context.next = 6;
+                return axios.get("api/" + "taskPriorities").then(function (response) {
+                  if (response.data != null) {
+                    _this.priorities = {};
+                    response.data.taskPriorities.forEach(function (priority) {
+                      _this.priorities[priority.id] = priority;
+                    });
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 6:
+                _context.next = 8;
                 return axios.get("api/" + "teams").then(function (response) {
                   if (response.data != null) {
                     _this.teams = {};
@@ -481,10 +509,24 @@ function Team(_ref2) {
                   }
                 })["catch"](function (error) {
                   console.log(error);
+
+                  if (error.response.status == 404) {
+                    _this.teams[0] = new Team({
+                      id: 0,
+                      name: "No Team",
+                      description: "",
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      pivot: {
+                        is_admin: true
+                      },
+                      users: [_this.user]
+                    });
+                  }
                 });
 
-              case 4:
-                _context.next = 6;
+              case 8:
+                _context.next = 10;
                 return axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
                   if (response.data != null) {
                     if (response.data.createdProjects != null) {
@@ -520,8 +562,8 @@ function Team(_ref2) {
                   console.log(error);
                 });
 
-              case 6:
-                _context.next = 8;
+              case 10:
+                _context.next = 12;
                 return axios.get("api/" + "createdTasks").then(function (response) {
                   if (response.data != null) {
                     response.data.createdTasks.forEach(function (project) {
@@ -546,13 +588,22 @@ function Team(_ref2) {
                   console.log(error);
 
                   if (error.response.status == 404) {
-                    _this.noTasks = true;
+                    _this.projects[0] = new Project({
+                      id: 0,
+                      title: "No Project",
+                      description: "Tasks without project",
+                      author_id: _this.user.id,
+                      team_id: 0,
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                      tasks: []
+                    });
                   }
 
                   _this.loaded = true;
                 });
 
-              case 8:
+              case 12:
               case "end":
                 return _context.stop();
             }
@@ -742,12 +793,19 @@ function Team(_ref2) {
       this.form.title = null;
       this.form.description = null;
       this.form.date_till_done = moment__WEBPACK_IMPORTED_MODULE_1___default()().format("YYYY-MM-DD");
-      this.form.status = this.statuses[1].val;
-      this.form.priority = this.priorities[1].val;
-      this.selectedProjectTeam = project.team_id;
+      console.log(this.statuses, this.priorities);
+      this.form.status_id = this.statuses[0].id;
+      this.form.priority_id = this.priorities[0].id;
+
+      if (project.team_id != null) {
+        this.selectedProjectTeam = project.team_id;
+      } else {
+        this.selectedProjectTeam = 0;
+      }
+
       this.form.project_id = this.projects[project.id].id;
       this.form.reporter_id = this.user.id;
-      this.form.assignee_id = this.projectsUsers[1].id;
+      this.form.assignee_id = this.teams[this.selectedProjectTeam].users[0].id;
     },
     startEdit: function startEdit(task, projectTeamId) {
       this.$store.commit("setErrors", {});
@@ -757,8 +815,8 @@ function Team(_ref2) {
       this.form.title = task.title;
       this.form.description = task.description;
       this.form.date_till_done = moment__WEBPACK_IMPORTED_MODULE_1___default()(task.date_till_done).format("YYYY-MM-DD");
-      this.form.status = task.status;
-      this.form.priority = task.priority;
+      this.form.status_id = task.status_id;
+      this.form.priority_id = task.priority_id;
 
       if (task.project_id != null) {
         this.form.project_id = task.project_id;
@@ -766,7 +824,12 @@ function Team(_ref2) {
         this.form.project_id = this.projects[0].id;
       }
 
-      this.selectedProjectTeam = projectTeamId;
+      if (projectTeamId != null) {
+        this.selectedProjectTeam = projectTeamId;
+      } else {
+        this.selectedProjectTeam = 0;
+      }
+
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;
     },
@@ -781,6 +844,26 @@ function Team(_ref2) {
     closeModal: function closeModal() {
       this.modal = false;
       this.editTask = null;
+    },
+    goToProject: function goToProject(name, id) {
+      if (id > 0) {
+        this.$router.push({
+          name: name,
+          params: {
+            projectId: id
+          }
+        });
+      }
+    },
+    goToTeam: function goToTeam(name, id) {
+      if (id > 0) {
+        this.$router.push({
+          name: name,
+          params: {
+            teamId: id
+          }
+        });
+      }
     }
   })
 });
@@ -804,7 +887,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-bb265d88] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 50vh;\r\n  overflow-y: auto;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-bb265d88] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 50vh;\r\n  overflow-y: auto;\n}\n.link[data-v-bb265d88]:hover {\r\n  color: #007bff;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1878,7 +1961,7 @@ var render = function() {
                                 }
                               },
                               _vm._l(
-                                this.teams[_vm.selectedProjectTeam].users,
+                                _vm.teams[_vm.selectedProjectTeam].users,
                                 function(user) {
                                   return _c(
                                     "option",
@@ -1922,8 +2005,8 @@ var render = function() {
                                   {
                                     name: "model",
                                     rawName: "v-model",
-                                    value: _vm.form.status,
-                                    expression: "form.status"
+                                    value: _vm.form.status_id,
+                                    expression: "form.status_id"
                                   }
                                 ],
                                 staticClass: "form-control",
@@ -1941,7 +2024,7 @@ var render = function() {
                                       })
                                     _vm.$set(
                                       _vm.form,
-                                      "status",
+                                      "status_id",
                                       $event.target.multiple
                                         ? $$selectedVal
                                         : $$selectedVal[0]
@@ -1953,13 +2036,13 @@ var render = function() {
                                 return _c(
                                   "option",
                                   {
-                                    key: status.val,
-                                    domProps: { value: status.val }
+                                    key: status.id,
+                                    domProps: { value: status.id }
                                   },
                                   [
                                     _vm._v(
                                       "\n                        " +
-                                        _vm._s(status.val) +
+                                        _vm._s(status.name) +
                                         "\n                      "
                                     )
                                   ]
@@ -1989,8 +2072,8 @@ var render = function() {
                                   {
                                     name: "model",
                                     rawName: "v-model",
-                                    value: _vm.form.priority,
-                                    expression: "form.priority"
+                                    value: _vm.form.priority_id,
+                                    expression: "form.priority_id"
                                   }
                                 ],
                                 staticClass: "form-control to-capital-first",
@@ -2008,7 +2091,7 @@ var render = function() {
                                       })
                                     _vm.$set(
                                       _vm.form,
-                                      "priority",
+                                      "priority_id",
                                       $event.target.multiple
                                         ? $$selectedVal
                                         : $$selectedVal[0]
@@ -2020,13 +2103,13 @@ var render = function() {
                                 return _c(
                                   "option",
                                   {
-                                    key: priority.val,
-                                    domProps: { value: priority.val }
+                                    key: priority.id,
+                                    domProps: { value: priority.id }
                                   },
                                   [
                                     _vm._v(
                                       "\n                        " +
-                                        _vm._s(priority.val) +
+                                        _vm._s(priority.name) +
                                         "\n                      "
                                     )
                                   ]
@@ -2130,13 +2213,64 @@ var render = function() {
                       [
                         _c("div", { staticClass: "row" }, [
                           _c("div", { staticClass: "col-2" }, [
-                            _c("h5", [_vm._v(_vm._s(project.title))])
+                            project.id > 0
+                              ? _c(
+                                  "h5",
+                                  {
+                                    staticClass: "link",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.$router.push({
+                                          name: "Project",
+                                          params: { projectId: project.id }
+                                        })
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                    " +
+                                        _vm._s(project.title) +
+                                        "\n                  "
+                                    )
+                                  ]
+                                )
+                              : _c("h5", [_vm._v(_vm._s(project.title))])
                           ]),
                           _vm._v(" "),
                           _c("div", { staticClass: "col-2" }, [
-                            _c("h6", [
-                              _vm._v(_vm._s(_vm.teams[project.team_id].name))
-                            ])
+                            _vm.teams[project.team_id].id > 0
+                              ? _c(
+                                  "h6",
+                                  {
+                                    staticClass: "link",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.$router.push({
+                                          name: "Team",
+                                          params: {
+                                            teamId:
+                                              _vm.teams[project.team_id].id
+                                          }
+                                        })
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                    " +
+                                        _vm._s(
+                                          _vm.teams[project.team_id].name
+                                        ) +
+                                        "\n                  "
+                                    )
+                                  ]
+                                )
+                              : _c("h6", [
+                                  _vm._v(
+                                    _vm._s(_vm.teams[project.team_id].name)
+                                  )
+                                ])
                           ])
                         ])
                       ]
@@ -2175,7 +2309,13 @@ var render = function() {
                                   ]),
                                   _vm._v(" "),
                                   _c("td", { staticStyle: { width: "20%" } }, [
-                                    _vm._v(_vm._s(task.status))
+                                    _vm._v(
+                                      "\n                      " +
+                                        _vm._s(
+                                          _vm.statuses[task.status_id].name
+                                        ) +
+                                        "\n                    "
+                                    )
                                   ]),
                                   _vm._v(" "),
                                   _c(
@@ -2187,7 +2327,10 @@ var render = function() {
                                     [
                                       _vm._v(
                                         "\n                      " +
-                                          _vm._s(task.priority) +
+                                          _vm._s(
+                                            _vm.priorities[task.priority_id]
+                                              .name
+                                          ) +
                                           "\n                    "
                                       )
                                     ]

@@ -191,6 +191,20 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          if (error.response.status == 404) {
+            this.teams[0] = new Team({
+              id: 0,
+              name: "No Team",
+              description: "",
+              created_at: moment(),
+              updated_at: moment(),
+              pivot: {
+                is_admin: true,
+              },
+              users: [this.user],
+            });
+            this.getDays();
+          }
         });
     },
 

@@ -48,6 +48,13 @@ const routes = [
             import("../components/ProjectsComponent.vue")
     },
     {
+        path: "/project/:projectId",
+        name: "Project",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/ProjectComponent.vue")
+    },
+    {
         path: "/teams",
         name: "Teams",
         beforeEnter: auth,

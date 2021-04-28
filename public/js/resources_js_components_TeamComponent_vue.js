@@ -857,7 +857,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     startDelete: function startDelete() {
       var _this9 = this;
 
-      this.$confirm("Are You sure?", "Confirm Remove", "error").then(function () {
+      this.$confirm("Are You sure?", "Confirm Delete", "error").then(function () {
         _this9["delete"]();
       })["catch"](function (error) {
         console.log(error);

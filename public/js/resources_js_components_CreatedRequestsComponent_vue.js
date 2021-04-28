@@ -348,6 +348,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -501,7 +507,11 @@ function User(_ref2) {
                   _this2.loaded = true;
                 })["catch"](function (error) {
                   console.log(error);
-                  _this2.loaded = true;
+
+                  if (error.response.status == 404) {
+                    _this2.noTeam = true;
+                    _this2.loaded = true;
+                  }
                 });
 
               case 4:
@@ -2262,7 +2272,7 @@ var render = function() {
         )
       : _vm._e(),
     _vm._v(" "),
-    this.createdRequests.data.length > 0 && this.loaded
+    this.createdRequests.data.length > 0 && this.loaded && !_vm.noTeam
       ? _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "col-12 card mt-3" }, [
             _c("div", { staticClass: "card-header bg-white" }, [
@@ -2506,7 +2516,7 @@ var render = function() {
             )
           ])
         ])
-      : this.loaded
+      : _vm.loaded && !_vm.noTeam
       ? _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "col-12 card mt-3" }, [
             _c("div", { staticClass: "card-body text-center" }, [
@@ -2562,6 +2572,8 @@ var render = function() {
             ])
           ])
         ])
+      : _vm.loaded && _vm.noTeam
+      ? _c("div", { staticClass: "col-12 card mt-3" }, [_vm._m(1)])
       : _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "loader mt-3" })
         ])
@@ -2589,6 +2601,18 @@ var staticRenderFns = [
         _c("th", { staticStyle: { width: "5%" } }),
         _vm._v(" "),
         _c("th", { staticStyle: { width: "5%" } })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-body text-center" }, [
+      _c("h3", { staticClass: "card-title" }, [_vm._v("Created Requests")]),
+      _vm._v(" "),
+      _c("h5", { staticClass: "card-text" }, [
+        _vm._v("You do not have a team. Start or join one.")
       ])
     ])
   }

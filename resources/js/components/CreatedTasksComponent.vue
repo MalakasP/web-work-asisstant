@@ -57,7 +57,7 @@
                         v-model="form.assignee_id"
                       >
                         <option
-                          v-for="user in this.teams[selectedProjectTeam].users"
+                          v-for="user in teams[selectedProjectTeam].users"
                           :value="user.id"
                           :key="user.id"
                         >
@@ -75,14 +75,14 @@
                       <select
                         class="form-control"
                         :class="{ 'is-invalid': errors.status }"
-                        v-model="form.status"
+                        v-model="form.status_id"
                       >
                         <option
                           v-for="status in this.statuses"
-                          :value="status.val"
-                          :key="status.val"
+                          :value="status.id"
+                          :key="status.id"
                         >
-                          {{ status.val }}
+                          {{ status.name }}
                         </option>
                       </select>
                       <div class="invalid-feedback" v-if="errors.status">
@@ -94,14 +94,14 @@
                       <select
                         class="form-control to-capital-first"
                         :class="{ 'is-invalid': errors.priority }"
-                        v-model="form.priority"
+                        v-model="form.priority_id"
                       >
                         <option
                           v-for="priority in this.priorities"
-                          :value="priority.val"
-                          :key="priority.val"
+                          :value="priority.id"
+                          :key="priority.id"
                         >
-                          {{ priority.val }}
+                          {{ priority.name }}
                         </option>
                       </select>
                       <div class="invalid-feedback" v-if="errors.priority">
@@ -152,10 +152,34 @@
               <div class="card-header bg-white justify-content-start">
                 <div class="row">
                   <div class="col-2">
-                    <h5>{{ project.title }}</h5>
+                    <h5
+                      v-if="project.id > 0"
+                      class="link"
+                      @click="
+                        $router.push({
+                          name: 'Project',
+                          params: { projectId: project.id },
+                        })
+                      "
+                    >
+                      {{ project.title }}
+                    </h5>
+                    <h5 v-else>{{ project.title }}</h5>
                   </div>
                   <div class="col-2">
-                    <h6>{{ teams[project.team_id].name }}</h6>
+                    <h6
+                      v-if="teams[project.team_id].id > 0"
+                      class="link"
+                      @click="
+                        $router.push({
+                          name: 'Team',
+                          params: { teamId: teams[project.team_id].id },
+                        })
+                      "
+                    >
+                      {{ teams[project.team_id].name }}
+                    </h6>
+                    <h6 v-else>{{ teams[project.team_id].name }}</h6>
                   </div>
                 </div>
               </div>
@@ -178,9 +202,11 @@
                       <td style="width: 20%">
                         {{ task.date_till_done | monthDay }}
                       </td>
-                      <td style="width: 20%">{{ task.status }}</td>
+                      <td style="width: 20%">
+                        {{ statuses[task.status_id].name }}
+                      </td>
                       <td class="to-capital-first" style="width: 20%">
-                        {{ task.priority }}
+                        {{ priorities[task.priority_id].name }}
                       </td>
                       <td style="width: 10%">
                         {{ projectsUsers[task.assignee_id].name }}
@@ -322,18 +348,8 @@ export default {
       noTasks: false,
       dynamicTitle: null,
       modal: false,
-      statuses: {
-        1: { val: "To Do" },
-        2: { val: "In Progress" },
-        3: { val: "Done" },
-      },
-      priorities: {
-        1: { val: "lowest" },
-        2: { val: "low" },
-        3: { val: "medium" },
-        4: { val: "high" },
-        5: { val: "critical" },
-      },
+      statuses: {},
+      priorities: {},
       editTask: null,
       taskProject: null,
       projects: {},
@@ -343,8 +359,8 @@ export default {
         title: null,
         description: null,
         date_till_done: null,
-        status: null,
-        priority: null,
+        status_id: null,
+        priority_id: null,
         project_id: null,
         reporter_id: null,
         assignee_id: null,
@@ -392,6 +408,36 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.projectsUsers = {};
+          this.projectsUsers[this.user.id] = this.user;
+        });
+
+      await axios
+        .get(process.env.MIX_API_URL + "taskStatuses")
+        .then((response) => {
+          if (response.data != null) {
+            this.statuses = {};
+            response.data.taskStatuses.forEach((status) => {
+              this.statuses[status.id] = status;
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      await axios
+        .get(process.env.MIX_API_URL + "taskPriorities")
+        .then((response) => {
+          if (response.data != null) {
+            this.priorities = {};
+            response.data.taskPriorities.forEach((priority) => {
+              this.priorities[priority.id] = priority;
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
 
       await axios
@@ -420,6 +466,19 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          if (error.response.status == 404) {
+            this.teams[0] = new Team({
+              id: 0,
+              name: "No Team",
+              description: "",
+              created_at: moment(),
+              updated_at: moment(),
+              pivot: {
+                is_admin: true,
+              },
+              users: [this.user],
+            });
+          }
         });
 
       await axios
@@ -487,7 +546,16 @@ export default {
         .catch((error) => {
           console.log(error);
           if (error.response.status == 404) {
-            this.noTasks = true;
+            this.projects[0] = new Project({
+              id: 0,
+              title: "No Project",
+              description: "Tasks without project",
+              author_id: this.user.id,
+              team_id: 0,
+              created_at: moment().format(),
+              updated_at: moment().format(),
+              tasks: [],
+            });
           }
           this.loaded = true;
         });
@@ -637,12 +705,17 @@ export default {
       this.form.title = null;
       this.form.description = null;
       this.form.date_till_done = moment().format("YYYY-MM-DD");
-      this.form.status = this.statuses[1].val;
-      this.form.priority = this.priorities[1].val;
-      this.selectedProjectTeam = project.team_id;
+      console.log(this.statuses, this.priorities);
+      this.form.status_id = this.statuses[0].id;
+      this.form.priority_id = this.priorities[0].id;
+      if (project.team_id != null) {
+        this.selectedProjectTeam = project.team_id;
+      } else {
+        this.selectedProjectTeam = 0;
+      }
       this.form.project_id = this.projects[project.id].id;
       this.form.reporter_id = this.user.id;
-      this.form.assignee_id = this.projectsUsers[1].id;
+      this.form.assignee_id = this.teams[this.selectedProjectTeam].users[0].id;
     },
 
     startEdit(task, projectTeamId) {
@@ -655,14 +728,18 @@ export default {
       this.form.date_till_done = moment(task.date_till_done).format(
         "YYYY-MM-DD"
       );
-      this.form.status = task.status;
-      this.form.priority = task.priority;
+      this.form.status_id = task.status_id;
+      this.form.priority_id = task.priority_id;
       if (task.project_id != null) {
         this.form.project_id = task.project_id;
       } else {
         this.form.project_id = this.projects[0].id;
       }
-      this.selectedProjectTeam = projectTeamId;
+      if (projectTeamId != null) {
+        this.selectedProjectTeam = projectTeamId;
+      } else {
+        this.selectedProjectTeam = 0;
+      }
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;
     },
@@ -679,6 +756,18 @@ export default {
     closeModal() {
       this.modal = false;
       this.editTask = null;
+    },
+
+    goToProject(name, id) {
+      if (id > 0) {
+        this.$router.push({ name: name, params: { projectId: id } });
+      }
+    },
+
+    goToTeam(name, id) {
+      if (id > 0) {
+        this.$router.push({ name: name, params: { teamId: id } });
+      }
     },
   },
 };
@@ -699,5 +788,9 @@ export default {
 .modal-body {
   height: 50vh;
   overflow-y: auto;
+}
+
+.link:hover {
+  color: #007bff;
 }
 </style>

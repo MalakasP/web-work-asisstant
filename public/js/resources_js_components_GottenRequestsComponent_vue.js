@@ -228,6 +228,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -249,37 +255,12 @@ function Team(_ref) {
   this.users = users;
 }
 
-function Request(_ref2) {
+function User(_ref2) {
   var id = _ref2.id,
-      date_from = _ref2.date_from,
-      date_to = _ref2.date_to,
-      description = _ref2.description,
-      type = _ref2.type,
-      is_confirmed = _ref2.is_confirmed,
-      confirmed_at = _ref2.confirmed_at,
-      requester_id = _ref2.requester_id,
-      responser_id = _ref2.responser_id,
+      name = _ref2.name,
+      email = _ref2.email,
       created_at = _ref2.created_at,
       updated_at = _ref2.updated_at;
-  this.id = id;
-  this.date_from = date_from;
-  this.date_to = date_to;
-  this.description = description;
-  this.type = type;
-  this.is_confirmed = is_confirmed;
-  this.confirmed_at = confirmed_at;
-  this.requester_id = requester_id;
-  this.responser_id = responser_id;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
-
-function User(_ref3) {
-  var id = _ref3.id,
-      name = _ref3.name,
-      email = _ref3.email,
-      created_at = _ref3.created_at,
-      updated_at = _ref3.updated_at;
   this.id = id;
   this.name = name;
   this.email = email;
@@ -290,6 +271,7 @@ function User(_ref3) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      noTeam: false,
       loaded: false,
       modal: false,
       edit: null,
@@ -384,6 +366,11 @@ function User(_ref3) {
                   }
                 })["catch"](function (error) {
                   console.log(error);
+
+                  if (error.response.status == 404) {
+                    _this.noTeam = true;
+                    _this.loaded = true;
+                  }
                 });
 
               case 4:
@@ -420,15 +407,18 @@ function User(_ref3) {
         }, _callee2);
       }))();
     },
-    fetchAnsweredRequestsData: function fetchAnsweredRequestsData(page) {
-      var _this3 = this;
+    fetchAnsweredRequestsData: function fetchAnsweredRequestsData() {
+      var _arguments = arguments,
+          _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        var page;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _context3.next = 2;
+                page = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : 1;
+                _context3.next = 3;
                 return axios.get("api/" + "getAnsweredRequests?page=" + page).then(function (response) {
                   if (response.data != null) {
                     _this3.answeredRequests = {};
@@ -445,7 +435,7 @@ function User(_ref3) {
                   }
                 });
 
-              case 2:
+              case 3:
               case "end":
                 return _context3.stop();
             }
@@ -590,7 +580,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-480f9626] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.card-header[data-v-480f9626] {\r\n  border: none;\r\n  padding-top: .75rem;\r\n  padding-left: 1.25rem;\r\n  padding-right: 1.25rem;\r\n  padding-bottom:0;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-480f9626] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.card-header[data-v-480f9626] {\r\n  border: none;\r\n  padding-top: 0.75rem;\r\n  padding-left: 1.25rem;\r\n  padding-right: 1.25rem;\r\n  padding-bottom: 0;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1676,7 +1666,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _vm.gottenRequests.data.length > 0 && this.loaded
+    _vm.gottenRequests.data.length > 0 && this.loaded && !_vm.noTeam
       ? _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "col-12 card mt-3" }, [
             _c("div", { staticClass: "card-header bg-white" }, [
@@ -1925,7 +1915,7 @@ var render = function() {
             )
           ])
         ])
-      : this.loaded
+      : this.loaded && !_vm.noTeam
       ? _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "col-12 card mt-3" }, [
             _c("div", { staticClass: "card-header bg-white" }, [
@@ -1991,6 +1981,8 @@ var render = function() {
             _vm._m(1)
           ])
         ])
+      : _vm.loaded && _vm.noTeam
+      ? _c("div", { staticClass: "col-12 card mt-3" }, [_vm._m(2)])
       : _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "loader mt-3" })
         ])
@@ -2028,6 +2020,18 @@ var staticRenderFns = [
         _vm._v(
           "\n          You have no active requests from team members.\n        "
         )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-body text-center" }, [
+      _c("h3", { staticClass: "card-title" }, [_vm._v("Gotten Requests")]),
+      _vm._v(" "),
+      _c("h5", { staticClass: "card-text" }, [
+        _vm._v("You do not have a team. Start one.")
       ])
     ])
   }

@@ -184,6 +184,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -232,23 +237,14 @@ function Team(_ref2) {
       projects: [],
       edit: null,
       modal: false,
-      statuses: {
-        1: {
-          val: "To Do"
-        },
-        2: {
-          val: "In Progress"
-        },
-        3: {
-          val: "Done"
-        }
-      },
+      statuses: {},
+      priorities: {},
       form: {
         title: null,
         description: null,
         date_till_done: null,
-        status: null,
-        priority: null,
+        status_id: null,
+        priority_id: null,
         project_id: null,
         reporter_id: null,
         assignee_id: null,
@@ -281,7 +277,34 @@ function Team(_ref2) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
+                console.log("here");
+                _context.next = 3;
+                return axios.get("api/" + "taskStatuses").then(function (response) {
+                  if (response.data != null) {
+                    _this.statuses = {};
+                    response.data.taskStatuses.forEach(function (status) {
+                      _this.statuses[status.id] = status;
+                    });
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 3:
+                _context.next = 5;
+                return axios.get("api/" + "taskPriorities").then(function (response) {
+                  if (response.data != null) {
+                    _this.priorities = {};
+                    response.data.taskPriorities.forEach(function (priority) {
+                      _this.priorities[priority.id] = priority;
+                    });
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 5:
+                _context.next = 7;
                 return axios.get("api/" + "teams").then(function (response) {
                   if (response.data != null) {
                     _this.teams = {};
@@ -302,11 +325,23 @@ function Team(_ref2) {
                     });
                   }
                 })["catch"](function (error) {
-                  console.log(error);
+                  if (error.response.status == 404) {
+                    _this.teams[0] = new Team({
+                      id: 0,
+                      name: "No Team",
+                      description: "",
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      pivot: {
+                        is_admin: true
+                      },
+                      users: [_this.user]
+                    });
+                  }
                 });
 
-              case 2:
-                _context.next = 4;
+              case 7:
+                _context.next = 9;
                 return axios.get("api/" + "assignedTasks").then(function (response) {
                   if (response.data != null) {
                     _this.assignedTasks = [];
@@ -346,7 +381,7 @@ function Team(_ref2) {
                   }
                 });
 
-              case 4:
+              case 9:
               case "end":
                 return _context.stop();
             }
@@ -421,8 +456,8 @@ function Team(_ref2) {
       this.form.title = task.title;
       this.form.description = task.description;
       this.form.date_till_done = task.date_till_done;
-      this.form.status = task.status;
-      this.form.priority = task.priority;
+      this.form.status_id = task.status_id;
+      this.form.priority_id = task.priority_id;
       this.form.project_id = task.project_id;
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;
@@ -1481,17 +1516,17 @@ var render = function() {
                                 }
                               }
                             },
-                            _vm._l(this.statuses, function(status) {
+                            _vm._l(_vm.statuses, function(status) {
                               return _c(
                                 "option",
                                 {
-                                  key: status.val,
-                                  domProps: { value: status.val }
+                                  key: status.id,
+                                  domProps: { value: status.id }
                                 },
                                 [
                                   _vm._v(
                                     "\n                      " +
-                                      _vm._s(status.val) +
+                                      _vm._s(status.name) +
                                       "\n                    "
                                   )
                                 ]
@@ -1583,11 +1618,21 @@ var render = function() {
                               ]),
                               _vm._v(" "),
                               _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(_vm._s(task.status))
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(_vm.statuses[task.status_id].name) +
+                                    "\n                  "
+                                )
                               ]),
                               _vm._v(" "),
                               _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(_vm._s(task.priority))
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(
+                                      _vm.priorities[task.priority_id].name
+                                    ) +
+                                    "\n                  "
+                                )
                               ]),
                               _vm._v(" "),
                               _c("td", { staticStyle: { width: "10%" } }, [
