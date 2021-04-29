@@ -34,7 +34,7 @@ class AdminController extends Controller
             ], 409);
         }
 
-        $user = User::where('email', $request->validated()['email'])->first();
+        $user = User::where('email', $request->validated()['email'])->firstOrFail();
 
         $team->users()->attach(
             $user->id,

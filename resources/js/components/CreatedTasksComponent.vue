@@ -489,16 +489,6 @@ export default {
           if (response.data != null) {
             if (response.data.createdProjects != null) {
               this.projects = {};
-              this.projects[0] = new Project({
-                id: 0,
-                title: "No Project",
-                description: "Tasks without project",
-                author_id: this.user.id,
-                team_id: 0,
-                created_at: moment().format(),
-                updated_at: moment().format(),
-                tasks: [],
-              });
               response.data.createdProjects.forEach((project) => {
                 if (project.team_id == null) {
                   project.team_id = 0;

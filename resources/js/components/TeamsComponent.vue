@@ -87,6 +87,20 @@
     </div>
     <div v-else-if="this.loaded">
       <h4 class="p-3 text-center">You are not included in any team.</h4>
+      <div class="row justify-content-center">
+        <div class="container">
+          <div class="row">
+            <div class="col-4 p-1">
+              <div class="card ripple" @click="startCreate()">
+                <div class="card-body">
+                  <h5 class="card-title">Create new team</h5>
+                  <p class="card-text">Want to start a new team? Click here.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div v-else class="row justify-content-center">
       <div class="loader mt-3"></div>

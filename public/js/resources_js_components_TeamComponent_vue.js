@@ -607,6 +607,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     });
                   } else if (error.response.status == 403) {
                     _this3.$alert(error.response.data.error, "Forbidden", "error");
+                  } else if (error.response.status == 404) {
+                    _this3.$alert("No user with given email found!", "Not Found", "error");
                   } else {
                     _this3.$alert(error.response.data.status, "Warning", "error");
                   }
@@ -2291,101 +2293,103 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _c("div", { staticClass: "col-4" }, [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-danger float-right",
-                        staticStyle: { margin: "1px" },
-                        attrs: { type: "button" },
-                        on: {
-                          click: function($event) {
-                            return _vm.startDelete()
-                          }
-                        }
-                      },
-                      [
-                        _c("span", { staticClass: "icon is-small" }, [
-                          _c(
-                            "svg",
-                            {
-                              staticClass: "bi bi-trash",
-                              attrs: {
-                                xmlns: "http://www.w3.org/2000/svg",
-                                width: "16",
-                                height: "16",
-                                fill: "currentColor",
-                                viewBox: "0 0 16 16"
+                  _vm.isAdmin
+                    ? _c("div", { staticClass: "col-4" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger float-right",
+                            staticStyle: { margin: "1px" },
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.startDelete()
                               }
-                            },
-                            [
-                              _c("path", {
-                                attrs: {
-                                  d:
-                                    "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("path", {
-                                attrs: {
-                                  "fill-rule": "evenodd",
-                                  d:
-                                    "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-                                }
-                              })
-                            ]
-                          )
-                        ])
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-primary float-right",
-                        staticStyle: { margin: "1px" },
-                        attrs: { type: "button" },
-                        on: {
-                          click: function($event) {
-                            return _vm.startEditTeam()
-                          }
-                        }
-                      },
-                      [
-                        _c("span", { staticClass: "icon is-small" }, [
-                          _c(
-                            "svg",
-                            {
-                              staticClass: "bi bi-pencil-square",
-                              attrs: {
-                                xmlns: "http://www.w3.org/2000/svg",
-                                width: "16",
-                                height: "16",
-                                fill: "currentColor",
-                                viewBox: "0 0 16 16"
+                            }
+                          },
+                          [
+                            _c("span", { staticClass: "icon is-small" }, [
+                              _c(
+                                "svg",
+                                {
+                                  staticClass: "bi bi-trash",
+                                  attrs: {
+                                    xmlns: "http://www.w3.org/2000/svg",
+                                    width: "16",
+                                    height: "16",
+                                    fill: "currentColor",
+                                    viewBox: "0 0 16 16"
+                                  }
+                                },
+                                [
+                                  _c("path", {
+                                    attrs: {
+                                      d:
+                                        "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("path", {
+                                    attrs: {
+                                      "fill-rule": "evenodd",
+                                      d:
+                                        "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                    }
+                                  })
+                                ]
+                              )
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary float-right",
+                            staticStyle: { margin: "1px" },
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.startEditTeam()
                               }
-                            },
-                            [
-                              _c("path", {
-                                attrs: {
-                                  d:
-                                    "M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("path", {
-                                attrs: {
-                                  "fill-rule": "evenodd",
-                                  d:
-                                    "M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-                                }
-                              })
-                            ]
-                          )
-                        ])
-                      ]
-                    )
-                  ])
+                            }
+                          },
+                          [
+                            _c("span", { staticClass: "icon is-small" }, [
+                              _c(
+                                "svg",
+                                {
+                                  staticClass: "bi bi-pencil-square",
+                                  attrs: {
+                                    xmlns: "http://www.w3.org/2000/svg",
+                                    width: "16",
+                                    height: "16",
+                                    fill: "currentColor",
+                                    viewBox: "0 0 16 16"
+                                  }
+                                },
+                                [
+                                  _c("path", {
+                                    attrs: {
+                                      d:
+                                        "M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("path", {
+                                    attrs: {
+                                      "fill-rule": "evenodd",
+                                      d:
+                                        "M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
+                                    }
+                                  })
+                                ]
+                              )
+                            ])
+                          ]
+                        )
+                      ])
+                    : _vm._e()
                 ])
               ]),
               _vm._v(" "),

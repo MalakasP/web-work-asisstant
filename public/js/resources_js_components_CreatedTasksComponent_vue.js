@@ -531,16 +531,6 @@ function Team(_ref2) {
                   if (response.data != null) {
                     if (response.data.createdProjects != null) {
                       _this.projects = {};
-                      _this.projects[0] = new Project({
-                        id: 0,
-                        title: "No Project",
-                        description: "Tasks without project",
-                        author_id: _this.user.id,
-                        team_id: 0,
-                        created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                        updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                        tasks: []
-                      });
                       response.data.createdProjects.forEach(function (project) {
                         if (project.team_id == null) {
                           project.team_id = 0;

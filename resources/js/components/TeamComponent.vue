@@ -119,7 +119,7 @@
                   </span>
                 </button>
               </div>
-              <div class="col-4">
+              <div class="col-4" v-if="isAdmin">
                 <button
                   type="button"
                   class="btn btn-danger float-right"
@@ -518,6 +518,8 @@ export default {
             });
           } else if (error.response.status == 403) {
             this.$alert(error.response.data.error, "Forbidden", "error");
+          } else if (error.response.status == 404) {
+            this.$alert("No user with given email found!", "Not Found", "error");
           } else {
             this.$alert(error.response.data.status, "Warning", "error");
           }

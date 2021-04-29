@@ -133,6 +133,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 function Team(_ref) {
@@ -1412,6 +1426,27 @@ var render = function() {
       ? _c("div", [
           _c("h4", { staticClass: "p-3 text-center" }, [
             _vm._v("You are not included in any team.")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row justify-content-center" }, [
+            _c("div", { staticClass: "container" }, [
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-4 p-1" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "card ripple",
+                      on: {
+                        click: function($event) {
+                          return _vm.startCreate()
+                        }
+                      }
+                    },
+                    [_vm._m(1)]
+                  )
+                ])
+              ])
+            ])
           ])
         ])
       : _c("div", { staticClass: "row justify-content-center" }, [
@@ -1420,6 +1455,18 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-body" }, [
+      _c("h5", { staticClass: "card-title" }, [_vm._v("Create new team")]),
+      _vm._v(" "),
+      _c("p", { staticClass: "card-text" }, [
+        _vm._v("Want to start a new team? Click here.")
+      ])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
