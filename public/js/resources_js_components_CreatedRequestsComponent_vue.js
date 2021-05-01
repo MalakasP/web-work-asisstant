@@ -504,6 +504,7 @@ function User(_ref2) {
                     });
                   }
 
+                  _this2.noTeam = false;
                   _this2.loaded = true;
                 })["catch"](function (error) {
                   console.log(error);
@@ -545,8 +546,10 @@ function User(_ref2) {
                       group: "app",
                       title: "Error!",
                       type: "error",
-                      text: "You do not have answered requests!"
+                      text: error.response.data.message
                     });
+                  } else {
+                    _this3.$alert("Something went wrong.", "Warning", "error");
                   }
                 });
 

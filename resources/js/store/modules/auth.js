@@ -1,3 +1,5 @@
+import router from '../../router';
+
 export default {
     namespaced: true,
 
@@ -31,7 +33,6 @@ export default {
                     commit("setUserData", response.data);
                 })
                 .catch(() => {
-                    // localStorage.removeItem("authToken");
                 });
         },
 
@@ -43,7 +44,6 @@ export default {
                     commit("setUserData", response.data.user);
                     commit("setAuthToken", response.data.token);
                     localStorage.setItem("authToken", response.data.token);
-                    // localStorage.setObject("userData", response.data.token);
                 })
         },
 
@@ -52,9 +52,6 @@ export default {
             return axios
                 .post(process.env.MIX_API_URL + "register", data)
                 .then(response => {
-                    // commit("setUserData", response.data.user);
-                    // commit("setAuthToken", response.data.token);
-                    // localStorage.setItem("authToken", response.data.token);
                     console.log(response);
                 });
         },
@@ -67,18 +64,10 @@ export default {
             }).then(() => {
                 commit("setUserData", null);
                 commit("setAuthToken", null);
-                // localStorage.removeItem("authToken");
-                // localStorage.removeItem("userData");
-                // localStorage.removeItem("counter");
-                // localStorage.removeItem("worktime");
-                // localStorage.removeItem("date");
+                router.push("/login");
                 sessionStorage.clear();
             });
         },
-
-        // setAuthToken({ commit}, token) {
-        //     commit("setAuthToken", token);
-        // }
 
     },
 

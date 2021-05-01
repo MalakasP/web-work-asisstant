@@ -1993,6 +1993,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2036,6 +2041,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           _this.loadingStatus = true;
         }, 1000);
+      } else {
+        if (this.timer) {
+          this.counter.seconds = this.timer;
+        } else if (this.duration >= 0) {
+          this.counter.seconds = this.duration;
+        }
+
+        var time = this.readableTimeFromSeconds(this.counter.seconds);
+        this.activeTimerString = "".concat(time.hours, ":").concat(time.minutes);
+        this.loadingStatus = true;
       }
     }
   },
@@ -2045,7 +2060,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * Logout user.
      */
     logout: function logout() {
-      this.$router.push('/');
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
@@ -2054,18 +2068,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
 
     /**
-     *
-     */
-    onRefresh: function onRefresh() {
-      if (this.isAuthenticated) {// this.setCounter(this.counter);
-      }
-    },
-
-    /**
      * Stops timer
      */
     stopTimer: function stopTimer() {
-      console.log("Timer stop");
       this.updateWorktime();
     },
 
@@ -2111,8 +2116,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     initiateTimerAfterLogin: function initiateTimerAfterLogin() {
       var _this3 = this;
-
-      console.log(!this.isTimerStopped);
 
       if (this.isAuthenticated && !this.isTimerStopped) {
         this.loadingStatus = true;
@@ -2494,6 +2497,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../router */ "./resources/js/router/index.js");
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
 
@@ -2528,8 +2533,7 @@ __webpack_require__.r(__webpack_exports__);
       var commit = _ref.commit;
       axios.get("api/" + "users/" + state.userData.id).then(function (response) {
         commit("setUserData", response.data);
-      })["catch"](function () {// localStorage.removeItem("authToken");
-      });
+      })["catch"](function () {});
     },
     sendLoginRequest: function sendLoginRequest(_ref2, data) {
       var commit = _ref2.commit;
@@ -2539,7 +2543,7 @@ __webpack_require__.r(__webpack_exports__);
       return axios.post("api/" + "login", data).then(function (response) {
         commit("setUserData", response.data.user);
         commit("setAuthToken", response.data.token);
-        localStorage.setItem("authToken", response.data.token); // localStorage.setObject("userData", response.data.token);
+        localStorage.setItem("authToken", response.data.token);
       });
     },
     sendRegisterRequest: function sendRegisterRequest(_ref3, data) {
@@ -2548,9 +2552,6 @@ __webpack_require__.r(__webpack_exports__);
         root: true
       });
       return axios.post("api/" + "register", data).then(function (response) {
-        // commit("setUserData", response.data.user);
-        // commit("setAuthToken", response.data.token);
-        // localStorage.setItem("authToken", response.data.token);
         console.log(response);
       });
     },
@@ -2562,18 +2563,11 @@ __webpack_require__.r(__webpack_exports__);
         base_url: "/"
       }).then(function () {
         commit("setUserData", null);
-        commit("setAuthToken", null); // localStorage.removeItem("authToken");
-        // localStorage.removeItem("userData");
-        // localStorage.removeItem("counter");
-        // localStorage.removeItem("worktime");
-        // localStorage.removeItem("date");
-
+        commit("setAuthToken", null);
+        _router__WEBPACK_IMPORTED_MODULE_0__.default.push("/login");
         sessionStorage.clear();
       });
-    } // setAuthToken({ commit}, token) {
-    //     commit("setAuthToken", token);
-    // }
-
+    }
   },
 
   /**

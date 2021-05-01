@@ -312,7 +312,7 @@
 </template>
 
 <script>
-import { mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 import moment from "moment";
 import Pagination from "vue-pagination-2";
 
@@ -449,6 +449,7 @@ export default {
               }
             });
           }
+          this.noTeam = false;
           this.loaded = true;
         })
         .catch((error) => {
@@ -475,8 +476,10 @@ export default {
               group: "app",
               title: "Error!",
               type: "error",
-              text: "You do not have answered requests!",
+              text: error.response.data.message,
             });
+          } else {
+            this.$alert("Something went wrong.", "Warning", "error");
           }
         });
     },

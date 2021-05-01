@@ -7,7 +7,7 @@
       <div class="col-12 card mt-3">
         <div class="card-header bg-white">
           <div class="row justify-content-end">
-            <div class="col-4">
+            <div class="col-4" v-if="this.adminOfTeam">
               <button
                 type="button"
                 class="btn btn-primary float-right"
@@ -45,7 +45,8 @@
               <thead>
                 <tr>
                   <th style="width: 40%">Reason</th>
-                  <th style="width: 20%">Requester</th>
+                  <th style="width: 10%">Team</th>
+                  <th style="width: 10%">Requester</th>
                   <th style="width: 15%">Date From</th>
                   <th style="width: 15%">Date To</th>
                   <th style="width: 5%"></th>
@@ -60,7 +61,10 @@
                   >
                     {{ request.type }}
                   </td>
-                  <td style="width: 20%">
+                  <td style="width: 10%">
+                    {{ teams[request.team_id].name }}
+                  </td>
+                  <td style="width: 10%">
                     {{ users[request.requester_id].name }}
                   </td>
                   <td style="width: 15%">
@@ -139,7 +143,7 @@
       <div class="col-12 card mt-3">
         <div class="card-header bg-white">
           <div class="row justify-content-end">
-            <div class="col-4">
+            <div class="col-4" v-if="this.adminOfTeam">
               <button
                 type="button"
                 class="btn btn-primary float-right"
@@ -192,7 +196,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 import moment from "moment";
 import Pagination from "vue-pagination-2";
 
@@ -218,6 +222,7 @@ export default {
   data: function () {
     return {
       noTeam: false,
+      adminOfTeam: false,
       loaded: false,
       modal: false,
       edit: null,
@@ -293,19 +298,14 @@ export default {
             this.teams = {};
             response.data.teams.forEach((team) => {
               if (team != null) {
+                if (team.pivot.is_admin > 0) {
+                  this.adminOfTeam = true;
+                }
                 this.teams[team.id] = new Team(team);
               }
+              console.log(this.adminOfTeam);
             });
-            this.teams[0] = new Team({
-              id: 0,
-              name: "No Team",
-              description: "",
-              created_at: moment(),
-              updated_at: moment(),
-              pivot: {
-                is_admin: true,
-              },
-            });
+            this.noTeam = false;
             this.loaded = true;
           }
         })
@@ -318,7 +318,7 @@ export default {
         });
     },
 
-    async fetchRequestsData(page) {
+    async fetchRequestsData(page = 1) {
       await axios
         .get(process.env.MIX_API_URL + "getNotAnsweredRequests?page=" + page)
         .then((response) => {

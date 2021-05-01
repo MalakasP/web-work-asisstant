@@ -234,6 +234,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -272,6 +276,7 @@ function User(_ref2) {
   data: function data() {
     return {
       noTeam: false,
+      adminOfTeam: false,
       loaded: false,
       modal: false,
       edit: null,
@@ -349,19 +354,16 @@ function User(_ref2) {
                     _this.teams = {};
                     response.data.teams.forEach(function (team) {
                       if (team != null) {
+                        if (team.pivot.is_admin > 0) {
+                          _this.adminOfTeam = true;
+                        }
+
                         _this.teams[team.id] = new Team(team);
                       }
+
+                      console.log(_this.adminOfTeam);
                     });
-                    _this.teams[0] = new Team({
-                      id: 0,
-                      name: "No Team",
-                      description: "",
-                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
-                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
-                      pivot: {
-                        is_admin: true
-                      }
-                    });
+                    _this.noTeam = false;
                     _this.loaded = true;
                   }
                 })["catch"](function (error) {
@@ -381,15 +383,18 @@ function User(_ref2) {
         }, _callee);
       }))();
     },
-    fetchRequestsData: function fetchRequestsData(page) {
-      var _this2 = this;
+    fetchRequestsData: function fetchRequestsData() {
+      var _arguments = arguments,
+          _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var page;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
+                page = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : 1;
+                _context2.next = 3;
                 return axios.get("api/" + "getNotAnsweredRequests?page=" + page).then(function (response) {
                   if (response.data != null) {
                     _this2.gottenRequests = {};
@@ -399,7 +404,7 @@ function User(_ref2) {
                   console.log(error);
                 });
 
-              case 2:
+              case 3:
               case "end":
                 return _context2.stop();
             }
@@ -408,7 +413,7 @@ function User(_ref2) {
       }))();
     },
     fetchAnsweredRequestsData: function fetchAnsweredRequestsData() {
-      var _arguments = arguments,
+      var _arguments2 = arguments,
           _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
@@ -417,7 +422,7 @@ function User(_ref2) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                page = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : 1;
+                page = _arguments2.length > 0 && _arguments2[0] !== undefined ? _arguments2[0] : 1;
                 _context3.next = 3;
                 return axios.get("api/" + "getAnsweredRequests?page=" + page).then(function (response) {
                   if (response.data != null) {
@@ -1671,60 +1676,62 @@ var render = function() {
           _c("div", { staticClass: "col-12 card mt-3" }, [
             _c("div", { staticClass: "card-header bg-white" }, [
               _c("div", { staticClass: "row justify-content-end" }, [
-                _c("div", { staticClass: "col-4" }, [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary float-right",
-                      attrs: { type: "button" },
-                      on: {
-                        click: function($event) {
-                          return _vm.history()
-                        }
-                      }
-                    },
-                    [
-                      _c("span", { staticClass: "icon is-small" }, [
-                        _c(
-                          "svg",
-                          {
-                            staticClass: "bi bi-clock-history",
-                            attrs: {
-                              xmlns: "http://www.w3.org/2000/svg",
-                              width: "16",
-                              height: "16",
-                              fill: "currentColor",
-                              viewBox: "0 0 16 16"
+                this.adminOfTeam
+                  ? _c("div", { staticClass: "col-4" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary float-right",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.history()
                             }
-                          },
-                          [
-                            _c("path", {
-                              attrs: {
-                                d:
-                                  "M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("path", {
-                              attrs: {
-                                d:
-                                  "M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("path", {
-                              attrs: {
-                                d:
-                                  "M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"
-                              }
-                            })
-                          ]
-                        )
-                      ]),
-                      _vm._v("\n              History\n            ")
-                    ]
-                  )
-                ])
+                          }
+                        },
+                        [
+                          _c("span", { staticClass: "icon is-small" }, [
+                            _c(
+                              "svg",
+                              {
+                                staticClass: "bi bi-clock-history",
+                                attrs: {
+                                  xmlns: "http://www.w3.org/2000/svg",
+                                  width: "16",
+                                  height: "16",
+                                  fill: "currentColor",
+                                  viewBox: "0 0 16 16"
+                                }
+                              },
+                              [
+                                _c("path", {
+                                  attrs: {
+                                    d:
+                                      "M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("path", {
+                                  attrs: {
+                                    d:
+                                      "M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("path", {
+                                  attrs: {
+                                    d:
+                                      "M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"
+                                  }
+                                })
+                              ]
+                            )
+                          ]),
+                          _vm._v("\n              History\n            ")
+                        ]
+                      )
+                    ])
+                  : _vm._e()
               ])
             ]),
             _vm._v(" "),
@@ -1768,7 +1775,15 @@ var render = function() {
                             ]
                           ),
                           _vm._v(" "),
-                          _c("td", { staticStyle: { width: "20%" } }, [
+                          _c("td", { staticStyle: { width: "10%" } }, [
+                            _vm._v(
+                              "\n                  " +
+                                _vm._s(_vm.teams[request.team_id].name) +
+                                "\n                "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticStyle: { width: "10%" } }, [
                             _vm._v(
                               "\n                  " +
                                 _vm._s(_vm.users[request.requester_id].name) +
@@ -1920,61 +1935,63 @@ var render = function() {
           _c("div", { staticClass: "col-12 card mt-3" }, [
             _c("div", { staticClass: "card-header bg-white" }, [
               _c("div", { staticClass: "row justify-content-end" }, [
-                _c("div", { staticClass: "col-4" }, [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary float-right",
-                      staticStyle: { margin: "1px" },
-                      attrs: { type: "button" },
-                      on: {
-                        click: function($event) {
-                          return _vm.history()
-                        }
-                      }
-                    },
-                    [
-                      _c("span", { staticClass: "icon is-small" }, [
-                        _c(
-                          "svg",
-                          {
-                            staticClass: "bi bi-clock-history",
-                            attrs: {
-                              xmlns: "http://www.w3.org/2000/svg",
-                              width: "16",
-                              height: "16",
-                              fill: "currentColor",
-                              viewBox: "0 0 16 16"
+                this.adminOfTeam
+                  ? _c("div", { staticClass: "col-4" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary float-right",
+                          staticStyle: { margin: "1px" },
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.history()
                             }
-                          },
-                          [
-                            _c("path", {
-                              attrs: {
-                                d:
-                                  "M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("path", {
-                              attrs: {
-                                d:
-                                  "M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("path", {
-                              attrs: {
-                                d:
-                                  "M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"
-                              }
-                            })
-                          ]
-                        )
-                      ]),
-                      _vm._v("\n              History\n            ")
-                    ]
-                  )
-                ])
+                          }
+                        },
+                        [
+                          _c("span", { staticClass: "icon is-small" }, [
+                            _c(
+                              "svg",
+                              {
+                                staticClass: "bi bi-clock-history",
+                                attrs: {
+                                  xmlns: "http://www.w3.org/2000/svg",
+                                  width: "16",
+                                  height: "16",
+                                  fill: "currentColor",
+                                  viewBox: "0 0 16 16"
+                                }
+                              },
+                              [
+                                _c("path", {
+                                  attrs: {
+                                    d:
+                                      "M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("path", {
+                                  attrs: {
+                                    d:
+                                      "M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("path", {
+                                  attrs: {
+                                    d:
+                                      "M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"
+                                  }
+                                })
+                              ]
+                            )
+                          ]),
+                          _vm._v("\n              History\n            ")
+                        ]
+                      )
+                    ])
+                  : _vm._e()
               ])
             ]),
             _vm._v(" "),
@@ -1997,7 +2014,9 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", { staticStyle: { width: "40%" } }, [_vm._v("Reason")]),
         _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Requester")]),
+        _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Team")]),
+        _vm._v(" "),
+        _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Requester")]),
         _vm._v(" "),
         _c("th", { staticStyle: { width: "15%" } }, [_vm._v("Date From")]),
         _vm._v(" "),

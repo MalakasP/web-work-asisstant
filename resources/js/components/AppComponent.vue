@@ -50,7 +50,9 @@
               <router-link class="nav-link" to="/teams">Teams</router-link>
             </li>
             <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/worktimes">Worktimes</router-link>
+              <router-link class="nav-link" to="/worktimes"
+                >Worktimes</router-link
+              >
             </li>
             <li class="nav-item dropdown">
               <div
@@ -64,7 +66,10 @@
               >
                 <a>Requests</a>
               </div>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdownRequests">
+              <div
+                class="dropdown-menu"
+                aria-labelledby="navbarDropdownRequests"
+              >
                 <a class="dropdown-item"
                   ><router-link to="/gottenRequests"
                     >Gotten Requests</router-link
@@ -189,6 +194,16 @@ export default {
 
           this.loadingStatus = true;
         }, 1000);
+      } else {
+        if (this.timer) {
+          this.counter.seconds = this.timer;
+        } else if (this.duration >= 0) {
+          this.counter.seconds = this.duration;
+        }
+
+        const time = this.readableTimeFromSeconds(this.counter.seconds);
+        this.activeTimerString = `${time.hours}:${time.minutes}`;
+        this.loadingStatus = true;
       }
     }
   },
@@ -209,7 +224,6 @@ export default {
      * Logout user.
      */
     logout() {
-      this.$router.push('/');
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
@@ -218,19 +232,9 @@ export default {
     },
 
     /**
-     *
-     */
-    onRefresh() {
-      if (this.isAuthenticated) {
-        // this.setCounter(this.counter);
-      }
-    },
-
-    /**
      * Stops timer
      */
     stopTimer() {
-      console.log("Timer stop");
       this.updateWorktime();
     },
 
@@ -260,7 +264,10 @@ export default {
       })
         .then((response) => {
           console.log(response);
-          this.setDuration(this.duration + this.durationToSeconds(response.data.worktime.duration));
+          this.setDuration(
+            this.duration +
+              this.durationToSeconds(response.data.worktime.duration)
+          );
           this.setTimerStopped(true);
           clearInterval(this.counter.ticker);
         })
@@ -274,7 +281,6 @@ export default {
     },
 
     initiateTimerAfterLogin() {
-      console.log(!this.isTimerStopped);
       if (this.isAuthenticated && !this.isTimerStopped) {
         this.loadingStatus = true;
         if (this.duration >= 0) {
