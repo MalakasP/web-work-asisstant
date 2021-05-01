@@ -65,6 +65,9 @@ export default {
     ...mapGetters(["errors"]),
     ...mapGetters("auth", ["user"]),
   },
+  created() {
+    this.$store.commit("setErrors", {});
+  },
   mounted() {
     this.$store.commit("setErrors", {});
   },

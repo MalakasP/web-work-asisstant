@@ -277,8 +277,7 @@ function Team(_ref2) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log("here");
-                _context.next = 3;
+                _context.next = 2;
                 return axios.get("api/" + "taskStatuses").then(function (response) {
                   if (response.data != null) {
                     _this.statuses = {};
@@ -290,8 +289,8 @@ function Team(_ref2) {
                   console.log(error);
                 });
 
-              case 3:
-                _context.next = 5;
+              case 2:
+                _context.next = 4;
                 return axios.get("api/" + "taskPriorities").then(function (response) {
                   if (response.data != null) {
                     _this.priorities = {};
@@ -303,8 +302,8 @@ function Team(_ref2) {
                   console.log(error);
                 });
 
-              case 5:
-                _context.next = 7;
+              case 4:
+                _context.next = 6;
                 return axios.get("api/" + "teams").then(function (response) {
                   if (response.data != null) {
                     _this.teams = {};
@@ -340,12 +339,11 @@ function Team(_ref2) {
                   }
                 });
 
-              case 7:
-                _context.next = 9;
+              case 6:
+                _context.next = 8;
                 return axios.get("api/" + "assignedTasks").then(function (response) {
                   if (response.data != null) {
                     _this.assignedTasks = [];
-                    console.log(response.data.assignedTasks);
                     response.data.assignedTasks.forEach(function (project) {
                       if (project.hasOwnProperty("id")) {
                         if (project.team_id == null) {
@@ -372,16 +370,13 @@ function Team(_ref2) {
                     });
                   }
                 })["catch"](function (error) {
-                  console.log(error);
-
                   if (error.response.status == 404) {
                     _this.noTasks = true;
                     _this.loaded = true;
-                    console.log(_this.noTasks, _this.loaded);
                   }
                 });
 
-              case 9:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -456,6 +451,7 @@ function Team(_ref2) {
       this.form.title = task.title;
       this.form.description = task.description;
       this.form.date_till_done = task.date_till_done;
+      console.log(task.status_id);
       this.form.status_id = task.status_id;
       this.form.priority_id = task.priority_id;
       this.form.project_id = task.project_id;
@@ -1489,8 +1485,8 @@ var render = function() {
                                 {
                                   name: "model",
                                   rawName: "v-model",
-                                  value: _vm.form.status,
-                                  expression: "form.status"
+                                  value: _vm.form.status_id,
+                                  expression: "form.status_id"
                                 }
                               ],
                               staticClass: "form-control",
@@ -1508,7 +1504,7 @@ var render = function() {
                                     })
                                   _vm.$set(
                                     _vm.form,
-                                    "status",
+                                    "status_id",
                                     $event.target.multiple
                                       ? $$selectedVal
                                       : $$selectedVal[0]

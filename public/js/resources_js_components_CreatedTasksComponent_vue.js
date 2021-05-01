@@ -783,9 +783,8 @@ function Team(_ref2) {
       this.form.title = null;
       this.form.description = null;
       this.form.date_till_done = moment__WEBPACK_IMPORTED_MODULE_1___default()().format("YYYY-MM-DD");
-      console.log(this.statuses, this.priorities);
-      this.form.status_id = this.statuses[0].id;
-      this.form.priority_id = this.priorities[0].id;
+      this.form.status_id = this.statuses[1].id;
+      this.form.priority_id = this.priorities[1].id;
 
       if (project.team_id != null) {
         this.selectedProjectTeam = project.team_id;

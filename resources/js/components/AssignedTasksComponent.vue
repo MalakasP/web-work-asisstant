@@ -45,7 +45,7 @@
                     <select
                       class="form-control"
                       :class="{ 'is-invalid': errors.status }"
-                      v-model="form.status"
+                      v-model="form.status_id"
                     >
                       <option
                         v-for="status in statuses"
@@ -227,7 +227,6 @@ export default {
   },
   methods: {
     async read() {
-      console.log("here");
       await axios
         .get(process.env.MIX_API_URL + "taskStatuses")
         .then((response) => {
@@ -299,7 +298,6 @@ export default {
         .then((response) => {
           if (response.data != null) {
             this.assignedTasks = [];
-            console.log(response.data.assignedTasks);
             response.data.assignedTasks.forEach((project) => {
               if (project.hasOwnProperty("id")) {
                 if (project.team_id == null) {
@@ -327,11 +325,9 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error);
           if (error.response.status == 404) {
             this.noTasks = true;
             this.loaded = true;
-            console.log(this.noTasks, this.loaded);
           }
         });
     },
@@ -388,6 +384,7 @@ export default {
       this.form.title = task.title;
       this.form.description = task.description;
       this.form.date_till_done = task.date_till_done;
+      console.log(task.status_id);
       this.form.status_id = task.status_id;
       this.form.priority_id = task.priority_id;
       this.form.project_id = task.project_id;

@@ -82,6 +82,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)("auth", ["user"])),
+  created: function created() {
+    this.$store.commit("setErrors", {});
+  },
   mounted: function mounted() {
     this.$store.commit("setErrors", {});
   },
