@@ -76,7 +76,7 @@ class TaskController extends Controller
         //check if project id is set and if the user does have right to create task in project
 
         if ($request->has('project_id') && Project::find($request->input('project_id'))) {
-            $project = Project::find($request->input('project_id'))->first();
+            $project = Project::find($request->input('project_id'));
             if ($project->team != null) {
                 $team = $project->team;
             } else if ($project->author_id != null) {

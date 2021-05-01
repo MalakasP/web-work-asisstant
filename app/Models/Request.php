@@ -20,8 +20,10 @@ class Request extends Model
         'description',
         'type',
         'is_confirmed',
+        'confirmed_at',
         'requester_id',
-        'responser_id'
+        'responser_id',
+        'team_id'
     ];
 
     /**

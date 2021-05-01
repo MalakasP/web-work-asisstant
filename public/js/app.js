@@ -1971,6 +1971,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2002,7 +2024,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         this.counter.ticker = setInterval(function () {
-          var time = _this._readableTimeFromSeconds(++_this.counter.seconds); // console.log(this.counter.seconds);
+          var time = _this.readableTimeFromSeconds(++_this.counter.seconds); // console.log(this.counter.seconds);
           // check if 8 hours is reached
 
 
@@ -2023,6 +2045,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * Logout user.
      */
     logout: function logout() {
+      this.$router.push('/');
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
@@ -2066,17 +2089,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         end_time: moment__WEBPACK_IMPORTED_MODULE_0___default()().format()
       };
       axios({
+        method: "put",
         url: "api/" + "worktimes/" + this.worktime.id,
         baseURL: "/",
         data: data
       }).then(function (response) {
+        console.log(response);
+
+        _this2.setDuration(_this2.duration + _this2.durationToSeconds(response.data.worktime.duration));
+
         _this2.setTimerStopped(true);
 
         clearInterval(_this2.counter.ticker);
       })["catch"](function (error) {
         if (error.response) {
           if (error.response.status === 406) {
-            _this2.$alert(error.response.data.error);
+            _this2.$alert(error.response.data.message);
           }
         }
       });
@@ -2094,14 +2122,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         this.counter.ticker = setInterval(function () {
-          var time = _this3._readableTimeFromSeconds(++_this3.counter.seconds); // console.log(this.counter.seconds);
+          var time = _this3.readableTimeFromSeconds(++_this3.counter.seconds); // console.log(this.counter.seconds);
           // check if 8 hours is reached
 
 
           _this3.activeTimerString = "".concat(time.hours, ":").concat(time.minutes);
 
           if (_this3.counter.seconds % 60 == 0) {
-            _this3.setTimer(_this3.counter.seconds);
+            _this3.setTimer(_this3.counter.seconds); // this.duration(this.counter.seconds);
+
           }
         }, 1000);
       }
@@ -2110,22 +2139,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     /**
      * Conditionally pads a number with "0"
      */
-    _padNumber: function _padNumber(number) {
+    padNumber: function padNumber(number) {
       return number > 9 ? number : "0" + number;
     },
 
     /**
      * Splits seconds into hours, minutes, and seconds.
      */
-    _readableTimeFromSeconds: function _readableTimeFromSeconds(seconds) {
+    readableTimeFromSeconds: function readableTimeFromSeconds(seconds) {
       var hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
       return {
-        hours: this._padNumber(hours),
-        seconds: this._padNumber(seconds % 60),
-        minutes: this._padNumber(parseInt(seconds / 60, 10) % 60)
+        hours: this.padNumber(hours),
+        seconds: this.padNumber(seconds % 60),
+        minutes: this.padNumber(parseInt(seconds / 60, 10) % 60)
       };
     },
-    _durationToSeconds: function _durationToSeconds(duration) {
+
+    /**
+     * Converts readable time to seconds.
+     */
+    durationToSeconds: function durationToSeconds(duration) {
       var timeMeasures = duration.split(":");
       var seconds = +timeMeasures[0] * 3600 + +timeMeasures[1] * 60 + +timeMeasures[2];
       return seconds;
@@ -2137,9 +2170,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     calculateTimeSpent: function calculateTimeSpent(timer) {
       var started = moment__WEBPACK_IMPORTED_MODULE_0___default()(timer.started_at);
       var stopped = moment__WEBPACK_IMPORTED_MODULE_0___default()(timer.stopped_at);
-
-      var time = this._readableTimeFromSeconds(parseInt(moment__WEBPACK_IMPORTED_MODULE_0___default().duration(stopped.diff(started)).asSeconds()));
-
+      var time = this.readableTimeFromSeconds(parseInt(moment__WEBPACK_IMPORTED_MODULE_0___default().duration(stopped.diff(started)).asSeconds()));
       return "".concat(time.hours, ":").concat(time.minutes);
     }
   })
@@ -2201,6 +2232,13 @@ axios.interceptors.request.use(function (config) {
     Accept: "application/json"
   };
   return config;
+});
+vue__WEBPACK_IMPORTED_MODULE_6__.default.directive('tooltip', function (el, binding) {
+  $(el).tooltip({
+    title: binding.value,
+    placement: binding.arg,
+    trigger: 'hover'
+  });
 });
 var app = new vue__WEBPACK_IMPORTED_MODULE_6__.default({
   el: '#app',
@@ -2321,6 +2359,13 @@ var routes = [{
     return __webpack_require__.e(/*! import() */ "resources_js_components_ProjectsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/ProjectsComponent.vue */ "./resources/js/components/ProjectsComponent.vue"));
   }
 }, {
+  path: "/project/:projectId",
+  name: "Project",
+  beforeEnter: auth,
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_ProjectComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/ProjectComponent.vue */ "./resources/js/components/ProjectComponent.vue"));
+  }
+}, {
   path: "/teams",
   name: "Teams",
   beforeEnter: auth,
@@ -2349,11 +2394,32 @@ var routes = [{
     return __webpack_require__.e(/*! import() */ "resources_js_components_AssignedTasksComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/AssignedTasksComponent.vue */ "./resources/js/components/AssignedTasksComponent.vue"));
   }
 }, {
-  path: "/requests",
-  name: "Requests",
+  path: "/gottenRequests",
+  name: "GottenRequests",
   beforeEnter: auth,
   component: function component() {
-    return __webpack_require__.e(/*! import() */ "resources_js_components_RequestsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/RequestsComponent.vue */ "./resources/js/components/RequestsComponent.vue"));
+    return __webpack_require__.e(/*! import() */ "resources_js_components_GottenRequestsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/GottenRequestsComponent.vue */ "./resources/js/components/GottenRequestsComponent.vue"));
+  }
+}, {
+  path: "/answeredRequests",
+  name: "AnsweredRequests",
+  beforeEnter: auth,
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_AnsweredRequestsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/AnsweredRequestsComponent.vue */ "./resources/js/components/AnsweredRequestsComponent.vue"));
+  }
+}, {
+  path: "/createdRequests",
+  name: "CreatedRequests",
+  beforeEnter: auth,
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_CreatedRequestsComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/CreatedRequestsComponent.vue */ "./resources/js/components/CreatedRequestsComponent.vue"));
+  }
+}, {
+  path: "/worktimes",
+  name: "Worktimes",
+  beforeEnter: auth,
+  component: function component() {
+    return __webpack_require__.e(/*! import() */ "resources_js_components_WorktimesComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/WorktimesComponent.vue */ "./resources/js/components/WorktimesComponent.vue"));
   }
 }, {
   path: '*',
@@ -2490,7 +2556,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     sendLogoutRequest: function sendLogoutRequest(_ref4) {
       var commit = _ref4.commit;
-      axios.post("api/" + "logout").then(function () {
+      axios({
+        method: "post",
+        url: "api/" + "logout",
+        base_url: "/"
+      }).then(function () {
         commit("setUserData", null);
         commit("setAuthToken", null); // localStorage.removeItem("authToken");
         // localStorage.removeItem("userData");
@@ -2603,8 +2673,7 @@ __webpack_require__.r(__webpack_exports__);
         user_id: user.id
       };
       axios.post("api/" + "worktimes", data).then(function (response) {
-        commit("setWorktime", response.data.worktime); // localStorage.setObject("worktime", response.data.worktime);
-        // localStorage.setObject("date", new Date());
+        commit("setWorktime", response.data.worktime);
       });
     }
   },
@@ -63113,35 +63182,75 @@ var render = function() {
                     [
                       _c(
                         "router-link",
-                        { staticClass: "nav-link", attrs: { to: "/" } },
+                        {
+                          staticClass: "nav-link",
+                          attrs: { to: "/worktimes" }
+                        },
                         [_vm._v("Worktimes")]
                       )
                     ],
                     1
                   ),
                   _vm._v(" "),
-                  _c(
-                    "li",
-                    {
-                      directives: [
-                        {
-                          name: "show",
-                          rawName: "v-show",
-                          value: _vm.isAuthenticated,
-                          expression: "isAuthenticated"
+                  _c("li", { staticClass: "nav-item dropdown" }, [
+                    _c(
+                      "div",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.isAuthenticated,
+                            expression: "isAuthenticated"
+                          }
+                        ],
+                        staticClass: "nav-link dropdown-toggle",
+                        attrs: {
+                          id: "navbarDropdownRequests",
+                          role: "button",
+                          "data-toggle": "dropdown",
+                          "aria-haspopup": "true",
+                          "aria-expanded": "false"
                         }
-                      ],
-                      staticClass: "nav-item"
-                    },
-                    [
-                      _c(
-                        "router-link",
-                        { staticClass: "nav-link", attrs: { to: "/requests" } },
-                        [_vm._v("Requests")]
-                      )
-                    ],
-                    1
-                  )
+                      },
+                      [_c("a", [_vm._v("Requests")])]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "dropdown-menu",
+                        attrs: { "aria-labelledby": "navbarDropdownRequests" }
+                      },
+                      [
+                        _c(
+                          "a",
+                          { staticClass: "dropdown-item" },
+                          [
+                            _c(
+                              "router-link",
+                              { attrs: { to: "/gottenRequests" } },
+                              [_vm._v("Gotten Requests")]
+                            )
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          { staticClass: "dropdown-item" },
+                          [
+                            _c(
+                              "router-link",
+                              { attrs: { to: "/createdRequests" } },
+                              [_vm._v("Created Requests")]
+                            )
+                          ],
+                          1
+                        )
+                      ]
+                    )
+                  ])
                 ]),
                 _vm._v(" "),
                 _c("ul", { staticClass: "navbar-nav" }, [
@@ -81251,7 +81360,7 @@ var index = {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_TeamComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_RequestsComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_HomeComponent_vue":1,"resources_js_components_Auth_LoginComponent_vue":1,"resources_js_components_Auth_RegisterComponent_vue":1,"resources_js_components_ProjectsComponent_vue":1,"resources_js_components_ProjectComponent_vue":1,"resources_js_components_TeamsComponent_vue":1,"resources_js_components_TeamComponent_vue":1,"resources_js_components_CreatedTasksComponent_vue":1,"resources_js_components_AssignedTasksComponent_vue":1,"resources_js_components_GottenRequestsComponent_vue":1,"resources_js_components_AnsweredRequestsComponent_vue":1,"resources_js_components_CreatedRequestsComponent_vue":1,"resources_js_components_WorktimesComponent_vue":1,"resources_js_components_NotFoundComponent_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

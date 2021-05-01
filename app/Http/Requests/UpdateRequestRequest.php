@@ -13,7 +13,7 @@ class UpdateRequestRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,14 @@ class UpdateRequestRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'date_from' => ['date', 'after:yesterday'],
+            'date_to' => ['date', 'after:date_from'],
+            'description' => ['string', 'max:191'],
+            'type' => ['string', 'max:191'],
+            'is_confirmed' => ['boolean'],
+            'confirmed_at' => ['nullable', 'date'],
+            'requester_id' => ['integer', 'numeric'],
+            'responser_id' => ['integer', 'numeric']
         ];
     }
 }

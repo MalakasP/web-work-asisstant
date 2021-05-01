@@ -8,9 +8,9 @@ use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\ProjectController;
-// use App\Http\Controllers\Api\WorktimeController;
-// use App\Http\Controllers\Api\RequestController;
-// use App\Http\Controllers\Api\TeamController;
+use App\Http\Controllers\Api\TaskStatusController;
+use App\Http\Controllers\Api\TaskPriorityController;
+use App\Http\Controllers\Api\RequestController;
 
 
 /*
@@ -26,25 +26,43 @@ use App\Http\Controllers\Api\ProjectController;
 
 Route::group(['as' => 'api.'], function () {
 
+    /**
+     * Login controller login route
+     */
     Route::post('login', [LoginController::class, 'login'])->name('login');
 
+    /**
+     * Register controller register route
+     */
     Route::post('register', [RegisterController::class, 'register'])->name('register');
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
 
-        //do I need this?
-        // Route::get('email/verify/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
+        /**
+         * Login controller logout route
+         */
+        Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-        // Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
-
+        /**
+         * User controller routes
+         */
         Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
 
         Route::get('users', [UserController::class, 'index'])->name('users.index');
 
-        Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+        /**
+         * Task status controller route
+         */
+        Route::get('taskStatuses', [TaskStatusController::class, 'index'])->name('taskStatuses.index');
 
-        // Route::resource('tasks', TaskController::class, ['except' => ['create', 'edit']]);
+        /**
+         * Task priorities controller route
+         */
+        Route::get('taskPriorities', [TaskPriorityController::class, 'index'])->name('taskPriorities.index');
 
+        /**
+         * Task controller routes
+         */
         Route::get('assignedTasks', [TaskController::class, 'getAssignedTasks'])->name('getAssignedTasks');
 
         Route::get('createdTasks', [TaskController::class, 'getCreatedTasks'])->name('getCreatedTasks');
@@ -57,11 +75,14 @@ Route::group(['as' => 'api.'], function () {
 
         Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
+        /**
+         * Project controller routes
+         */
         Route::get('users/{user}/projects', [ProjectController::class, 'getUserProjects'])->name('getUserProjects');
 
         Route::get('users/{user}/teamProjects', [ProjectController::class, 'getCreatedAndTeamProjects'])->name('getCreatedAndTeamProjects');
 
-        Route::get('projects/{project}', [TaskContProjectControllerroller::class, 'show'])->name('projects.show');
+        Route::get('projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 
         Route::post('projects', [ProjectController::class, 'store'])->name('projects.store');
 
@@ -69,20 +90,45 @@ Route::group(['as' => 'api.'], function () {
 
         Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
-        // Route::resource('projects', ProjectController::class, ['except' => ['create', 'edit']]);
-
+        /**
+         * Worktimes resource controller routes
+         */
         Route::resource('worktimes', WorktimeController::class, ['except' => ['create', 'edit']]);
 
-        Route::resource('requests', RequestController::class, ['except' => ['create', 'edit']]);
+        /**
+         * Request controller routes
+         */
+        Route::get('createdRequests', [RequestController::class, 'getCreatedRequests'])->name('getCreatedRequests');
 
+        Route::get('getNotAnsweredRequests', [RequestController::class, 'getNotAnsweredRequests'])->name('getNotAnsweredRequests');
+
+        Route::get('getAnsweredRequests', [RequestController::class, 'getAnsweredRequests'])->name('getAnsweredRequests');
+
+        Route::get('requests/{request}', [RequestController::class, 'show'])->name('requests.show');
+
+        Route::post('requests', [RequestController::class, 'store'])->name('requests.store');
+
+        Route::put('requests/{request}', [RequestController::class, 'update'])->name('requests.update');
+
+        Route::delete('requests/{request}', [RequestController::class, 'destroy'])->name('requests.destroy');
+
+        /**
+         * Team resource controller routes
+         */
         Route::resource('teams', TeamController::class, ['except' => ['create', 'edit']]);
 
+        /**
+         * Admin controller routes
+         */
         Route::post('teams/{team}/addUser', [AdminController::class, 'store'])->name('admin.addTeamUser');
 
         Route::put('teams/{team}/users/{user}', [AdminController::class, 'update'])->name('admin.update');
 
         Route::delete('teams/{team}/users/{user}', [AdminController::class, 'destroy'])->name('admin.destroy');
 
-        // Route::put('teams/{team}', 'TeamController@update');
+        Route::get('teams/{team}/worktimes', [AdminController::class, 'getTeamUsersWorktimes'])->name('admin.getTeamUsersWorktimes');
+
+        Route::get('project/{project}/tasks', [AdminController::class, 'getProjectTaskByStatus'])->name('admin.getProjectTaskByStatus');
+
     });
 });

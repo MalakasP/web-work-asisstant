@@ -133,6 +133,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 function Team(_ref) {
@@ -248,7 +262,7 @@ function User(_ref2) {
                       text: response.data.message
                     });
 
-                    _this2.loadRouterLink(_this2.teams[response.data.team.id]);
+                    _this2.goRouter(_this2.teams[response.data.team.id]);
                   }
                 })["catch"](function (error) {
                   if (error.response.status == 422) {
@@ -275,7 +289,7 @@ function User(_ref2) {
         }, _callee2);
       }))();
     },
-    loadRouterLink: function loadRouterLink(team) {
+    goRouter: function goRouter(team) {
       this.$router.push({
         name: "Team",
         params: {
@@ -1362,7 +1376,7 @@ var render = function() {
                         staticClass: "card ripple",
                         on: {
                           click: function($event) {
-                            return _vm.loadRouterLink(team)
+                            return _vm.goRouter(team)
                           }
                         }
                       },
@@ -1412,14 +1426,47 @@ var render = function() {
       ? _c("div", [
           _c("h4", { staticClass: "p-3 text-center" }, [
             _vm._v("You are not included in any team.")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row justify-content-center" }, [
+            _c("div", { staticClass: "container" }, [
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-4 p-1" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "card ripple",
+                      on: {
+                        click: function($event) {
+                          return _vm.startCreate()
+                        }
+                      }
+                    },
+                    [_vm._m(1)]
+                  )
+                ])
+              ])
+            ])
           ])
         ])
       : _c("div", { staticClass: "row justify-content-center" }, [
-          _c("div", { staticClass: "loader" })
+          _c("div", { staticClass: "loader mt-3" })
         ])
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-body" }, [
+      _c("h5", { staticClass: "card-title" }, [_vm._v("Create new team")]),
+      _vm._v(" "),
+      _c("p", { staticClass: "card-text" }, [
+        _vm._v("Want to start a new team? Click here.")
+      ])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

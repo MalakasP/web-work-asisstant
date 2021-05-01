@@ -311,43 +311,55 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
-function Task(_ref) {
+function Project(_ref) {
   var id = _ref.id,
       title = _ref.title,
       description = _ref.description,
-      date_till_done = _ref.date_till_done,
-      status = _ref.status,
-      priority = _ref.priority,
-      project_id = _ref.project_id,
-      reporter_id = _ref.reporter_id,
-      assignee_id = _ref.assignee_id,
+      author_id = _ref.author_id,
+      team_id = _ref.team_id,
       created_at = _ref.created_at,
-      updated_at = _ref.updated_at;
-  this.id = id;
-  this.title = title;
-  this.description = description;
-  this.date_till_done = date_till_done;
-  this.status = status;
-  this.priority = priority;
-  this.project_id = project_id;
-  this.reporter_id = reporter_id;
-  this.assignee_id = assignee_id;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
-
-function Project(_ref2) {
-  var id = _ref2.id,
-      title = _ref2.title,
-      description = _ref2.description,
-      author_id = _ref2.author_id,
-      team_id = _ref2.team_id,
-      created_at = _ref2.created_at,
-      updated_at = _ref2.updated_at,
-      tasks = _ref2.tasks;
+      updated_at = _ref.updated_at,
+      tasks = _ref.tasks;
   this.id = id;
   this.title = title;
   this.description = description;
@@ -358,6 +370,23 @@ function Project(_ref2) {
   this.tasks = tasks;
 }
 
+function Team(_ref2) {
+  var id = _ref2.id,
+      name = _ref2.name,
+      description = _ref2.description,
+      created_at = _ref2.created_at,
+      updated_at = _ref2.updated_at,
+      pivot = _ref2.pivot,
+      users = _ref2.users;
+  this.id = id;
+  this.name = name;
+  this.description = description;
+  this.created_at = created_at;
+  this.updated_at = updated_at;
+  this.pivot = pivot;
+  this.users = users;
+}
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -365,49 +394,28 @@ function Project(_ref2) {
       noTasks: false,
       dynamicTitle: null,
       modal: false,
-      statuses: {
-        1: {
-          val: "To Do"
-        },
-        2: {
-          val: "In Progress"
-        },
-        3: {
-          val: "Done"
-        }
-      },
-      priorities: {
-        1: {
-          val: "lowest"
-        },
-        2: {
-          val: "low"
-        },
-        3: {
-          val: "medium"
-        },
-        4: {
-          val: "high"
-        },
-        5: {
-          val: "critical"
-        }
-      },
+      statuses: {},
+      priorities: {},
       editTask: null,
       taskProject: null,
       projects: {},
       projectsUsers: {},
+      teams: {},
       form: {
         title: null,
         description: null,
         date_till_done: null,
-        status: null,
-        priority: null,
+        status_id: null,
+        priority_id: null,
         project_id: null,
         reporter_id: null,
         assignee_id: null,
         created_at: null,
         updated_at: null
+      },
+      selectedProjectTeam: null,
+      masks: {
+        input: "YYYY-MM-DD"
       }
     };
   },
@@ -422,7 +430,7 @@ function Project(_ref2) {
     monthDay: function monthDay(value) {
       if (!value) return "";
       value = value.toString();
-      return value.substring(5);
+      return value.substring(5, 10);
     }
   },
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)("worktime", [])), {}, {
@@ -446,35 +454,18 @@ function Project(_ref2) {
                   }
                 })["catch"](function (error) {
                   console.log(error);
+                  _this.projectsUsers = {};
+                  _this.projectsUsers[_this.user.id] = _this.user;
                 });
 
               case 2:
                 _context.next = 4;
-                return axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
+                return axios.get("api/" + "taskStatuses").then(function (response) {
                   if (response.data != null) {
-                    if (response.data.createdProjects != null) {
-                      _this.projects = {};
-                      _this.projects[0] = new Project({
-                        id: 0,
-                        title: "No Project",
-                        description: "Tasks without project",
-                        author_id: _this.user.id,
-                        team_id: 0,
-                        created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                        updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                        tasks: []
-                      });
-                      response.data.createdProjects.forEach(function (project) {
-                        _this.projects[project.id] = new Project(project);
-                        _this.projects[project.id].tasks = [];
-                      });
-                    } //User might have rights to add tasks to the project if he is admin of the project
-                    // if (response.data.teamProjects != null) {
-                    //   response.data.teamProjects.forEach((project) => {
-                    //     this.teamProjects.push(project);
-                    //   });
-                    // }
-
+                    _this.statuses = {};
+                    response.data.taskStatuses.forEach(function (status) {
+                      _this.statuses[status.id] = status;
+                    });
                   }
                 })["catch"](function (error) {
                   console.log(error);
@@ -482,13 +473,103 @@ function Project(_ref2) {
 
               case 4:
                 _context.next = 6;
+                return axios.get("api/" + "taskPriorities").then(function (response) {
+                  if (response.data != null) {
+                    _this.priorities = {};
+                    response.data.taskPriorities.forEach(function (priority) {
+                      _this.priorities[priority.id] = priority;
+                    });
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 6:
+                _context.next = 8;
+                return axios.get("api/" + "teams").then(function (response) {
+                  if (response.data != null) {
+                    _this.teams = {};
+                    response.data.teams.forEach(function (team) {
+                      if (team != null) {
+                        _this.teams[team.id] = new Team(team);
+                      }
+                    });
+                    _this.teams[0] = new Team({
+                      id: 0,
+                      name: "No Team",
+                      description: "",
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      pivot: {
+                        is_admin: true
+                      },
+                      users: [_this.user]
+                    });
+                    console.log(_this.teams);
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+
+                  if (error.response.status == 404) {
+                    _this.teams[0] = new Team({
+                      id: 0,
+                      name: "No Team",
+                      description: "",
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
+                      pivot: {
+                        is_admin: true
+                      },
+                      users: [_this.user]
+                    });
+                  }
+                });
+
+              case 8:
+                _context.next = 10;
+                return axios.get("api/" + "users/" + _this.user.id + "/teamProjects").then(function (response) {
+                  if (response.data != null) {
+                    if (response.data.createdProjects != null) {
+                      _this.projects = {};
+                      response.data.createdProjects.forEach(function (project) {
+                        if (project.team_id == null) {
+                          project.team_id = 0;
+                        }
+
+                        _this.projects[project.id] = new Project(project);
+                        _this.projects[project.id].tasks = [];
+                      });
+                    }
+
+                    console.log(_this.projects); //User might have rights to add tasks to the project if he is admin of the project
+                    // if (response.data.teamProjects != null) {
+                    //   response.data.teamProjects.forEach((project) => {
+                    //     this.teamProjects.push(project);
+                    //   });
+                    // }
+                  }
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 10:
+                _context.next = 12;
                 return axios.get("api/" + "createdTasks").then(function (response) {
                   if (response.data != null) {
                     response.data.createdTasks.forEach(function (project) {
                       if (project.hasOwnProperty("id")) {
                         _this.projects[project.id].tasks = project.tasks;
-                      } else if (project[0].project_id === null) {
-                        _this.projects[0].tasks = project;
+                      } else if (Array.isArray(project)) {
+                        _this.projects[0] = new Project({
+                          id: 0,
+                          title: "No Project",
+                          description: "Tasks without project",
+                          author_id: _this.user.id,
+                          team_id: 0,
+                          created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                          updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                          tasks: project
+                        });
                       }
                     });
                     _this.loaded = true;
@@ -497,13 +578,22 @@ function Project(_ref2) {
                   console.log(error);
 
                   if (error.response.status == 404) {
-                    _this.noTasks = true;
+                    _this.projects[0] = new Project({
+                      id: 0,
+                      title: "No Project",
+                      description: "Tasks without project",
+                      author_id: _this.user.id,
+                      team_id: 0,
+                      created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                      updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
+                      tasks: []
+                    });
                   }
 
                   _this.loaded = true;
                 });
 
-              case 6:
+              case 12:
               case "end":
                 return _context.stop();
             }
@@ -535,11 +625,11 @@ function Project(_ref2) {
 
                       _this2.projects[_this2.editTask.project_id].tasks.splice(taskIndex, 1, response.data.task);
                     } else {
-                      var taskIndex = _this2.projects[0].tasks.findIndex(function (task) {
+                      var _taskIndex = _this2.projects[0].tasks.findIndex(function (task) {
                         return task.id == _this2.editTask.id;
                       });
 
-                      _this2.projects[0].tasks.splice(taskIndex, 1, response.data.task);
+                      _this2.projects[0].tasks.splice(_taskIndex, 1, response.data.task);
                     }
 
                     _this2.editTask = null;
@@ -559,7 +649,7 @@ function Project(_ref2) {
                       _this2.modal = false;
                       _this2.editTask = null;
 
-                      _this2.$alert(error.response.data.status, "Warning", "error");
+                      _this2.$alert("Something went wrong", "Warning", "error");
                     } else {
                       if (_this2.form.project_id == null) {
                         _this2.form.project_id = 0;
@@ -612,11 +702,15 @@ function Project(_ref2) {
                   console.log(error);
 
                   if (error.response) {
+                    console.log(error);
+
                     if (error.response.status != 422) {
                       _this3.modal = false;
 
                       _this3.$alert(error.response.data.status, "Warning", "error");
                     } else {
+                      console.log(error);
+
                       _this3.$store.commit("setErrors", error.response.data.errors);
                     }
                   }
@@ -689,27 +783,41 @@ function Project(_ref2) {
       this.form.title = null;
       this.form.description = null;
       this.form.date_till_done = moment__WEBPACK_IMPORTED_MODULE_1___default()().format("YYYY-MM-DD");
-      this.form.status = this.statuses[1].val;
-      this.form.priority = this.priorities[1].val;
+      console.log(this.statuses, this.priorities);
+      this.form.status_id = this.statuses[0].id;
+      this.form.priority_id = this.priorities[0].id;
+
+      if (project.team_id != null) {
+        this.selectedProjectTeam = project.team_id;
+      } else {
+        this.selectedProjectTeam = 0;
+      }
+
       this.form.project_id = this.projects[project.id].id;
       this.form.reporter_id = this.user.id;
-      this.form.assignee_id = this.projectsUsers[1].id;
+      this.form.assignee_id = this.teams[this.selectedProjectTeam].users[0].id;
     },
-    startEdit: function startEdit(task) {
+    startEdit: function startEdit(task, projectTeamId) {
       this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "Edit Task";
       this.editTask = task;
       this.form.title = task.title;
       this.form.description = task.description;
-      this.form.date_till_done = task.date_till_done;
-      this.form.status = task.status;
-      this.form.priority = task.priority;
+      this.form.date_till_done = moment__WEBPACK_IMPORTED_MODULE_1___default()(task.date_till_done).format("YYYY-MM-DD");
+      this.form.status_id = task.status_id;
+      this.form.priority_id = task.priority_id;
 
       if (task.project_id != null) {
         this.form.project_id = task.project_id;
       } else {
         this.form.project_id = this.projects[0].id;
+      }
+
+      if (projectTeamId != null) {
+        this.selectedProjectTeam = projectTeamId;
+      } else {
+        this.selectedProjectTeam = 0;
       }
 
       this.form.reporter_id = task.reporter_id;
@@ -722,6 +830,30 @@ function Project(_ref2) {
       this.$confirm("Are You sure?", "Confirm Delete", "error").then(function () {
         _this5["delete"](task);
       })["catch"]();
+    },
+    closeModal: function closeModal() {
+      this.modal = false;
+      this.editTask = null;
+    },
+    goToProject: function goToProject(name, id) {
+      if (id > 0) {
+        this.$router.push({
+          name: name,
+          params: {
+            projectId: id
+          }
+        });
+      }
+    },
+    goToTeam: function goToTeam(name, id) {
+      if (id > 0) {
+        this.$router.push({
+          name: name,
+          params: {
+            teamId: id
+          }
+        });
+      }
     }
   })
 });
@@ -745,7 +877,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 50vh;\r\n  overflow-y: auto;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-bb265d88] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.to-capital-first[data-v-bb265d88] {\r\n  text-transform: capitalize;\n}\n.modal-body[data-v-bb265d88] {\r\n  height: 50vh;\r\n  overflow-y: auto;\n}\n.link[data-v-bb265d88]:hover {\r\n  color: #007bff;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1667,8 +1799,7 @@ var render = function() {
                             attrs: { type: "button" },
                             on: {
                               click: function($event) {
-                                _vm.editTask = null
-                                _vm.modal = false
+                                return _vm.closeModal()
                               }
                             }
                           },
@@ -1718,6 +1849,277 @@ var render = function() {
                             : _vm._e()
                         ]),
                         _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "div",
+                            { staticClass: "form-group col-md-6" },
+                            [
+                              _c("label", [_vm._v("Select Deadline")]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("v-date-picker", {
+                                attrs: { mode: "date", masks: _vm.masks },
+                                scopedSlots: _vm._u(
+                                  [
+                                    {
+                                      key: "default",
+                                      fn: function(ref) {
+                                        var inputValue = ref.inputValue
+                                        var inputEvents = ref.inputEvents
+                                        return [
+                                          _c(
+                                            "input",
+                                            _vm._g(
+                                              {
+                                                staticClass:
+                                                  "px-2 py-1 border rounded focus:outline-none focus:border-blue-300",
+                                                domProps: { value: inputValue }
+                                              },
+                                              inputEvents
+                                            )
+                                          )
+                                        ]
+                                      }
+                                    }
+                                  ],
+                                  null,
+                                  false,
+                                  666616994
+                                ),
+                                model: {
+                                  value: _vm.form.date_till_done,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.form, "date_till_done", $$v)
+                                  },
+                                  expression: "form.date_till_done"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _vm.errors.date_till_done
+                                ? _c(
+                                    "div",
+                                    { staticClass: "invalid-feedback" },
+                                    [
+                                      _vm._v(
+                                        "\n                      " +
+                                          _vm._s(_vm.errors.date_till_done) +
+                                          "\n                    "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e()
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group col-md-6" }, [
+                            _c("label", [_vm._v("Choose Assignee")]),
+                            _vm._v(" "),
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.form.assignee_id,
+                                    expression: "form.assignee_id"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: { "is-invalid": _vm.errors.assignee_id },
+                                on: {
+                                  change: function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.$set(
+                                      _vm.form,
+                                      "assignee_id",
+                                      $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    )
+                                  }
+                                }
+                              },
+                              _vm._l(
+                                _vm.teams[_vm.selectedProjectTeam].users,
+                                function(user) {
+                                  return _c(
+                                    "option",
+                                    {
+                                      key: user.id,
+                                      domProps: { value: user.id }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                        " +
+                                          _vm._s(user.name) +
+                                          "\n                      "
+                                      )
+                                    ]
+                                  )
+                                }
+                              ),
+                              0
+                            ),
+                            _vm._v(" "),
+                            _vm.errors.assignee_id
+                              ? _c("div", { staticClass: "invalid-feedback" }, [
+                                  _vm._v(
+                                    "\n                      " +
+                                      _vm._s(_vm.errors.assignee_id) +
+                                      "\n                    "
+                                  )
+                                ])
+                              : _vm._e()
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c("div", { staticClass: "form-group col-md-6" }, [
+                            _c("label", [_vm._v("Choose Status")]),
+                            _vm._v(" "),
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.form.status_id,
+                                    expression: "form.status_id"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                class: { "is-invalid": _vm.errors.status },
+                                on: {
+                                  change: function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.$set(
+                                      _vm.form,
+                                      "status_id",
+                                      $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    )
+                                  }
+                                }
+                              },
+                              _vm._l(this.statuses, function(status) {
+                                return _c(
+                                  "option",
+                                  {
+                                    key: status.id,
+                                    domProps: { value: status.id }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                        " +
+                                        _vm._s(status.name) +
+                                        "\n                      "
+                                    )
+                                  ]
+                                )
+                              }),
+                              0
+                            ),
+                            _vm._v(" "),
+                            _vm.errors.status
+                              ? _c("div", { staticClass: "invalid-feedback" }, [
+                                  _vm._v(
+                                    "\n                      " +
+                                      _vm._s(_vm.errors.status) +
+                                      "\n                    "
+                                  )
+                                ])
+                              : _vm._e()
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group col-md-6" }, [
+                            _c("label", [_vm._v("Choose Priority")]),
+                            _vm._v(" "),
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.form.priority_id,
+                                    expression: "form.priority_id"
+                                  }
+                                ],
+                                staticClass: "form-control to-capital-first",
+                                class: { "is-invalid": _vm.errors.priority },
+                                on: {
+                                  change: function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.$set(
+                                      _vm.form,
+                                      "priority_id",
+                                      $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    )
+                                  }
+                                }
+                              },
+                              _vm._l(this.priorities, function(priority) {
+                                return _c(
+                                  "option",
+                                  {
+                                    key: priority.id,
+                                    domProps: { value: priority.id }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                        " +
+                                        _vm._s(priority.name) +
+                                        "\n                      "
+                                    )
+                                  ]
+                                )
+                              }),
+                              0
+                            ),
+                            _vm._v(" "),
+                            _vm.errors.priority
+                              ? _c("div", { staticClass: "invalid-feedback" }, [
+                                  _vm._v(
+                                    "\n                      " +
+                                      _vm._s(_vm.errors.priority) +
+                                      "\n                    "
+                                  )
+                                ])
+                              : _vm._e()
+                          ])
+                        ]),
+                        _vm._v(" "),
                         _c("div", { staticClass: "form-group" }, [
                           _c("label", [_vm._v("Enter Description")]),
                           _vm._v(" "),
@@ -1759,254 +2161,6 @@ var render = function() {
                             : _vm._e()
                         ]),
                         _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("div", { staticClass: "form-group col-md-6" }, [
-                            _c("label", [_vm._v("Enter Deadline")]),
-                            _vm._v(" "),
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.date_till_done,
-                                  expression: "form.date_till_done"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.errors.date_till_done
-                              },
-                              attrs: { type: "date" },
-                              domProps: { value: _vm.form.date_till_done },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "date_till_done",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            }),
-                            _vm._v(" "),
-                            _vm.errors.date_till_done
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(_vm.errors.date_till_done) +
-                                      "\n                    "
-                                  )
-                                ])
-                              : _vm._e()
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-group col-md-6" }, [
-                            _c("label", [_vm._v("Choose Assignee")]),
-                            _vm._v(" "),
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.assignee_id,
-                                    expression: "form.assignee_id"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: { "is-invalid": _vm.errors.assignee_id },
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.form,
-                                      "assignee_id",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              _vm._l(this.projectsUsers, function(user) {
-                                return _c(
-                                  "option",
-                                  {
-                                    key: user.id,
-                                    domProps: { value: user.id }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                        " +
-                                        _vm._s(user.name) +
-                                        "\n                      "
-                                    )
-                                  ]
-                                )
-                              }),
-                              0
-                            ),
-                            _vm._v(" "),
-                            _vm.errors.assignee_id
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(_vm.errors.assignee_id) +
-                                      "\n                    "
-                                  )
-                                ])
-                              : _vm._e()
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group row" }, [
-                          _c("div", { staticClass: "form-group col-md-6" }, [
-                            _c("label", [_vm._v("Choose Status")]),
-                            _vm._v(" "),
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.status,
-                                    expression: "form.status"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: { "is-invalid": _vm.errors.status },
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.form,
-                                      "status",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              _vm._l(this.statuses, function(status) {
-                                return _c(
-                                  "option",
-                                  {
-                                    key: status.val,
-                                    domProps: { value: status.val }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                        " +
-                                        _vm._s(status.val) +
-                                        "\n                      "
-                                    )
-                                  ]
-                                )
-                              }),
-                              0
-                            ),
-                            _vm._v(" "),
-                            _vm.errors.status
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(_vm.errors.status) +
-                                      "\n                    "
-                                  )
-                                ])
-                              : _vm._e()
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-group col-md-6" }, [
-                            _c("label", [_vm._v("Choose Priority")]),
-                            _vm._v(" "),
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.form.priority,
-                                    expression: "form.priority"
-                                  }
-                                ],
-                                staticClass: "form-control to-capital-first",
-                                class: { "is-invalid": _vm.errors.priority },
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.form,
-                                      "priority",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              _vm._l(this.priorities, function(priority) {
-                                return _c(
-                                  "option",
-                                  {
-                                    key: priority.val,
-                                    domProps: { value: priority.val }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                        " +
-                                        _vm._s(priority.val) +
-                                        "\n                      "
-                                    )
-                                  ]
-                                )
-                              }),
-                              0
-                            ),
-                            _vm._v(" "),
-                            _vm.errors.priority
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(_vm.errors.priority) +
-                                      "\n                    "
-                                  )
-                                ])
-                              : _vm._e()
-                          ])
-                        ]),
-                        _vm._v(" "),
                         _c("div", { attrs: { align: "center" } }, [
                           _vm.editTask == null
                             ? _c("input", {
@@ -2039,135 +2193,286 @@ var render = function() {
               { staticClass: "card p-3" },
               _vm._l(_vm.projects, function(project) {
                 return _c("div", { key: project.id }, [
-                  _c("h5", { staticClass: "text-left mt-3 p-1" }, [
-                    _vm._v(_vm._s(project.title))
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "card p-3" }, [
+                  _c("div", { staticClass: "card p-3 mt-3" }, [
                     _c(
-                      "table",
-                      { staticClass: "table-striped w-100 d-block d-md-table" },
+                      "div",
+                      {
+                        staticClass:
+                          "card-header bg-white justify-content-start"
+                      },
                       [
-                        project.tasks && project.tasks.length > 0
-                          ? _c("thead", [_vm._m(0, true)])
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _c(
-                          "tbody",
-                          [
-                            _vm._l(project.tasks, function(task) {
-                              return _c("tr", { key: task.id }, [
-                                _c("td", { staticStyle: { width: "20%" } }, [
-                                  _vm._v(_vm._s(task.title))
-                                ]),
-                                _vm._v(" "),
-                                _c("td", { staticStyle: { width: "20%" } }, [
-                                  _vm._v(
-                                    "\n                    " +
-                                      _vm._s(
-                                        _vm._f("monthDay")(task.date_till_done)
-                                      ) +
-                                      "\n                  "
-                                  )
-                                ]),
-                                _vm._v(" "),
-                                _c("td", { staticStyle: { width: "20%" } }, [
-                                  _vm._v(_vm._s(task.status))
-                                ]),
-                                _vm._v(" "),
-                                _c(
-                                  "td",
+                        _c("div", { staticClass: "row" }, [
+                          _c("div", { staticClass: "col-2" }, [
+                            project.id > 0
+                              ? _c(
+                                  "h5",
                                   {
-                                    staticClass: "to-capital-first",
-                                    staticStyle: { width: "20%" }
+                                    staticClass: "link",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.$router.push({
+                                          name: "Project",
+                                          params: { projectId: project.id }
+                                        })
+                                      }
+                                    }
                                   },
                                   [
                                     _vm._v(
                                       "\n                    " +
-                                        _vm._s(task.priority) +
+                                        _vm._s(project.title) +
                                         "\n                  "
                                     )
                                   ]
-                                ),
-                                _vm._v(" "),
-                                _c("td", { staticStyle: { width: "10%" } }, [
-                                  _vm._v(
-                                    "\n                    " +
-                                      _vm._s(
-                                        _vm.projectsUsers[task.assignee_id].name
-                                      ) +
-                                      "\n                  "
-                                  )
-                                ]),
-                                _vm._v(" "),
-                                _c("td", { staticStyle: { width: "5%" } }, [
-                                  _c(
-                                    "button",
-                                    {
-                                      staticClass: "btn btn-primary",
-                                      staticStyle: { margin: "1px" },
-                                      attrs: { type: "button" },
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.startEdit(task)
-                                        }
+                                )
+                              : _c("h5", [_vm._v(_vm._s(project.title))])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-2" }, [
+                            _vm.teams[project.team_id].id > 0
+                              ? _c(
+                                  "h6",
+                                  {
+                                    staticClass: "link",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.$router.push({
+                                          name: "Team",
+                                          params: {
+                                            teamId:
+                                              _vm.teams[project.team_id].id
+                                          }
+                                        })
                                       }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                    " +
+                                        _vm._s(
+                                          _vm.teams[project.team_id].name
+                                        ) +
+                                        "\n                  "
+                                    )
+                                  ]
+                                )
+                              : _c("h6", [
+                                  _vm._v(
+                                    _vm._s(_vm.teams[project.team_id].name)
+                                  )
+                                ])
+                          ])
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "table-responsive" }, [
+                      _c(
+                        "table",
+                        {
+                          staticClass: "table-striped w-100 d-block d-md-table"
+                        },
+                        [
+                          project.tasks && project.tasks.length > 0
+                            ? _c("thead", [_vm._m(0, true)])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c(
+                            "tbody",
+                            [
+                              _vm._l(project.tasks, function(task) {
+                                return _c("tr", { key: task.id }, [
+                                  _c("td", { staticStyle: { width: "20%" } }, [
+                                    _vm._v(_vm._s(task.title))
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "20%" } }, [
+                                    _vm._v(
+                                      "\n                      " +
+                                        _vm._s(
+                                          _vm._f("monthDay")(
+                                            task.date_till_done
+                                          )
+                                        ) +
+                                        "\n                    "
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "20%" } }, [
+                                    _vm._v(
+                                      "\n                      " +
+                                        _vm._s(
+                                          _vm.statuses[task.status_id].name
+                                        ) +
+                                        "\n                    "
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c(
+                                    "td",
+                                    {
+                                      staticClass: "to-capital-first",
+                                      staticStyle: { width: "20%" }
                                     },
                                     [
-                                      _c(
-                                        "span",
-                                        { staticClass: "icon is-small" },
-                                        [
-                                          _c(
-                                            "svg",
-                                            {
-                                              staticClass: "bi bi-three-dots",
-                                              attrs: {
-                                                xmlns:
-                                                  "http://www.w3.org/2000/svg",
-                                                width: "16",
-                                                height: "16",
-                                                fill: "currentColor",
-                                                viewBox: "0 0 16 16"
-                                              }
-                                            },
-                                            [
-                                              _c("path", {
-                                                attrs: {
-                                                  d:
-                                                    "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                                                }
-                                              })
-                                            ]
-                                          )
-                                        ]
+                                      _vm._v(
+                                        "\n                      " +
+                                          _vm._s(
+                                            _vm.priorities[task.priority_id]
+                                              .name
+                                          ) +
+                                          "\n                    "
                                       )
                                     ]
-                                  )
-                                ]),
+                                  ),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "10%" } }, [
+                                    _vm._v(
+                                      "\n                      " +
+                                        _vm._s(
+                                          _vm.projectsUsers[task.assignee_id]
+                                            .name
+                                        ) +
+                                        "\n                    "
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "5%" } }, [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-primary",
+                                        staticStyle: { margin: "1px" },
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.startEdit(
+                                              task,
+                                              project.team_id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "span",
+                                          { staticClass: "icon is-small" },
+                                          [
+                                            _c(
+                                              "svg",
+                                              {
+                                                staticClass: "bi bi-three-dots",
+                                                attrs: {
+                                                  xmlns:
+                                                    "http://www.w3.org/2000/svg",
+                                                  width: "16",
+                                                  height: "16",
+                                                  fill: "currentColor",
+                                                  viewBox: "0 0 16 16"
+                                                }
+                                              },
+                                              [
+                                                _c("path", {
+                                                  attrs: {
+                                                    d:
+                                                      "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
+                                                  }
+                                                })
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "5%" } }, [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger",
+                                        staticStyle: { margin: "1px" },
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.startDelete(task)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "span",
+                                          { staticClass: "icon is-small" },
+                                          [
+                                            _c(
+                                              "svg",
+                                              {
+                                                staticClass: "bi bi-trash",
+                                                attrs: {
+                                                  xmlns:
+                                                    "http://www.w3.org/2000/svg",
+                                                  width: "16",
+                                                  height: "16",
+                                                  fill: "currentColor",
+                                                  viewBox: "0 0 16 16"
+                                                }
+                                              },
+                                              [
+                                                _c("path", {
+                                                  attrs: {
+                                                    d:
+                                                      "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                                                  }
+                                                }),
+                                                _vm._v(" "),
+                                                _c("path", {
+                                                  attrs: {
+                                                    "fill-rule": "evenodd",
+                                                    d:
+                                                      "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                                  }
+                                                })
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ])
+                                ])
+                              }),
+                              _vm._v(" "),
+                              _c("tr", { staticClass: "bg-white" }, [
+                                project.tasks && project.tasks.length > 0
+                                  ? _c("td")
+                                  : _vm._e(),
                                 _vm._v(" "),
-                                _c("td", { staticStyle: { width: "5%" } }, [
+                                project.tasks && project.tasks.length > 0
+                                  ? _c("td")
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _c("td", [
                                   _c(
                                     "button",
                                     {
-                                      staticClass: "btn btn-danger",
-                                      staticStyle: { margin: "1px" },
+                                      staticClass: "btn btn-secondary",
+                                      staticStyle: { margin: "3px" },
                                       attrs: { type: "button" },
                                       on: {
                                         click: function($event) {
-                                          return _vm.startDelete(task)
+                                          return _vm.startCreate(project)
                                         }
                                       }
                                     },
                                     [
                                       _c(
                                         "span",
-                                        { staticClass: "icon is-small" },
+                                        { staticClass: "icon full-size" },
                                         [
                                           _c(
                                             "svg",
                                             {
-                                              staticClass: "bi bi-trash",
+                                              staticClass: "bi bi-plus-square",
                                               attrs: {
                                                 xmlns:
                                                   "http://www.w3.org/2000/svg",
@@ -2181,18 +2486,20 @@ var render = function() {
                                               _c("path", {
                                                 attrs: {
                                                   d:
-                                                    "M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                                                    "M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
                                                 }
                                               }),
                                               _vm._v(" "),
                                               _c("path", {
                                                 attrs: {
-                                                  "fill-rule": "evenodd",
                                                   d:
-                                                    "M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                                    "M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
                                                 }
                                               })
                                             ]
+                                          ),
+                                          _vm._v(
+                                            "\n                          Add Task\n                        "
                                           )
                                         ]
                                       )
@@ -2200,85 +2507,19 @@ var render = function() {
                                   )
                                 ])
                               ])
-                            }),
-                            _vm._v(" "),
-                            _c("tr", { staticClass: "bg-white" }, [
-                              project.tasks && project.tasks.length > 0
-                                ? _c("td")
-                                : _vm._e(),
-                              _vm._v(" "),
-                              project.tasks && project.tasks.length > 0
-                                ? _c("td")
-                                : _vm._e(),
-                              _vm._v(" "),
-                              _c("td", [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-secondary",
-                                    staticStyle: { margin: "3px" },
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.startCreate(project)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _c(
-                                      "span",
-                                      { staticClass: "icon full-size" },
-                                      [
-                                        _c(
-                                          "svg",
-                                          {
-                                            staticClass: "bi bi-plus-square",
-                                            attrs: {
-                                              xmlns:
-                                                "http://www.w3.org/2000/svg",
-                                              width: "16",
-                                              height: "16",
-                                              fill: "currentColor",
-                                              viewBox: "0 0 16 16"
-                                            }
-                                          },
-                                          [
-                                            _c("path", {
-                                              attrs: {
-                                                d:
-                                                  "M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-                                              }
-                                            }),
-                                            _vm._v(" "),
-                                            _c("path", {
-                                              attrs: {
-                                                d:
-                                                  "M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                                              }
-                                            })
-                                          ]
-                                        ),
-                                        _vm._v(
-                                          "\n                        Add Task\n                      "
-                                        )
-                                      ]
-                                    )
-                                  ]
-                                )
-                              ])
-                            ])
-                          ],
-                          2
-                        )
-                      ]
-                    )
+                            ],
+                            2
+                          )
+                        ]
+                      )
+                    ])
                   ])
                 ])
               }),
               0
             )
           : _c("div", { staticClass: "row justify-content-center" }, [
-              _c("div", { staticClass: "loader" })
+              _c("div", { staticClass: "loader mt-3" })
             ])
       ])
     ])

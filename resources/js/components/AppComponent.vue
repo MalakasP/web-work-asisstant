@@ -50,10 +50,32 @@
               <router-link class="nav-link" to="/teams">Teams</router-link>
             </li>
             <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/">Worktimes</router-link>
+              <router-link class="nav-link" to="/worktimes">Worktimes</router-link>
             </li>
-            <li class="nav-item" v-show="isAuthenticated">
-              <router-link class="nav-link" to="/requests">Requests</router-link>
+            <li class="nav-item dropdown">
+              <div
+                class="nav-link dropdown-toggle"
+                id="navbarDropdownRequests"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                v-show="isAuthenticated"
+              >
+                <a>Requests</a>
+              </div>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownRequests">
+                <a class="dropdown-item"
+                  ><router-link to="/gottenRequests"
+                    >Gotten Requests</router-link
+                  ></a
+                >
+                <a class="dropdown-item"
+                  ><router-link to="/createdRequests"
+                    >Created Requests</router-link
+                  ></a
+                >
+              </div>
             </li>
           </ul>
           <ul class="navbar-nav">
@@ -157,7 +179,7 @@ export default {
         }
 
         this.counter.ticker = setInterval(() => {
-          const time = this._readableTimeFromSeconds(++this.counter.seconds);
+          const time = this.readableTimeFromSeconds(++this.counter.seconds);
           // console.log(this.counter.seconds);
           // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
@@ -182,10 +204,12 @@ export default {
       "setWorktime",
       "setTimer",
     ]),
+
     /**
      * Logout user.
      */
     logout() {
+      this.$router.push('/');
       this.sendLogoutRequest();
       this.setTimerStopped(false);
       this.setDuration(null);
@@ -229,18 +253,21 @@ export default {
       };
 
       axios({
+        method: "put",
         url: process.env.MIX_API_URL + "worktimes/" + this.worktime.id,
         baseURL: "/",
         data: data,
       })
         .then((response) => {
+          console.log(response);
+          this.setDuration(this.duration + this.durationToSeconds(response.data.worktime.duration));
           this.setTimerStopped(true);
           clearInterval(this.counter.ticker);
         })
         .catch((error) => {
           if (error.response) {
             if (error.response.status === 406) {
-              this.$alert(error.response.data.error);
+              this.$alert(error.response.data.message);
             }
           }
         });
@@ -255,12 +282,13 @@ export default {
         }
 
         this.counter.ticker = setInterval(() => {
-          const time = this._readableTimeFromSeconds(++this.counter.seconds);
+          const time = this.readableTimeFromSeconds(++this.counter.seconds);
           // console.log(this.counter.seconds);
           // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
           if (this.counter.seconds % 60 == 0) {
             this.setTimer(this.counter.seconds);
+            // this.duration(this.counter.seconds);
           }
         }, 1000);
       }
@@ -269,23 +297,26 @@ export default {
     /**
      * Conditionally pads a number with "0"
      */
-    _padNumber(number) {
+    padNumber(number) {
       return number > 9 ? number : "0" + number;
     },
 
     /**
      * Splits seconds into hours, minutes, and seconds.
      */
-    _readableTimeFromSeconds(seconds) {
+    readableTimeFromSeconds(seconds) {
       const hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
       return {
-        hours: this._padNumber(hours),
-        seconds: this._padNumber(seconds % 60),
-        minutes: this._padNumber(parseInt(seconds / 60, 10) % 60),
+        hours: this.padNumber(hours),
+        seconds: this.padNumber(seconds % 60),
+        minutes: this.padNumber(parseInt(seconds / 60, 10) % 60),
       };
     },
 
-    _durationToSeconds(duration) {
+    /**
+     * Converts readable time to seconds.
+     */
+    durationToSeconds(duration) {
       var timeMeasures = duration.split(":");
       var seconds =
         +timeMeasures[0] * 3600 + +timeMeasures[1] * 60 + +timeMeasures[2];
@@ -298,7 +329,7 @@ export default {
     calculateTimeSpent(timer) {
       const started = moment(timer.started_at);
       const stopped = moment(timer.stopped_at);
-      const time = this._readableTimeFromSeconds(
+      const time = this.readableTimeFromSeconds(
         parseInt(moment.duration(stopped.diff(started)).asSeconds())
       );
       return `${time.hours}:${time.minutes}`;

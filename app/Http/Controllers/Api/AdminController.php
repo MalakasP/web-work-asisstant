@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTeamUserRequest;
 use App\Http\Requests\UpdateTeamUserRequest;
+use App\Http\Requests\GetWorktimesRequest;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Project;
+use App\Models\TaskStatus;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -31,7 +34,7 @@ class AdminController extends Controller
             ], 409);
         }
 
-        $user = User::where('email', $request->validated()['email'])->first();
+        $user = User::where('email', $request->validated()['email'])->firstOrFail();
 
         $team->users()->attach(
             $user->id,
@@ -99,17 +102,93 @@ class AdminController extends Controller
     }
 
     /**
-     * Get team user worktimes
+     * Get team users worktimes
+     * 
+     * @param \App\Models\Team $team
+     * @param \App\Http\Requests\GetWorktimesRequest  $request
+     * @return \Illuminate\Http\Response
      */
-    public function getUserWorktimes(User $user)
+    public function getTeamUsersWorktimes(Team $team, GetWorktimesRequest $request)
     {
+        $request->validated();
+
+        if (!$team->isUserAdmin(Auth::id())) {
+            return response()->json([
+                'message' => 'You are not the admin of this team!'
+            ], 403);
+        }
+
+        if ($request->has('from') && $request->has('to')) {
+            $from = date('Y-m-d', strtotime($request->from));
+            $to = date('Y-m-d', strtotime($request->to));
+            $users = $team->users;
+            foreach ($users as $user) {
+                $worktimes[$user->id] = $user->worktimes()->whereBetween('created_at', [$from, $to])->get()->groupBy(function ($worktime) {
+                    return Carbon::parse($worktime->created_at)->format('Y-m-d');
+                });
+            }
+        } else {
+            return response()->json([
+                'message' => 'No date range given.'
+            ], 422);
+        }
+
+        if (empty($worktimes)) {
+            return response()->json([
+                'message' => 'You do not have saved worktimes.'
+            ], 404);
+        }
+
+        return response()->json([
+            'usersWorktimes' => $worktimes
+        ]);
     }
 
     /**
-     * Gets users of the team
+     * Gets tasks grouped by status
+     * 
+     * @param \App\Models\Project $project
+     * @return \Illuminate\Http\Response
      */
-    public function getTeamUsers(Team $team)
+    public function getProjectTaskByStatus(Project $project)
     {
+        if ($project->team != null) {
+            $isAdmin = $project->team->isUserAdmin(Auth::id());
+            $isAuthor = false;
+        } else if ($project->author_id != null) {
+            $isAuthor = $project->author_id == Auth::id();
+            $isAdmin = false;
+        } else {
+            $isAdmin = false;
+            $isAuthor = false;
+        }
+
+        if (!$isAdmin && !$isAuthor) {
+            return response()->json([
+                'message' => 'You do not have rights to do this!',
+            ], 403);
+        }
+
+        $empty = true;
+
+        $statuses = TaskStatus::get();
+        
+        foreach ($statuses as $status) {
+          $tasks[$status->name] = $project->tasks()->where('status_id', $status->id)->get();
+          if (!$tasks[$status->name]->isEmpty()) {
+            $empty = false;
+          }
+        }
+
+        if ($empty) {
+            return response()->json([
+                'message' => 'You do not have tasks in project'
+            ], 404);
+        }
+
+        return response()->json([
+            'tasks' => $tasks
+        ]);
     }
 
     // /**

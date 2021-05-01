@@ -48,6 +48,13 @@ const routes = [
             import("../components/ProjectsComponent.vue")
     },
     {
+        path: "/project/:projectId",
+        name: "Project",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/ProjectComponent.vue")
+    },
+    {
         path: "/teams",
         name: "Teams",
         beforeEnter: auth,
@@ -76,11 +83,32 @@ const routes = [
             import("../components/AssignedTasksComponent.vue")
     },
     {
-        path: "/requests",
-        name: "Requests",
+        path: "/gottenRequests",
+        name: "GottenRequests",
         beforeEnter: auth,
         component: () =>
-            import("../components/RequestsComponent.vue")
+            import("../components/GottenRequestsComponent.vue")
+    },
+    {
+        path: "/answeredRequests",
+        name: "AnsweredRequests",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/AnsweredRequestsComponent.vue")
+    },
+    {
+        path: "/createdRequests",
+        name: "CreatedRequests",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/CreatedRequestsComponent.vue")
+    },
+    {
+        path: "/worktimes",
+        name: "Worktimes",
+        beforeEnter: auth,
+        component: () =>
+            import("../components/WorktimesComponent.vue")
     },
     { 
         path: '*',

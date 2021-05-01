@@ -6,32 +6,67 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRequestRequest;
 use App\Http\Requests\UpdateRequestRequest;
 use App\Models\Request as UserRequest;
-use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class RequestController extends Controller
 {
     /**
-     * Get all the requests that bellongs to the user.
+     * Get all the requests that user has been created.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getCreatedRequests()
     {
-        $createdRequests = Auth::user()->createdRequests;
+        $createdRequests = Auth::user()->createdRequests()->paginate(10);
 
-        $gottenRequests = Auth::user()->gottenRequests;
-
-        if ($createdRequests->isEmpty() && $gottenRequests->isEmpty()) {
+        if ($createdRequests->isEmpty()) {
             return response()->json([
                 'message' => 'No requests found!'
             ], 404);
         }
 
         return response()->json([
-            'gottenRequests' => $gottenRequests,
             'createdRequests' => $createdRequests
+        ]);
+    }
+
+    /**
+     * Get all gotten requests that are not yet aswered by the user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getNotAnsweredRequests()
+    {
+        $gottenRequests = Auth::user()->gottenRequests()->whereNull('confirmed_at')->paginate(10);
+
+        if ($gottenRequests->isEmpty()) {
+            return response()->json([
+                'message' => 'No requests found!'
+            ], 404);
+        }
+
+        return response()->json([
+            'gottenRequests' => $gottenRequests
+        ]);
+    }
+
+    /**
+     * Get all gotten requests that are already been aswered by the user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getAnsweredRequests()
+    {
+        $answeredRequests = Auth::user()->gottenRequests()->whereNotNull('confirmed_at')->paginate(10);
+
+        if ($answeredRequests->isEmpty()) {
+            return response()->json([
+                'message' => 'No requests found!'
+            ], 404);
+        }
+
+        return response()->json([
+            'answeredRequests' => $answeredRequests
         ]);
     }
 
@@ -76,22 +111,20 @@ class RequestController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateRequestRequest  $request
-     * @param  \App\Models\Request  $userRequest
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRequestRequest $request, UserRequest $userRequest)
+    public function update(UserRequest $request, UpdateRequestRequest $updateRequest)
     {
-        if (Auth::id() != $userRequest->requester_id) {
+        if (Auth::id() != $request->requester_id && Auth::id() != $request->responser_id) {
             return response()->json([
                 'message' => 'You do not have the rights to do this!'
             ], 403);
         }
 
-        $userRequest->update($request->validated());
+        $request->update($updateRequest->validated());
 
         return response()->json([
-            'userRequest' => $userRequest,
+            'request' => $request,
             'message' => 'Request updated successfully!'
         ]);
     }

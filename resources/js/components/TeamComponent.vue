@@ -98,12 +98,28 @@
     >
       <div class="container">
         <div class="card mt-5">
-          <div class="card-header">
+          <div class="card-header bg-white">
             <div class="row justify-content-between">
               <div class="col-4">
-                <router-link to="/teams">Back</router-link>
+                <button type="button" class="btn btn-primary" @click="goBack()">
+                  <span class="icon is-small">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      class="bi bi-arrow-left"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+                      />
+                    </svg>
+                  </span>
+                </button>
               </div>
-              <div class="col-4">
+              <div class="col-4" v-if="isAdmin">
                 <button
                   type="button"
                   class="btn btn-danger float-right"
@@ -385,7 +401,7 @@
       <not-found-component></not-found-component>
     </div>
     <div v-else class="row justify-content-center">
-      <div class="loader"></div>
+      <div class="loader mt-3"></div>
     </div>
   </div>
 </template>
@@ -502,6 +518,8 @@ export default {
             });
           } else if (error.response.status == 403) {
             this.$alert(error.response.data.error, "Forbidden", "error");
+          } else if (error.response.status == 404) {
+            this.$alert("No user with given email found!", "Not Found", "error");
           } else {
             this.$alert(error.response.data.status, "Warning", "error");
           }
@@ -521,7 +539,7 @@ export default {
       })
         .then((response) => {
           if (response.data != null) {
-            var userIndex = this.team.users.findIndex(
+            let userIndex = this.team.users.findIndex(
               (user) => user.id == userId
             );
             this.team.users.splice(userIndex, 1);
@@ -557,7 +575,7 @@ export default {
       })
         .then((response) => {
           if (response.data != null) {
-            var index = this.team.users.findIndex(
+            let index = this.team.users.findIndex(
               (user) => user.id == this.editUser.id
             );
             this.team.users[index].pivot.is_admin = this.editForm.is_admin;
@@ -690,7 +708,7 @@ export default {
     },
 
     startDelete() {
-      this.$confirm("Are You sure?", "Confirm Remove", "error")
+      this.$confirm("Are You sure?", "Confirm Delete", "error")
         .then(() => {
           this.delete();
         })
@@ -705,6 +723,10 @@ export default {
       this.editTeamForm.name = this.team.name;
       this.editTeamForm.description = this.team.description;
       this.$store.commit("setErrors", {});
+    },
+
+    goBack() {
+      this.$router.push({ name: "Teams" });
     },
   },
 };
@@ -737,6 +759,9 @@ tbody tr {
 
 .card-header {
   border: none;
-  background-color: white;
+  padding-top: 0.75rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-bottom: 0;
 }
 </style>

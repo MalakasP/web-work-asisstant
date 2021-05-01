@@ -1,4 +1,4 @@
-(self["webpackChunk"] = self["webpackChunk"] || []).push([["resources_js_components_AssignedTasksComponent_vue"],{
+(self["webpackChunk"] = self["webpackChunk"] || []).push([["resources_js_components_WorktimesComponent_vue"],{
 
 /***/ "./node_modules/@babel/runtime/regenerator/index.js":
 /*!**********************************************************!*\
@@ -11,10 +11,10 @@ module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -32,6 +32,18 @@ __webpack_require__.r(__webpack_exports__);
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -134,81 +146,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
-function Project(_ref) {
-  var id = _ref.id,
-      title = _ref.title,
-      description = _ref.description,
-      author_id = _ref.author_id,
-      team_id = _ref.team_id,
-      created_at = _ref.created_at,
-      updated_at = _ref.updated_at,
-      tasks = _ref.tasks;
-  this.id = id;
-  this.title = title;
-  this.description = description;
-  this.author_id = author_id;
-  this.team_id = team_id;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-  this.tasks = tasks;
+function Day(_ref) {
+  var weekday_name = _ref.weekday_name,
+      month_day = _ref.month_day,
+      full_date = _ref.full_date,
+      worktime = _ref.worktime;
+  this.weekday_name = weekday_name;
+  this.month_day = month_day;
+  this.full_date = full_date;
+  this.worktime = worktime;
 }
 
 function Team(_ref2) {
@@ -232,44 +181,51 @@ function Team(_ref2) {
   data: function data() {
     return {
       loaded: false,
-      noTasks: false,
-      teams: {},
-      projects: [],
-      edit: null,
       modal: false,
-      statuses: {},
-      priorities: {},
-      form: {
-        title: null,
-        description: null,
-        date_till_done: null,
-        status_id: null,
-        priority_id: null,
-        project_id: null,
-        reporter_id: null,
-        assignee_id: null,
-        created_at: null,
-        updated_at: null
+      range: {
+        start: new Date(moment__WEBPACK_IMPORTED_MODULE_1___default()().subtract(7, "d")),
+        end: new Date(moment__WEBPACK_IMPORTED_MODULE_1___default()())
       },
-      dynamicTitle: null
+      teams: {},
+      selectedTeamId: 0,
+      worktimes: [],
+      loadedWorktimes: false
     };
   },
-  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])),
+  computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])), {}, {
+    teamsAdmin: function teamsAdmin() {
+      var teamsAdmin = Object.entries(this.teams).filter(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            key = _ref4[0],
+            team = _ref4[1];
+
+        if (team.pivot.is_admin) {
+          return team.pivot.is_admin;
+        } else {
+          return false;
+        }
+      });
+      return Object.fromEntries(teamsAdmin);
+    }
+  }),
   mounted: function mounted() {
     this.$store.commit("setErrors", {});
   },
   created: function created() {
-    this.read();
+    this.fetchContextData();
   },
   filters: {
-    monthDay: function monthDay(value) {
-      if (!value) return "";
-      value = value.toString();
-      return value.substring(5, 10);
+    zeroTime: function zeroTime(value) {
+      if (value != 0 && value != null && value !== undefined) {
+        return value;
+      } else {
+        return "00:00";
+      }
     }
   },
+  components: {},
   methods: {
-    read: function read() {
+    fetchContextData: function fetchContextData() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -277,34 +233,7 @@ function Team(_ref2) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log("here");
-                _context.next = 3;
-                return axios.get("api/" + "taskStatuses").then(function (response) {
-                  if (response.data != null) {
-                    _this.statuses = {};
-                    response.data.taskStatuses.forEach(function (status) {
-                      _this.statuses[status.id] = status;
-                    });
-                  }
-                })["catch"](function (error) {
-                  console.log(error);
-                });
-
-              case 3:
-                _context.next = 5;
-                return axios.get("api/" + "taskPriorities").then(function (response) {
-                  if (response.data != null) {
-                    _this.priorities = {};
-                    response.data.taskPriorities.forEach(function (priority) {
-                      _this.priorities[priority.id] = priority;
-                    });
-                  }
-                })["catch"](function (error) {
-                  console.log(error);
-                });
-
-              case 5:
-                _context.next = 7;
+                _context.next = 2;
                 return axios.get("api/" + "teams").then(function (response) {
                   if (response.data != null) {
                     _this.teams = {};
@@ -321,10 +250,15 @@ function Team(_ref2) {
                       updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()(),
                       pivot: {
                         is_admin: true
-                      }
+                      },
+                      users: [_this.user]
                     });
+
+                    _this.getDays();
                   }
                 })["catch"](function (error) {
+                  console.log(error);
+
                   if (error.response.status == 404) {
                     _this.teams[0] = new Team({
                       id: 0,
@@ -337,51 +271,12 @@ function Team(_ref2) {
                       },
                       users: [_this.user]
                     });
+
+                    _this.getDays();
                   }
                 });
 
-              case 7:
-                _context.next = 9;
-                return axios.get("api/" + "assignedTasks").then(function (response) {
-                  if (response.data != null) {
-                    _this.assignedTasks = [];
-                    console.log(response.data.assignedTasks);
-                    response.data.assignedTasks.forEach(function (project) {
-                      if (project.hasOwnProperty("id")) {
-                        if (project.team_id == null) {
-                          project.team_id = 0;
-                        }
-
-                        _this.projects.push(new Project(project));
-                      } else if (Array.isArray(project)) {
-                        if (project.length > 0) {
-                          _this.projects.push(new Project({
-                            id: 0,
-                            title: "No Project",
-                            description: "Tasks without project",
-                            author_id: _this.user.id,
-                            team_id: 0,
-                            created_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                            updated_at: moment__WEBPACK_IMPORTED_MODULE_1___default()().format(),
-                            tasks: project
-                          }));
-                        }
-                      }
-
-                      _this.loaded = true;
-                    });
-                  }
-                })["catch"](function (error) {
-                  console.log(error);
-
-                  if (error.response.status == 404) {
-                    _this.noTasks = true;
-                    _this.loaded = true;
-                    console.log(_this.noTasks, _this.loaded);
-                  }
-                });
-
-              case 9:
+              case 2:
               case "end":
                 return _context.stop();
             }
@@ -389,58 +284,84 @@ function Team(_ref2) {
         }, _callee);
       }))();
     },
-    update: function update() {
+    fetchUserWorktimesData: function fetchUserWorktimesData() {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var format_to, from, to;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
-                return axios.put("api/" + "tasks/" + _this2.edit.id, _this2.form).then(function (response) {
+                format_to = "YYYY-MM-DD HH:mm:ss";
+                from = moment__WEBPACK_IMPORTED_MODULE_1___default()(_this2.range.start).format(format_to);
+                to = moment__WEBPACK_IMPORTED_MODULE_1___default()(_this2.range.end).add(1, "day").format(format_to);
+
+                if (!(_this2.selectedTeamId > 0)) {
+                  _context2.next = 8;
+                  break;
+                }
+
+                _context2.next = 6;
+                return axios.get("api/" + "teams/" + _this2.selectedTeamId + "/worktimes?from=" + from + "&to=" + to).then(function (response) {
                   if (response.data != null) {
-                    _this2.modal = false;
+                    _this2.usersWorktimes = response.data.usersWorktimes;
+                    Object.entries(_this2.usersWorktimes).forEach(function (_ref5) {
+                      var _ref6 = _slicedToArray(_ref5, 2),
+                          userId = _ref6[0],
+                          days = _ref6[1];
 
-                    if (_this2.edit.project_id != null) {
-                      var taskIndex = _this2.projects[_this2.edit.project_id].tasks.findIndex(function (task) {
-                        return task.id == _this2.edit.id;
+                      Object.entries(days).forEach(function (_ref7) {
+                        var _ref8 = _slicedToArray(_ref7, 2),
+                            day = _ref8[0],
+                            worktimes = _ref8[1];
+
+                        _this2.calculateDurationOfWorktimes(userId, day, worktimes);
                       });
-
-                      _this2.projects[_this2.edit.project_id].tasks.splice(taskIndex, 1, response.data.task);
-                    } else {
-                      var _taskIndex = _this2.projects[0].tasks.findIndex(function (task) {
-                        return task.id == _this2.edit.id;
-                      });
-
-                      _this2.projects[0].tasks.splice(_taskIndex, 1, response.data.task);
-                    }
-
-                    _this2.edit = null;
-
-                    _this2.$notify({
-                      group: "app",
-                      title: "Success!",
-                      type: "success",
-                      text: "Task was updated!"
                     });
+
+                    _this2.$forceUpdate();
+
+                    _this2.loaded = true;
+                    _this2.loadedWorktimes = true;
                   }
                 })["catch"](function (error) {
+                  _this2.loaded = true;
+                  _this2.loadedWorktimes = true;
                   console.log(error);
-
-                  if (error.response) {
-                    if (error.response.status != 422) {
-                      _this2.modal = false;
-                      _this2.editTask = null;
-
-                      _this2.$alert("Something went wrong", "Warning", "error");
-                    } else {
-                      _this2.$store.commit("setErrors", error.response.data.errors);
-                    }
-                  }
                 });
 
-              case 2:
+              case 6:
+                _context2.next = 11;
+                break;
+
+              case 8:
+                if (!(_this2.selectedTeamId == 0)) {
+                  _context2.next = 11;
+                  break;
+                }
+
+                _context2.next = 11;
+                return axios.get("api/" + "worktimes?from=" + from + "&to=" + to).then(function (response) {
+                  if (response.data != null) {
+                    _this2.worktimes = response.data.worktimes;
+                    Object.entries(_this2.worktimes).forEach(function (_ref9) {
+                      var _ref10 = _slicedToArray(_ref9, 2),
+                          day = _ref10[0],
+                          worktimes = _ref10[1];
+
+                      _this2.calculateDurationOfWorktimes(_this2.user.id, day, worktimes);
+                    });
+                    _this2.loaded = true;
+                    _this2.loadedWorktimes = true;
+                  }
+                })["catch"](function (error) {
+                  _this2.loaded = true;
+                  _this2.loadedWorktimes = true;
+                  console.log(error);
+                });
+
+              case 11:
               case "end":
                 return _context2.stop();
             }
@@ -448,29 +369,84 @@ function Team(_ref2) {
         }, _callee2);
       }))();
     },
-    startEdit: function startEdit(task) {
-      this.$store.commit("setErrors", {});
-      this.dynamicTitle = "Edit task";
-      this.edit = task;
-      this.modal = true;
-      this.form.title = task.title;
-      this.form.description = task.description;
-      this.form.date_till_done = task.date_till_done;
-      this.form.status_id = task.status_id;
-      this.form.priority_id = task.priority_id;
-      this.form.project_id = task.project_id;
-      this.form.reporter_id = task.reporter_id;
-      this.form.assignee_id = task.assignee_id;
+    calculateDurationOfWorktimes: function calculateDurationOfWorktimes(userId, day, worktimes) {
+      var _this3 = this;
+
+      var result = 0;
+      var user = this.teams[this.selectedTeamId].users.find(function (user) {
+        if (user.id == userId) {
+          return true;
+        }
+      });
+      user.selectedDays.forEach(function (calendarDay) {
+        if (moment__WEBPACK_IMPORTED_MODULE_1___default()(calendarDay.full_date).isSame(day, "day")) {
+          result = worktimes.reduce(function (total, worktime) {
+            return total + _this3.durationToSeconds(worktime.duration);
+          }, 0);
+          calendarDay.worktime = _this3.readableTimeFromSeconds(result);
+          return;
+        }
+      });
+    },
+    getDays: function getDays() {
+      var _this4 = this;
+
+      this.loadedWorktimes = false;
+      this.teams[this.selectedTeamId].users.forEach(function (user) {
+        user.selectedDays = [];
+        var days = [];
+        var start = _this4.range.start;
+
+        while (start <= _this4.range.end) {
+          days.push(new Day({
+            weekday_name: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("ddd"),
+            month_day: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("MM-DD"),
+            full_date: moment__WEBPACK_IMPORTED_MODULE_1___default()(start).format("YYYY-MM-DD"),
+            worktime: "00:00"
+          }));
+          var nextDay = start.setDate(start.getDate() + 1);
+          start = new Date(nextDay);
+        }
+
+        user.selectedDays = [];
+        user.selectedDays = days;
+        _this4.range.start = new Date(moment__WEBPACK_IMPORTED_MODULE_1___default()(days[0].full_date));
+      });
+      this.fetchUserWorktimesData();
+    },
+
+    /**
+     * Conditionally pads a number with "0"
+     */
+    padNumber: function padNumber(number) {
+      return number > 9 ? number : "0" + number;
+    },
+
+    /**
+     * Splits seconds into hours, minutes, and seconds.
+     */
+    readableTimeFromSeconds: function readableTimeFromSeconds(seconds) {
+      var hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
+      return this.padNumber(hours) + ":" + this.padNumber(parseInt(seconds / 60, 10) % 60).toString();
+    },
+
+    /**
+     * Converts readable time to seconds.
+     */
+    durationToSeconds: function durationToSeconds(duration) {
+      var timeMeasures = duration.split(":");
+      var seconds = +timeMeasures[0] * 3600 + +timeMeasures[1] * 60 + +timeMeasures[2];
+      return seconds;
     }
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&":
-/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& ***!
-  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css&":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css& ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -484,7 +460,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-33281c28] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-5c4a6f53] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\ntable[data-v-5c4a6f53] {\r\n  display: block;\r\n  overflow-x: auto;\r\n  white-space: nowrap;\n}\nth[data-v-5c4a6f53] {\r\n  border: 1px solid #dee2e6;\r\n  min-width: 20%;\n}\nth + th[data-v-5c4a6f53] {\r\n  border: 1px solid #dee2e6;\r\n  width: auto;\n}\ntd[data-v-5c4a6f53] {\r\n  border: 1px solid #dee2e6;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1249,10 +1225,10 @@ try {
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&":
-/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& ***!
-  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css&":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css& ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1262,7 +1238,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_WorktimesComponent_vue_vue_type_style_index_0_id_5c4a6f53_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css& */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css&");
 
             
 
@@ -1271,18 +1247,18 @@ var options = {};
 options.insert = "head";
 options.singleton = false;
 
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default, options);
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_WorktimesComponent_vue_vue_type_style_index_0_id_5c4a6f53_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default, options);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_WorktimesComponent_vue_vue_type_style_index_0_id_5c4a6f53_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
 
 /***/ }),
 
-/***/ "./resources/js/components/AssignedTasksComponent.vue":
-/*!************************************************************!*\
-  !*** ./resources/js/components/AssignedTasksComponent.vue ***!
-  \************************************************************/
+/***/ "./resources/js/components/WorktimesComponent.vue":
+/*!********************************************************!*\
+  !*** ./resources/js/components/WorktimesComponent.vue ***!
+  \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1290,9 +1266,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true& */ "./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true&");
-/* harmony import */ var _AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AssignedTasksComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&");
-/* harmony import */ var _AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& */ "./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&");
+/* harmony import */ var _WorktimesComponent_vue_vue_type_template_id_5c4a6f53_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./WorktimesComponent.vue?vue&type=template&id=5c4a6f53&scoped=true& */ "./resources/js/components/WorktimesComponent.vue?vue&type=template&id=5c4a6f53&scoped=true&");
+/* harmony import */ var _WorktimesComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./WorktimesComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/WorktimesComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _WorktimesComponent_vue_vue_type_style_index_0_id_5c4a6f53_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css& */ "./resources/js/components/WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -1303,27 +1279,27 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__.default)(
-  _AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
-  _AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
-  _AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  _WorktimesComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _WorktimesComponent_vue_vue_type_template_id_5c4a6f53_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
+  _WorktimesComponent_vue_vue_type_template_id_5c4a6f53_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
   false,
   null,
-  "33281c28",
+  "5c4a6f53",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/AssignedTasksComponent.vue"
+component.options.__file = "resources/js/components/WorktimesComponent.vue"
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************!*\
-  !*** ./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************/
+/***/ "./resources/js/components/WorktimesComponent.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/WorktimesComponent.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1331,45 +1307,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AssignedTasksComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_WorktimesComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./WorktimesComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_WorktimesComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
 
 /***/ }),
 
-/***/ "./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&":
-/*!*********************************************************************************************************************!*\
-  !*** ./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& ***!
-  \*********************************************************************************************************************/
+/***/ "./resources/js/components/WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css&":
+/*!*****************************************************************************************************************!*\
+  !*** ./resources/js/components/WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css& ***!
+  \*****************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_style_index_0_id_33281c28_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=style&index=0&id=33281c28&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_WorktimesComponent_vue_vue_type_style_index_0_id_5c4a6f53_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=style&index=0&id=5c4a6f53&scoped=true&lang=css&");
 
 
 /***/ }),
 
-/***/ "./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true&":
-/*!*******************************************************************************************************!*\
-  !*** ./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true& ***!
-  \*******************************************************************************************************/
+/***/ "./resources/js/components/WorktimesComponent.vue?vue&type=template&id=5c4a6f53&scoped=true&":
+/*!***************************************************************************************************!*\
+  !*** ./resources/js/components/WorktimesComponent.vue?vue&type=template&id=5c4a6f53&scoped=true& ***!
+  \***************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_WorktimesComponent_vue_vue_type_template_id_5c4a6f53_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_WorktimesComponent_vue_vue_type_template_id_5c4a6f53_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AssignedTasksComponent_vue_vue_type_template_id_33281c28_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true&");
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_WorktimesComponent_vue_vue_type_template_id_5c4a6f53_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./WorktimesComponent.vue?vue&type=template&id=5c4a6f53&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=template&id=5c4a6f53&scoped=true&");
 
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true&":
-/*!**********************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/AssignedTasksComponent.vue?vue&type=template&id=33281c28&scoped=true& ***!
-  \**********************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=template&id=5c4a6f53&scoped=true&":
+/*!******************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/WorktimesComponent.vue?vue&type=template&id=5c4a6f53&scoped=true& ***!
+  \******************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1383,105 +1359,76 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Assigned Tasks")]),
-    _vm._v(" "),
-    _vm.modal
-      ? _c(
-          "div",
-          [
-            _c("transition", { attrs: { name: "model" } }, [
-              _c("div", { staticClass: "modal-mask" }, [
-                _c("div", { staticClass: "modal-wrapper" }, [
-                  _c("div", { staticClass: "modal-dialog" }, [
-                    _c("div", { staticClass: "modal-content" }, [
-                      _c("div", { staticClass: "modal-header" }, [
-                        _c("h4", { staticClass: "modal-title" }, [
-                          _vm._v(_vm._s(_vm.dynamicTitle))
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "close",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function($event) {
-                                _vm.edit = null
-                                _vm.modal = false
-                              }
-                            }
-                          },
-                          [
-                            _c("span", { attrs: { "aria-hidden": "true" } }, [
-                              _vm._v("× ")
-                            ])
-                          ]
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "modal-body" }, [
-                        _c(
-                          "div",
-                          { staticClass: "form-group" },
-                          [
-                            _c("label", [_vm._v("Select Deadline")]),
-                            _vm._v(" "),
-                            _c("br"),
-                            _vm._v(" "),
-                            _c("v-date-picker", {
-                              attrs: { mode: "date", "min-date": new Date() },
-                              scopedSlots: _vm._u(
-                                [
-                                  {
-                                    key: "default",
-                                    fn: function(ref) {
-                                      var inputValue = ref.inputValue
-                                      var inputEvents = ref.inputEvents
-                                      return [
-                                        _c(
-                                          "input",
-                                          _vm._g(
-                                            {
-                                              staticClass:
-                                                "px-2 py-1 border rounded focus:outline-none focus:border-blue-300",
-                                              domProps: { value: inputValue }
-                                            },
-                                            inputEvents
-                                          )
-                                        )
-                                      ]
-                                    }
-                                  }
-                                ],
-                                null,
-                                false,
-                                666616994
-                              ),
-                              model: {
-                                value: _vm.form.date_till_done,
-                                callback: function($$v) {
-                                  _vm.$set(_vm.form, "date_till_done", $$v)
-                                },
-                                expression: "form.date_till_done"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _vm.errors.date_till_done
-                              ? _c("div", { staticClass: "invalid-feedback" }, [
-                                  _vm._v(
-                                    "\n                    " +
-                                      _vm._s(_vm.errors.date_till_done) +
-                                      "\n                  "
+     true && this.loaded
+      ? _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12 card mt-3" }, [
+            _c("h3", { staticClass: "p-3 text-center" }, [_vm._v("Worktimes")]),
+            _vm._v(" "),
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _c(
+                "div",
+                { staticClass: "row justify-content-between" },
+                [
+                  _c("v-date-picker", {
+                    attrs: { "is-range": "", "max-date": new Date() },
+                    on: { input: _vm.getDays },
+                    scopedSlots: _vm._u(
+                      [
+                        {
+                          key: "default",
+                          fn: function(ref) {
+                            var inputValue = ref.inputValue
+                            var inputEvents = ref.inputEvents
+                            return [
+                              _c("div", { staticClass: "form-group row" }, [
+                                _c("div", { staticClass: "col-6" }, [
+                                  _c(
+                                    "input",
+                                    _vm._g(
+                                      {
+                                        staticClass: "form-control",
+                                        domProps: { value: inputValue.start }
+                                      },
+                                      inputEvents.start
+                                    )
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-6" }, [
+                                  _c(
+                                    "input",
+                                    _vm._g(
+                                      {
+                                        staticClass: "form-control",
+                                        domProps: { value: inputValue.end }
+                                      },
+                                      inputEvents.end
+                                    )
                                   )
                                 ])
-                              : _vm._e()
-                          ],
-                          1
-                        ),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _c("label", [_vm._v("Choose Status")]),
-                          _vm._v(" "),
+                              ])
+                            ]
+                          }
+                        }
+                      ],
+                      null,
+                      false,
+                      1104178848
+                    ),
+                    model: {
+                      value: _vm.range,
+                      callback: function($$v) {
+                        _vm.range = $$v
+                      },
+                      expression: "range"
+                    }
+                  }),
+                  _vm._v(" "),
+                  Object.keys(_vm.teamsAdmin).length > 0
+                    ? _c("div", { staticClass: "form-group col-2" }, [
+                        _c("div", { staticClass: "form-group row" }, [
                           _c(
                             "select",
                             {
@@ -1489,217 +1436,127 @@ var render = function() {
                                 {
                                   name: "model",
                                   rawName: "v-model",
-                                  value: _vm.form.status,
-                                  expression: "form.status"
+                                  value: _vm.selectedTeamId,
+                                  expression: "selectedTeamId"
                                 }
                               ],
                               staticClass: "form-control",
-                              class: { "is-invalid": _vm.errors.status },
                               on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.form,
-                                    "status",
-                                    $event.target.multiple
+                                change: [
+                                  function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.selectedTeamId = $event.target.multiple
                                       ? $$selectedVal
                                       : $$selectedVal[0]
-                                  )
-                                }
+                                  },
+                                  _vm.getDays
+                                ]
                               }
                             },
-                            _vm._l(_vm.statuses, function(status) {
+                            _vm._l(this.teamsAdmin, function(team) {
                               return _c(
                                 "option",
-                                {
-                                  key: status.id,
-                                  domProps: { value: status.id }
-                                },
+                                { key: team.id, domProps: { value: team.id } },
                                 [
                                   _vm._v(
-                                    "\n                      " +
-                                      _vm._s(status.name) +
-                                      "\n                    "
+                                    "\n                  " +
+                                      _vm._s(team.name) +
+                                      "\n                "
                                   )
                                 ]
                               )
                             }),
                             0
-                          ),
-                          _vm._v(" "),
-                          _vm.errors.status
-                            ? _c("div", { staticClass: "invalid-feedback" }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(_vm.errors.status) +
-                                    "\n                  "
-                                )
-                              ])
-                            : _vm._e()
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { attrs: { align: "center" } }, [
-                          _c("input", {
-                            staticClass: "btn btn-primary",
-                            attrs: { type: "button", value: "Submit" },
-                            on: { click: _vm.update }
-                          })
+                          )
                         ])
                       ])
-                    ])
-                  ])
-                ])
-              ])
-            ])
-          ],
-          1
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "card p-3 m-b-3" }, [
-        !this.noTasks
-          ? _c(
-              "div",
-              _vm._l(_vm.projects, function(project) {
-                return _c("div", { key: project.id }, [
-                  _c("div", { staticClass: "card p-3 mt-3" }, [
-                    _c(
-                      "div",
-                      {
-                        staticClass:
-                          "card-header bg-white justify-content-start"
-                      },
-                      [
-                        _c("div", { staticClass: "row" }, [
-                          _c("div", { staticClass: "col-2" }, [
-                            _c("h5", [_vm._v(_vm._s(project.title))])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-2" }, [
-                            _c("h6", [
-                              _vm._v(_vm._s(_vm.teams[project.team_id].name))
-                            ])
-                          ])
-                        ])
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "table",
-                      { staticClass: "table-striped w-100 d-block d-md-table" },
-                      [
-                        _vm._m(0, true),
-                        _vm._v(" "),
+                    : _vm._e()
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "table-responsive" }, [
+                _c("table", { staticClass: "table w-100 d-block d-md-table" }, [
+                  _vm.teams[_vm.selectedTeamId].users[0].selectedDays.length > 0
+                    ? _c("thead", [
                         _c(
-                          "tbody",
-                          _vm._l(project.tasks, function(task) {
-                            return _c("tr", { key: task.id }, [
-                              _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(_vm._s(task.title))
-                              ]),
-                              _vm._v(" "),
-                              _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(
-                                      _vm._f("monthDay")(task.date_till_done)
-                                    ) +
-                                    "\n                  "
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(_vm.statuses[task.status_id].name) +
-                                    "\n                  "
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(
-                                      _vm.priorities[task.priority_id].name
-                                    ) +
-                                    "\n                  "
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("td", { staticStyle: { width: "10%" } }, [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-primary",
-                                    staticStyle: { margin: "1px" },
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.startEdit(task)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _c(
-                                      "span",
-                                      { staticClass: "icon is-small" },
-                                      [
-                                        _c(
-                                          "svg",
-                                          {
-                                            staticClass: "bi bi-three-dots",
-                                            attrs: {
-                                              xmlns:
-                                                "http://www.w3.org/2000/svg",
-                                              width: "16",
-                                              height: "16",
-                                              fill: "currentColor",
-                                              viewBox: "0 0 16 16"
-                                            }
-                                          },
-                                          [
-                                            _c("path", {
-                                              attrs: {
-                                                d:
-                                                  "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                                              }
-                                            })
-                                          ]
-                                        )
-                                      ]
-                                    )
-                                  ]
-                                )
-                              ])
-                            ])
-                          }),
-                          0
+                          "tr",
+                          [
+                            _c("th", { staticStyle: { width: "20%" } }, [
+                              _vm._v("Users")
+                            ]),
+                            _vm._v(" "),
+                            _vm._l(
+                              _vm.teams[_vm.selectedTeamId].users[0]
+                                .selectedDays,
+                              function(day) {
+                                return _c("th", { key: day.id }, [
+                                  _vm._v(
+                                    "\n                  " +
+                                      _vm._s(day.month_day) +
+                                      "\n                "
+                                  )
+                                ])
+                              }
+                            )
+                          ],
+                          2
                         )
-                      ]
-                    )
-                  ])
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.loadedWorktimes
+                    ? _c(
+                        "tbody",
+                        _vm._l(_vm.teams[_vm.selectedTeamId].users, function(
+                          user
+                        ) {
+                          return _c(
+                            "tr",
+                            { key: user.id },
+                            [
+                              _c("td", { staticClass: "font-weight-bold" }, [
+                                _vm._v(_vm._s(user.name))
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(user.selectedDays, function(day) {
+                                return _c("td", { key: day.id }, [
+                                  _vm._v(
+                                    "\n                  " +
+                                      _vm._s(_vm._f("zeroTime")(day.worktime)) +
+                                      "\n                "
+                                  )
+                                ])
+                              })
+                            ],
+                            2
+                          )
+                        }),
+                        0
+                      )
+                    : _vm._e()
                 ])
-              }),
-              0
-            )
-          : this.loaded
-          ? _c("div", [
-              _c("h4", { staticClass: "p-3 text-center" }, [
-                _vm._v("You have no assigned tasks.")
               ])
             ])
-          : _vm._e()
-      ])
-    ])
+          ])
+        ])
+      : this.loaded
+      ? _c("div", [
+          _c("h4", { staticClass: "p-3 text-center" }, [
+            _vm._v("You have no worktimes.")
+          ])
+        ])
+      : _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "loader mt-3" })
+        ])
   ])
 }
 var staticRenderFns = [
@@ -1707,17 +1564,9 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Title")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Deadline")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Status")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "20%" } }, [_vm._v("Priority")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "10%" } })
+    return _c("div", { staticClass: "card-header bg-white" }, [
+      _c("div", { staticClass: "row justify-content-end" }, [
+        _c("div", { staticClass: "col-4" })
       ])
     ])
   }

@@ -18,12 +18,13 @@ class Task extends Model
         'title',
         'description',
         'date_till_done',
-        'status',
-        'priority',
+        'status_id',
+        'priority_id',
         'project_id',
         'reporter_id',
         'assignee_id'
     ];
+
 
     /**
      * Get the project that the task belongs to.

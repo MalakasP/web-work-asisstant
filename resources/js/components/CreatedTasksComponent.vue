@@ -9,14 +9,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h4 class="modal-title">{{ dynamicTitle }}</h4>
-                  <button
-                    type="button"
-                    class="close"
-                    @click="
-                      editTask = null;
-                      modal = false;
-                    "
-                  >
+                  <button type="button" class="close" @click="closeModal()">
                     <span aria-hidden="true">&times; </span>
                   </button>
                 </div>
@@ -33,27 +26,22 @@
                       {{ errors.title }}
                     </div>
                   </div>
-                  <div class="form-group">
-                    <label>Enter Description</label>
-                    <textarea
-                      class="form-control"
-                      :class="{ 'is-invalid': errors.description }"
-                      v-model="form.description"
-                      rows="3"
-                    ></textarea>
-                    <div class="invalid-feedback" v-if="errors.description">
-                      {{ errors.description }}
-                    </div>
-                  </div>
                   <div class="form-group row">
                     <div class="form-group col-md-6">
-                      <label>Enter Deadline</label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        :class="{ 'is-invalid': errors.date_till_done }"
+                      <label>Select Deadline</label> <br />
+                      <v-date-picker
                         v-model="form.date_till_done"
-                      />
+                        mode="date"
+                        :masks="masks"
+                      >
+                        <template v-slot="{ inputValue, inputEvents }">
+                          <input
+                            class="px-2 py-1 border rounded focus:outline-none focus:border-blue-300"
+                            :value="inputValue"
+                            v-on="inputEvents"
+                          />
+                        </template>
+                      </v-date-picker>
                       <div
                         class="invalid-feedback"
                         v-if="errors.date_till_done"
@@ -69,7 +57,7 @@
                         v-model="form.assignee_id"
                       >
                         <option
-                          v-for="user in this.projectsUsers"
+                          v-for="user in teams[selectedProjectTeam].users"
                           :value="user.id"
                           :key="user.id"
                         >
@@ -87,14 +75,14 @@
                       <select
                         class="form-control"
                         :class="{ 'is-invalid': errors.status }"
-                        v-model="form.status"
+                        v-model="form.status_id"
                       >
                         <option
                           v-for="status in this.statuses"
-                          :value="status.val"
-                          :key="status.val"
+                          :value="status.id"
+                          :key="status.id"
                         >
-                          {{ status.val }}
+                          {{ status.name }}
                         </option>
                       </select>
                       <div class="invalid-feedback" v-if="errors.status">
@@ -106,19 +94,31 @@
                       <select
                         class="form-control to-capital-first"
                         :class="{ 'is-invalid': errors.priority }"
-                        v-model="form.priority"
+                        v-model="form.priority_id"
                       >
                         <option
                           v-for="priority in this.priorities"
-                          :value="priority.val"
-                          :key="priority.val"
+                          :value="priority.id"
+                          :key="priority.id"
                         >
-                          {{ priority.val }}
+                          {{ priority.name }}
                         </option>
                       </select>
                       <div class="invalid-feedback" v-if="errors.priority">
                         {{ errors.priority }}
                       </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Enter Description</label>
+                    <textarea
+                      class="form-control"
+                      :class="{ 'is-invalid': errors.description }"
+                      v-model="form.description"
+                      rows="3"
+                    ></textarea>
+                    <div class="invalid-feedback" v-if="errors.description">
+                      {{ errors.description }}
                     </div>
                   </div>
                   <div align="center">
@@ -148,122 +148,159 @@
       <div class="col-12">
         <div class="card p-3" v-if="this.loaded">
           <div v-for="project in projects" :key="project.id">
-            <h5 class="text-left mt-3 p-1">{{ project.title }}</h5>
-            <div class="card p-3">
-              <table class="table-striped w-100 d-block d-md-table">
-                <thead v-if="project.tasks && project.tasks.length > 0">
-                  <tr>
-                    <th style="width: 20%">Title</th>
-                    <th style="width: 20%">Deadline</th>
-                    <th style="width: 20%">Status</th>
-                    <th style="width: 20%">Priority</th>
-                    <th style="width: 10%">Assignee</th>
-                    <th style="width: 5%"></th>
-                    <th style="width: 5%"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="task in project.tasks" :key="task.id">
-                    <td style="width: 20%">{{ task.title }}</td>
-                    <td style="width: 20%">
-                      {{ task.date_till_done | monthDay }}
-                    </td>
-                    <td style="width: 20%">{{ task.status }}</td>
-                    <td class="to-capital-first" style="width: 20%">
-                      {{ task.priority }}
-                    </td>
-                    <td style="width: 10%">
-                      {{ projectsUsers[task.assignee_id].name }}
-                    </td>
-                    <td style="width: 5%">
-                      <button
-                        type="button"
-                        style="margin: 1px"
-                        class="btn btn-primary"
-                        @click="startEdit(task)"
-                      >
-                        <span class="icon is-small">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-three-dots"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                            />
-                          </svg>
-                        </span>
-                      </button>
-                    </td>
-                    <td style="width: 5%">
-                      <button
-                        type="button"
-                        class="btn btn-danger"
-                        style="margin: 1px"
-                        @click="startDelete(task)"
-                      >
-                        <span class="icon is-small">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-trash"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-                            />
-                            <path
-                              fill-rule="evenodd"
-                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-                            />
-                          </svg>
-                        </span>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr class="bg-white">
-                    <td v-if="project.tasks && project.tasks.length > 0"></td>
-                    <td v-if="project.tasks && project.tasks.length > 0"></td>
-                    <td>
-                      <button
-                        type="button"
-                        class="btn btn-secondary"
-                        style="margin: 3px"
-                        @click="startCreate(project)"
-                      >
-                        <span class="icon full-size">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-plus-square"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-                            />
-                            <path
-                              d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                            />
-                          </svg>
-                          Add Task
-                        </span>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="card p-3 mt-3">
+              <div class="card-header bg-white justify-content-start">
+                <div class="row">
+                  <div class="col-2">
+                    <h5
+                      v-if="project.id > 0"
+                      class="link"
+                      @click="
+                        $router.push({
+                          name: 'Project',
+                          params: { projectId: project.id },
+                        })
+                      "
+                    >
+                      {{ project.title }}
+                    </h5>
+                    <h5 v-else>{{ project.title }}</h5>
+                  </div>
+                  <div class="col-2">
+                    <h6
+                      v-if="teams[project.team_id].id > 0"
+                      class="link"
+                      @click="
+                        $router.push({
+                          name: 'Team',
+                          params: { teamId: teams[project.team_id].id },
+                        })
+                      "
+                    >
+                      {{ teams[project.team_id].name }}
+                    </h6>
+                    <h6 v-else>{{ teams[project.team_id].name }}</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table-striped w-100 d-block d-md-table">
+                  <thead v-if="project.tasks && project.tasks.length > 0">
+                    <tr>
+                      <th style="width: 20%">Title</th>
+                      <th style="width: 20%">Deadline</th>
+                      <th style="width: 20%">Status</th>
+                      <th style="width: 20%">Priority</th>
+                      <th style="width: 10%">Assignee</th>
+                      <th style="width: 5%"></th>
+                      <th style="width: 5%"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="task in project.tasks" :key="task.id">
+                      <td style="width: 20%">{{ task.title }}</td>
+                      <td style="width: 20%">
+                        {{ task.date_till_done | monthDay }}
+                      </td>
+                      <td style="width: 20%">
+                        {{ statuses[task.status_id].name }}
+                      </td>
+                      <td class="to-capital-first" style="width: 20%">
+                        {{ priorities[task.priority_id].name }}
+                      </td>
+                      <td style="width: 10%">
+                        {{ projectsUsers[task.assignee_id].name }}
+                      </td>
+                      <td style="width: 5%">
+                        <button
+                          type="button"
+                          style="margin: 1px"
+                          class="btn btn-primary"
+                          @click="startEdit(task, project.team_id)"
+                        >
+                          <span class="icon is-small">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="bi bi-three-dots"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+                      </td>
+                      <td style="width: 5%">
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          style="margin: 1px"
+                          @click="startDelete(task)"
+                        >
+                          <span class="icon is-small">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="bi bi-trash"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                              />
+                              <path
+                                fill-rule="evenodd"
+                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr class="bg-white">
+                      <td v-if="project.tasks && project.tasks.length > 0"></td>
+                      <td v-if="project.tasks && project.tasks.length > 0"></td>
+                      <td>
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          style="margin: 3px"
+                          @click="startCreate(project)"
+                        >
+                          <span class="icon full-size">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="bi bi-plus-square"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+                              />
+                              <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                              />
+                            </svg>
+                            Add Task
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
         <div v-else class="row justify-content-center">
-          <div class="loader"></div>
+          <div class="loader mt-3"></div>
         </div>
       </div>
     </div>
@@ -273,32 +310,6 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
-
-function Task({
-  id,
-  title,
-  description,
-  date_till_done,
-  status,
-  priority,
-  project_id,
-  reporter_id,
-  assignee_id,
-  created_at,
-  updated_at,
-}) {
-  this.id = id;
-  this.title = title;
-  this.description = description;
-  this.date_till_done = date_till_done;
-  this.status = status;
-  this.priority = priority;
-  this.project_id = project_id;
-  this.reporter_id = reporter_id;
-  this.assignee_id = assignee_id;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
 
 function Project({
   id,
@@ -320,6 +331,16 @@ function Project({
   this.tasks = tasks;
 }
 
+function Team({ id, name, description, created_at, updated_at, pivot, users }) {
+  this.id = id;
+  this.name = name;
+  this.description = description;
+  this.created_at = created_at;
+  this.updated_at = updated_at;
+  this.pivot = pivot;
+  this.users = users;
+}
+
 export default {
   data: function () {
     return {
@@ -327,33 +348,28 @@ export default {
       noTasks: false,
       dynamicTitle: null,
       modal: false,
-      statuses: {
-        1: { val: "To Do" },
-        2: { val: "In Progress" },
-        3: { val: "Done" },
-      },
-      priorities: {
-        1: { val: "lowest" },
-        2: { val: "low" },
-        3: { val: "medium" },
-        4: { val: "high" },
-        5: { val: "critical" },
-      },
+      statuses: {},
+      priorities: {},
       editTask: null,
       taskProject: null,
       projects: {},
       projectsUsers: {},
+      teams: {},
       form: {
         title: null,
         description: null,
         date_till_done: null,
-        status: null,
-        priority: null,
+        status_id: null,
+        priority_id: null,
         project_id: null,
         reporter_id: null,
         assignee_id: null,
         created_at: null,
         updated_at: null,
+      },
+      selectedProjectTeam: null,
+      masks: {
+        input: "YYYY-MM-DD",
       },
     };
   },
@@ -371,7 +387,7 @@ export default {
     monthDay: function (value) {
       if (!value) return "";
       value = value.toString();
-      return value.substring(5);
+      return value.substring(5, 10);
     },
   },
   methods: {
@@ -392,23 +408,78 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.projectsUsers = {};
+          this.projectsUsers[this.user.id] = this.user;
         });
 
-      // await axios
-      //   .get(process.env.MIX_API_URL + "teams")
-      //   .then((response) => {
-      //     if (response.data != null) {
-      //       this.projectsUsers = {};
-      //       response.data.users.forEach((user) => {
-      //         if (user != null) {
-      //           this.projectsUsers[user.id] = user;
-      //         }
-      //       });
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
+      await axios
+        .get(process.env.MIX_API_URL + "taskStatuses")
+        .then((response) => {
+          if (response.data != null) {
+            this.statuses = {};
+            response.data.taskStatuses.forEach((status) => {
+              this.statuses[status.id] = status;
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      await axios
+        .get(process.env.MIX_API_URL + "taskPriorities")
+        .then((response) => {
+          if (response.data != null) {
+            this.priorities = {};
+            response.data.taskPriorities.forEach((priority) => {
+              this.priorities[priority.id] = priority;
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      await axios
+        .get(process.env.MIX_API_URL + "teams")
+        .then((response) => {
+          if (response.data != null) {
+            this.teams = {};
+            response.data.teams.forEach((team) => {
+              if (team != null) {
+                this.teams[team.id] = new Team(team);
+              }
+            });
+            this.teams[0] = new Team({
+              id: 0,
+              name: "No Team",
+              description: "",
+              created_at: moment(),
+              updated_at: moment(),
+              pivot: {
+                is_admin: true,
+              },
+              users: [this.user],
+            });
+            console.log(this.teams);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 404) {
+            this.teams[0] = new Team({
+              id: 0,
+              name: "No Team",
+              description: "",
+              created_at: moment(),
+              updated_at: moment(),
+              pivot: {
+                is_admin: true,
+              },
+              users: [this.user],
+            });
+          }
+        });
 
       await axios
         .get(
@@ -418,21 +489,15 @@ export default {
           if (response.data != null) {
             if (response.data.createdProjects != null) {
               this.projects = {};
-              this.projects[0] = new Project({
-                id: 0,
-                title: "No Project",
-                description: "Tasks without project",
-                author_id: this.user.id,
-                team_id: 0,
-                created_at: moment().format(),
-                updated_at: moment().format(),
-                tasks: [],
-              });
               response.data.createdProjects.forEach((project) => {
+                if (project.team_id == null) {
+                  project.team_id = 0;
+                }
                 this.projects[project.id] = new Project(project);
                 this.projects[project.id].tasks = [];
               });
             }
+            console.log(this.projects);
             //User might have rights to add tasks to the project if he is admin of the project
             // if (response.data.teamProjects != null) {
             //   response.data.teamProjects.forEach((project) => {
@@ -452,8 +517,17 @@ export default {
             response.data.createdTasks.forEach((project) => {
               if (project.hasOwnProperty("id")) {
                 this.projects[project.id].tasks = project.tasks;
-              } else if (project[0].project_id === null) {
-                this.projects[0].tasks = project;
+              } else if (Array.isArray(project)) {
+                this.projects[0] = new Project({
+                  id: 0,
+                  title: "No Project",
+                  description: "Tasks without project",
+                  author_id: this.user.id,
+                  team_id: 0,
+                  created_at: moment().format(),
+                  updated_at: moment().format(),
+                  tasks: project,
+                });
               }
             });
             this.loaded = true;
@@ -462,7 +536,16 @@ export default {
         .catch((error) => {
           console.log(error);
           if (error.response.status == 404) {
-            this.noTasks = true;
+            this.projects[0] = new Project({
+              id: 0,
+              title: "No Project",
+              description: "Tasks without project",
+              author_id: this.user.id,
+              team_id: 0,
+              created_at: moment().format(),
+              updated_at: moment().format(),
+              tasks: [],
+            });
           }
           this.loaded = true;
         });
@@ -479,7 +562,7 @@ export default {
           if (response.data != null) {
             this.modal = false;
             if (this.editTask.project_id != null) {
-              var taskIndex = this.projects[
+              let taskIndex = this.projects[
                 this.editTask.project_id
               ].tasks.findIndex((task) => task.id == this.editTask.id);
               this.projects[this.editTask.project_id].tasks.splice(
@@ -488,7 +571,7 @@ export default {
                 response.data.task
               );
             } else {
-              var taskIndex = this.projects[0].tasks.findIndex(
+              let taskIndex = this.projects[0].tasks.findIndex(
                 (task) => task.id == this.editTask.id
               );
               this.projects[0].tasks.splice(taskIndex, 1, response.data.task);
@@ -508,7 +591,7 @@ export default {
             if (error.response.status != 422) {
               this.modal = false;
               this.editTask = null;
-              this.$alert(error.response.data.status, "Warning", "error");
+              this.$alert("Something went wrong", "Warning", "error");
             } else {
               if (this.form.project_id == null) {
                 this.form.project_id = 0;
@@ -548,10 +631,12 @@ export default {
         .catch((error) => {
           console.log(error);
           if (error.response) {
+            console.log(error);
             if (error.response.status != 422) {
               this.modal = false;
               this.$alert(error.response.data.status, "Warning", "error");
             } else {
+              console.log(error);
               this.$store.commit("setErrors", error.response.data.errors);
             }
           }
@@ -610,29 +695,41 @@ export default {
       this.form.title = null;
       this.form.description = null;
       this.form.date_till_done = moment().format("YYYY-MM-DD");
-      this.form.status = this.statuses[1].val;
-      this.form.priority = this.priorities[1].val;
+      console.log(this.statuses, this.priorities);
+      this.form.status_id = this.statuses[0].id;
+      this.form.priority_id = this.priorities[0].id;
+      if (project.team_id != null) {
+        this.selectedProjectTeam = project.team_id;
+      } else {
+        this.selectedProjectTeam = 0;
+      }
       this.form.project_id = this.projects[project.id].id;
       this.form.reporter_id = this.user.id;
-      this.form.assignee_id = this.projectsUsers[1].id;
+      this.form.assignee_id = this.teams[this.selectedProjectTeam].users[0].id;
     },
 
-    startEdit(task) {
+    startEdit(task, projectTeamId) {
       this.$store.commit("setErrors", {});
       this.modal = true;
       this.dynamicTitle = "Edit Task";
       this.editTask = task;
       this.form.title = task.title;
       this.form.description = task.description;
-      this.form.date_till_done = task.date_till_done;
-      this.form.status = task.status;
-      this.form.priority = task.priority;
+      this.form.date_till_done = moment(task.date_till_done).format(
+        "YYYY-MM-DD"
+      );
+      this.form.status_id = task.status_id;
+      this.form.priority_id = task.priority_id;
       if (task.project_id != null) {
         this.form.project_id = task.project_id;
       } else {
         this.form.project_id = this.projects[0].id;
       }
-
+      if (projectTeamId != null) {
+        this.selectedProjectTeam = projectTeamId;
+      } else {
+        this.selectedProjectTeam = 0;
+      }
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;
     },
@@ -645,11 +742,35 @@ export default {
         })
         .catch();
     },
+
+    closeModal() {
+      this.modal = false;
+      this.editTask = null;
+    },
+
+    goToProject(name, id) {
+      if (id > 0) {
+        this.$router.push({ name: name, params: { projectId: id } });
+      }
+    },
+
+    goToTeam(name, id) {
+      if (id > 0) {
+        this.$router.push({ name: name, params: { teamId: id } });
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
+.card {
+  min-height: 200px;
+  border: 0;
+  -webkit-box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);
+  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);
+}
+
 .to-capital-first {
   text-transform: capitalize;
 }
@@ -657,5 +778,9 @@ export default {
 .modal-body {
   height: 50vh;
   overflow-y: auto;
+}
+
+.link:hover {
+  color: #007bff;
 }
 </style>
