@@ -29,12 +29,4 @@ class Worktime extends Model
         'end_time',
         'user_id',
     ];
-
-    /**
-     * Get the user that owns the worktime.
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

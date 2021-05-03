@@ -46,7 +46,7 @@
                   @change="getDays"
                 >
                   <option
-                    v-for="team in this.teamsAdmin"
+                    v-for="team in this.teams"
                     :value="team.id"
                     :key="team.id"
                   >

@@ -126,7 +126,7 @@
                       v-if="editTask == null"
                       class="btn btn-primary"
                       value="Submit"
-                      @click="createTask"
+                      @click="create"
                     />
                     <input
                       type="button"
@@ -429,7 +429,7 @@
 <script>
 import { mapGetters } from "vuex";
 import moment from "moment";
-import NotFoundComponent from "./NotFoundComponent.vue";
+import NotFoundComponent from "../home/NotFoundComponent";
 
 function Team({ id, name, description, created_at, updated_at, pivot, users }) {
   this.id = id;

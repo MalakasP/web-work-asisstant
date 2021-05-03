@@ -408,7 +408,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import NotFoundComponent from "./NotFoundComponent.vue";
+import NotFoundComponent from "../home/NotFoundComponent";
 
 export default {
   components: { NotFoundComponent },

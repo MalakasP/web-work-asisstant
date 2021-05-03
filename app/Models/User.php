@@ -48,6 +48,22 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get the tasks created by the user.
+     */
+    public function createdTasks()
+    {
+        return $this->hasMany(Task::class, 'reporter_id')->whereNull('project_id')->orderBy('created_at');
+    }
+
+    /**
+     * Get the teams that user is in.
+     */
+    public function onlyTeamsId()
+    {
+        return $this->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')->select(['team_id']);
+    }
+
+    /**
      * Get the worktimes for the user.
      */
     public function worktimes()
@@ -87,7 +103,7 @@ class User extends Authenticatable
     {
         $projects = collect([$this->assignedTasks]);
 
-        $teamsIds = $this->onlyTeams->pluck('team_id')->toArray();
+        $teamsIds = $this->onlyTeamsId->pluck('team_id')->toArray();
  
         $projectsWithTasks = Project::whereIn('team_id', $teamsIds)
             ->orWhere('author_id', $this->id)
@@ -111,7 +127,7 @@ class User extends Authenticatable
     {
         $projects = collect([$this->createdTasks]);
 
-        $teamsIds = $this->onlyTeams->pluck('team_id')->toArray();
+        $teamsIds = $this->onlyTeamsId->pluck('team_id')->toArray();
  
         $projectsWithTasks = Project::whereIn('team_id', $teamsIds)
             ->orWhere('author_id', $this->id)
@@ -126,14 +142,6 @@ class User extends Authenticatable
         }
 
         return $projects;
-    }
-
-    /**
-     * Get the tasks created by the user.
-     */
-    public function createdTasks()
-    {
-        return $this->hasMany(Task::class, 'reporter_id')->whereNull('project_id')->orderBy('created_at');
     }
 
     /**
@@ -184,14 +192,6 @@ class User extends Authenticatable
         }
 
         return $users;
-    }
-
-    /**
-     * Get the teams that user is in.
-     */
-    public function onlyTeams()
-    {
-        return $this->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')->select(['team_id']);
     }
 
     /**

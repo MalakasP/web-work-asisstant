@@ -18,7 +18,6 @@ export default {
         user: state => state.userData,
         token: state => state.token,
         isAuthenticated: state => !!state.token,
-
     },
 
     /**
@@ -56,12 +55,12 @@ export default {
                 });
         },
 
+        /**
+         * Send logout request and push login route if successful
+         * @param 
+         */
         sendLogoutRequest({ commit }) {
-            axios({
-                method: "post",
-                url: process.env.MIX_API_URL + "logout",
-                base_url: "/",
-            }).then(() => {
+            axios.post(process.env.MIX_API_URL + "logout").then(() => {
                 commit("setUserData", null);
                 commit("setAuthToken", null);
                 router.push("/login");

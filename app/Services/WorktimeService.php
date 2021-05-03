@@ -39,7 +39,6 @@ class WorktimeService
         } else {
             $minutes = $minutes - ($minutes % 15);
             return gmdate("H:i", $minutes * WorktimeService::HOURS_TO_MIN);
-            // return gmdate("H:i", $hours * WorktimeService::HOURS_TO_SECONDS + $minutes * WorktimeService::HOURS_TO_MIN);
         }
     }
 }
