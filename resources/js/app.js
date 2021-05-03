@@ -3,7 +3,7 @@ import store from "./store";
 import router from "./router";
 import VueSimpleAlert from "vue-simple-alert";
 import Notifications from 'vue-notification'
-import AppComponent from './components/AppComponent.vue';
+import AppComponent from './components/home/AppComponent.vue';
 import VCalendar from 'v-calendar';
 
 require('./bootstrap');

@@ -102,7 +102,7 @@ class TeamController extends Controller
                 'message' => 'You do not have rights to do this!'
             ], 403);
         }
-        //maybe will be a need to detach every user before deleting the object
+
         $team->users()->detach();
 
         $team->delete();

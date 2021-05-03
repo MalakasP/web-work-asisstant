@@ -33,12 +33,4 @@ class Request extends Model
     {
         return $this->belongsTo(User::class, 'requester_id');
     }
-
-    /**
-     * Get the addressee of the request.
-     */
-    public function responser()
-    {
-        return $this->belongsTo(User::class, 'responser_id');
-    }
 }

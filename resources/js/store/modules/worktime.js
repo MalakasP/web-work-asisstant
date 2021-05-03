@@ -28,16 +28,6 @@ export default {
      */
     actions: {
 
-        getWorktimesByDate({ commit }, date) {
-            let format_to = 'YYYY-MM-DD HH:mm:ss';
-            date = date.format(format_to);
-            axios
-                .get(process.env.MIX_API_URL + "worktimes?date=" + date)
-                .then(response => {
-                    // commit("setWorktimes", response.data.worktimes);
-                });
-        },
-
         setDuration({ commit }, duration) {
             commit("setDuration", duration);
         },

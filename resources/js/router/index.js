@@ -24,96 +24,96 @@ const routes = [
         path: "/",
         name: "Home",
         component: () =>
-            import("../components/HomeComponent.vue")
+            import("../components/home/HomeComponent.vue")
     },
     {
         path: "/login",
         name: "Login",
         beforeEnter: guest,
         component: () =>
-            import("../components/Auth/LoginComponent.vue")
+            import("../components/auth/LoginComponent.vue")
     },
     {
         path: "/register",
         name: "Register",
         beforeEnter: guest,
         component: () =>
-            import("../components/Auth/RegisterComponent.vue")
+            import("../components/auth/RegisterComponent.vue")
     },
     {
         path: "/projects",
         name: "Projects",
         beforeEnter: auth,
         component: () =>
-            import("../components/ProjectsComponent.vue")
+            import("../components/projects/ProjectsComponent.vue")
     },
     {
         path: "/project/:projectId",
         name: "Project",
         beforeEnter: auth,
         component: () =>
-            import("../components/ProjectComponent.vue")
+            import("../components/projects/ProjectComponent.vue")
     },
     {
         path: "/teams",
         name: "Teams",
         beforeEnter: auth,
         component: () =>
-            import("../components/TeamsComponent.vue")
+            import("../components/teams/TeamsComponent.vue")
     },
     {
         path: "/teams/:teamId",
         name: "Team",
         beforeEnter: auth,
         component: () =>
-            import("../components/TeamComponent.vue")
+            import("../components/teams/TeamComponent.vue")
     },
     {
         path: "/createdTasks",
         name: "CreatedTasks",
         beforeEnter: auth,
         component: () =>
-            import("../components/CreatedTasksComponent.vue")
+            import("../components/tasks/CreatedTasksComponent.vue")
     },
     {
         path: "/assignedTasks",
         name: "AssignedTasks",
         beforeEnter: auth,
         component: () =>
-            import("../components/AssignedTasksComponent.vue")
+            import("../components/tasks/AssignedTasksComponent.vue")
     },
     {
         path: "/gottenRequests",
         name: "GottenRequests",
         beforeEnter: auth,
         component: () =>
-            import("../components/GottenRequestsComponent.vue")
+            import("../components/requests/GottenRequestsComponent.vue")
     },
     {
         path: "/answeredRequests",
         name: "AnsweredRequests",
         beforeEnter: auth,
         component: () =>
-            import("../components/AnsweredRequestsComponent.vue")
+            import("../components/requests/AnsweredRequestsComponent.vue")
     },
     {
         path: "/createdRequests",
         name: "CreatedRequests",
         beforeEnter: auth,
         component: () =>
-            import("../components/CreatedRequestsComponent.vue")
+            import("../components/requests/CreatedRequestsComponent.vue")
     },
     {
         path: "/worktimes",
         name: "Worktimes",
         beforeEnter: auth,
         component: () =>
-            import("../components/WorktimesComponent.vue")
+            import("../components/worktimes/WorktimesComponent.vue")
     },
     { 
         path: '*',
         component: () =>
-          import("../components/NotFoundComponent.vue")
+          import("../components/home/NotFoundComponent.vue")
     }
 ]
 

@@ -29,29 +29,12 @@ class RegisterController extends Controller
     use RegistersUsers;
 
     /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = RouteServiceProvider::HOME;
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
-
-    /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
+    protected function createUser(array $data)
     {
         return User::create([
             'name' => $data['name'],
@@ -64,10 +47,10 @@ class RegisterController extends Controller
      * The user has been registered.
      *
      * @param  \App\Http\Requests\RegisterRequest  $request
-     * @param  mixed  $user
+     * @param  \App\Models\User  $user
      * @return mixed
      */
-    protected function registered(RegisterRequest $request, $user)
+    protected function registered(RegisterRequest $request, User $user)
     {
         return response()->json([
             'token'    => $user->createToken($user->id)->plainTextToken,
@@ -83,7 +66,7 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        event(new Registered($user = $this->create($request->validated())));
+        event(new Registered($user = $this->createUser($request->validated())));
 
         $this->guard()->login($user);
 

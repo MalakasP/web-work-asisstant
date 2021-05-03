@@ -775,7 +775,7 @@ export default {
 }
 
 .modal-body {
-  height: 50vh;
+  height: 60vh;
   overflow-y: auto;
 }
 
