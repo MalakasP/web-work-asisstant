@@ -73,7 +73,6 @@ class TaskController extends Controller
     public function store(CreateTaskRequest $request)
     {
         $request->validated();
-        //check if project id is set and if the user does have right to create task in project
 
         if ($request->has('project_id') && Project::find($request->input('project_id'))) {
             $project = Project::find($request->input('project_id'));
@@ -111,20 +110,6 @@ class TaskController extends Controller
             ], 404);
         }
     }
-
-    /**
-     * Display the specified task.
-     *
-     * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Task $task)
-    {
-        return response()->json([
-            'task' => $task
-        ]);
-    }
-
 
     /**
      * Update the specified resource in storage.
@@ -185,7 +170,6 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        // move to middleware 
         if (!empty($task->project)) {
             $project = $task->project;
             if ($project->team != null) {

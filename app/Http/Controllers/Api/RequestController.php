@@ -96,19 +96,6 @@ class RequestController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function show(UserRequest $request)
-    {
-        return response()->json([
-            'request' => $request
-        ]);
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @return \Illuminate\Http\Response

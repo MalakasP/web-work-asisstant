@@ -98,7 +98,7 @@ class AdminController extends Controller
 
         return response()->json([
             'message' => 'User information updated!'
-        ]); 
+        ]);
     }
 
     /**
@@ -112,11 +112,11 @@ class AdminController extends Controller
     {
         $request->validated();
 
-        if (!$team->isUserAdmin(Auth::id())) {
-            return response()->json([
-                'message' => 'You are not the admin of this team!'
-            ], 403);
-        }
+        // if (!$team->isUserAdmin(Auth::id())) {
+        //     return response()->json([
+        //         'message' => 'You are not the admin of this team!'
+        //     ], 403);
+        // }
 
         if ($request->has('from') && $request->has('to')) {
             $from = date('Y-m-d', strtotime($request->from));
@@ -172,12 +172,12 @@ class AdminController extends Controller
         $empty = true;
 
         $statuses = TaskStatus::get();
-        
+
         foreach ($statuses as $status) {
-          $tasks[$status->name] = $project->tasks()->where('status_id', $status->id)->get();
-          if (!$tasks[$status->name]->isEmpty()) {
-            $empty = false;
-          }
+            $tasks[$status->name] = $project->tasks()->where('status_id', $status->id)->get();
+            if (!$tasks[$status->name]->isEmpty()) {
+                $empty = false;
+            }
         }
 
         if ($empty) {
@@ -190,13 +190,4 @@ class AdminController extends Controller
             'tasks' => $tasks
         ]);
     }
-
-    // /**
-    //  * 
-    //  * @param \Illuminate\Http\Request $request
-    //  */
-    // public function getTeamUsers(Request $request) 
-    // {
-    //     Team::find()
-    // }
 }

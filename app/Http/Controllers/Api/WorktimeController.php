@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateWorktimeRequest;
+use App\Http\Requests\DeleteWorktimeRequest;
 use App\Http\Requests\GetWorktimesRequest;
 use App\Http\Requests\UpdateWorktimeRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Models\Worktime;
 use App\Models\Team;
 use App\Models\User;
@@ -88,19 +88,6 @@ class WorktimeController extends Controller
     }
 
     /**
-     * Display the specified worktime.
-     *
-     * @param  \App\Models\Worktime $worktime
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Worktime $worktime)
-    {
-        return response()->json([
-            'request' => $worktime
-        ]);
-    }
-
-    /**
      * Update the specified worktime in storage.
      *
      * @param  \App\Http\Requests\UpdateWorktimeRequest  $request
@@ -153,12 +140,12 @@ class WorktimeController extends Controller
      * Remove the specified worktime from storage.
      *
      * @param  \App\Models\Worktime  $worktime
-     * @param  \Illuminate\Http\Request
+     * @param  \App\Http\Requests\DeleteWorktimeRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Worktime $worktime, Request $request)
+    public function destroy(Worktime $worktime, DeleteWorktimeRequest $request)
     {
-        if ($request->has('team_id')) {
+        if ($request->validated()['team_id']) {
             $team = Team::find($request->validated()['team_id'])->get();
         }
 
