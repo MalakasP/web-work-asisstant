@@ -2016,8 +2016,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _this = this;
 
     if (this.isAuthenticated) {
-      //check if there is today's timer started for this user and assign it if it's not over 8 hours
-      // this.counter.timer = timer;
       if (!this.isTimerStopped) {
         var todaysDate = moment__WEBPACK_IMPORTED_MODULE_0___default()().startOf("day");
         var savedDate = moment__WEBPACK_IMPORTED_MODULE_0___default()(this.worktime.created_at).startOf("day");
@@ -2029,9 +2027,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         this.counter.ticker = setInterval(function () {
-          var time = _this.readableTimeFromSeconds(++_this.counter.seconds); // console.log(this.counter.seconds);
-          // check if 8 hours is reached
-
+          var time = _this.readableTimeFromSeconds(++_this.counter.seconds);
 
           _this.activeTimerString = "".concat(time.hours, ":").concat(time.minutes);
 
@@ -2114,6 +2110,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       });
     },
+
+    /**
+     * Start time after login
+     */
     initiateTimerAfterLogin: function initiateTimerAfterLogin() {
       var _this3 = this;
 
@@ -2125,15 +2125,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         this.counter.ticker = setInterval(function () {
-          var time = _this3.readableTimeFromSeconds(++_this3.counter.seconds); // console.log(this.counter.seconds);
-          // check if 8 hours is reached
-
+          var time = _this3.readableTimeFromSeconds(++_this3.counter.seconds);
 
           _this3.activeTimerString = "".concat(time.hours, ":").concat(time.minutes);
 
           if (_this3.counter.seconds % 60 == 0) {
-            _this3.setTimer(_this3.counter.seconds); // this.duration(this.counter.seconds);
-
+            _this3.setTimer(_this3.counter.seconds);
           }
         }, 1000);
       }
@@ -2207,11 +2204,27 @@ __webpack_require__.r(__webpack_exports__);
 
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+/**
+ * Registering VueSimpleAlert component to Vue
+ */
+
 
 vue__WEBPACK_IMPORTED_MODULE_6__.default.use(vue_simple_alert__WEBPACK_IMPORTED_MODULE_2__.default);
+/**
+ * Registering Notifications component to Vue
+ */
+
 vue__WEBPACK_IMPORTED_MODULE_6__.default.use((vue_notification__WEBPACK_IMPORTED_MODULE_3___default()));
+/**
+ * Registering VCalendar component to Vue
+ */
+
 vue__WEBPACK_IMPORTED_MODULE_6__.default.use((v_calendar__WEBPACK_IMPORTED_MODULE_5___default()));
 vue__WEBPACK_IMPORTED_MODULE_6__.default.config.productionTip = false;
+/**
+ * Intercepts all error responses of axios and saves them to state
+ */
+
 axios.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
@@ -2228,6 +2241,10 @@ axios.interceptors.response.use(function (response) {
 
   return Promise.reject(error);
 });
+/**
+ * Intercepts all axios request and adds token in request header for authorization 
+ */
+
 axios.interceptors.request.use(function (config) {
   config.headers.common = {
     Authorization: "Bearer ".concat(_store__WEBPACK_IMPORTED_MODULE_0__.default.getters["auth/token"]),
@@ -2236,6 +2253,10 @@ axios.interceptors.request.use(function (config) {
   };
   return config;
 });
+/**
+ * Tooltip initialization for Vue
+ */
+
 vue__WEBPACK_IMPORTED_MODULE_6__.default.directive('tooltip', function (el, binding) {
   $(el).tooltip({
     title: binding.value,
@@ -2243,6 +2264,10 @@ vue__WEBPACK_IMPORTED_MODULE_6__.default.directive('tooltip', function (el, bind
     trigger: 'hover'
   });
 });
+/**
+ * Vue app creation
+ */
+
 var app = new vue__WEBPACK_IMPORTED_MODULE_6__.default({
   el: '#app',
   components: {
@@ -2316,7 +2341,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * Registering VueRouter component to Vue
+ */
+
 vue__WEBPACK_IMPORTED_MODULE_1__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_2__.default);
+/**
+ * Guard for not authorized routes
+ */
 
 var guest = function guest(to, from, next) {
   if (!_store__WEBPACK_IMPORTED_MODULE_0__.default.getters["auth/token"]) {
@@ -2325,6 +2357,10 @@ var guest = function guest(to, from, next) {
     return next("/");
   }
 };
+/**
+ * Guard for authorized routes
+ */
+
 
 var auth = function auth(to, from, next) {
   if (_store__WEBPACK_IMPORTED_MODULE_0__.default.getters["auth/token"]) {
@@ -2333,6 +2369,10 @@ var auth = function auth(to, from, next) {
     return next("/login");
   }
 };
+/**
+ * Registering routes used by VueRouter
+ */
+
 
 var routes = [{
   path: "/",
@@ -2430,6 +2470,10 @@ var routes = [{
     return __webpack_require__.e(/*! import() */ "resources_js_components_home_NotFoundComponent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../components/home/NotFoundComponent.vue */ "./resources/js/components/home/NotFoundComponent.vue"));
   }
 }];
+/**
+ * Creating VueRouter
+ */
+
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_2__.default({
   mode: "history",
   linkActiveClass: 'font-semibold',
@@ -2461,23 +2505,50 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * Register Vuex to Vue
+ */
+
 vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vuex__WEBPACK_IMPORTED_MODULE_4__.default);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_4__.default.Store({
+  /**
+   * Variables saved in Vuex state
+   */
   state: {
     errors: []
   },
+
+  /**
+   * Plugins used for Vuex
+   */
   plugins: [(0,vuex_persistedstate__WEBPACK_IMPORTED_MODULE_2__.default)()],
+
+  /**
+   * Getters for state
+   */
   getters: {
     errors: function errors(state) {
       return state.errors;
     }
   },
+
+  /**
+   * Change state with mutations
+   */
   mutations: {
     setErrors: function setErrors(state, errors) {
       state.errors = errors;
     }
   },
+
+  /**
+   * Initiate mutations through actions
+   */
   actions: {},
+
+  /**
+   * Different modules used in Vuex
+   */
   modules: {
     auth: _modules_auth__WEBPACK_IMPORTED_MODULE_0__.default,
     worktime: _modules_worktime__WEBPACK_IMPORTED_MODULE_1__.default
@@ -2529,12 +2600,19 @@ __webpack_require__.r(__webpack_exports__);
    * Initiate mutations through actions
    */
   actions: {
+    /**
+     * Get user data from server side
+     */
     getUserData: function getUserData(_ref) {
       var commit = _ref.commit;
       axios.get("api/" + "users/" + state.userData.id).then(function (response) {
         commit("setUserData", response.data);
       })["catch"](function () {});
     },
+
+    /**
+     * Send login request with user credentials
+     */
     sendLoginRequest: function sendLoginRequest(_ref2, data) {
       var commit = _ref2.commit;
       commit("setErrors", {}, {
@@ -2543,9 +2621,12 @@ __webpack_require__.r(__webpack_exports__);
       return axios.post("api/" + "login", data).then(function (response) {
         commit("setUserData", response.data.user);
         commit("setAuthToken", response.data.token);
-        localStorage.setItem("authToken", response.data.token);
       });
     },
+
+    /**
+     * Send register request with new user data
+     */
     sendRegisterRequest: function sendRegisterRequest(_ref3, data) {
       var commit = _ref3.commit;
       commit("setErrors", {}, {
@@ -2575,9 +2656,16 @@ __webpack_require__.r(__webpack_exports__);
    * Change state with mutations
    */
   mutations: {
+    /**
+     * Save user data to state
+     */
     setUserData: function setUserData(state, user) {
       state.userData = user;
     },
+
+    /**
+     * Save auth token data to state
+     */
     setAuthToken: function setAuthToken(state, token) {
       state.token = token;
     }
@@ -2597,9 +2685,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
 
@@ -2635,18 +2720,33 @@ __webpack_require__.r(__webpack_exports__);
    * Initiate mutations through actions
    */
   actions: {
+    /**
+     * Action to call setDuration mutation
+     */
     setDuration: function setDuration(_ref, duration) {
       var commit = _ref.commit;
       commit("setDuration", duration);
     },
+
+    /**
+     * Action to call setTimerStopped mutation
+     */
     setTimerStopped: function setTimerStopped(_ref2, status) {
       var commit = _ref2.commit;
       commit("setTimerStopped", status);
     },
+
+    /**
+     * Action to call setWorktime mutation
+     */
     setWorktime: function setWorktime(_ref3, worktime) {
       var commit = _ref3.commit;
       commit("setWorktime", worktime);
     },
+
+    /**
+     * Action to call setTimer mutation
+     */
     setTimer: function setTimer(_ref4, timer) {
       var commit = _ref4.commit;
       commit("setTimer", timer);
@@ -2670,15 +2770,30 @@ __webpack_require__.r(__webpack_exports__);
    * Change state with mutations
    */
   mutations: {
+    /**
+     * Change worktime state with mutation
+     */
     setWorktime: function setWorktime(state, worktime) {
       state.worktime = worktime;
     },
+
+    /**
+     * Change duration state with mutation
+     */
     setDuration: function setDuration(state, duration) {
       state.duration = duration;
     },
+
+    /**
+     * Change timerStopped state with mutation
+     */
     setTimerStopped: function setTimerStopped(state, status) {
       state.timerStopped = status;
     },
+
+    /**
+     * Change timer state with mutation
+     */
     setTimer: function setTimer(state, timer) {
       state.timer = timer;
     }

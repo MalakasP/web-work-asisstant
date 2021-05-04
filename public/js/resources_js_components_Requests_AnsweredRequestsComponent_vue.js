@@ -241,17 +241,27 @@ function User(_ref2) {
     Pagination: (vue_pagination_2__WEBPACK_IMPORTED_MODULE_2___default())
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function monthDay(value) {
       if (!value) return "";
       value = value.toString();
       return value.substring(16, 5);
     },
+
+    /**
+     * Filter status to readable format
+     */
     statusReadable: function statusReadable(value) {
       if (!value) return "Rejected";
       return "Confirmed";
     }
   },
   methods: {
+    /**
+     * Get context data for answered requests component
+     */
     fetchContextData: function fetchContextData() {
       var _this = this;
 
@@ -308,6 +318,10 @@ function User(_ref2) {
         }, _callee);
       }))();
     },
+
+    /**
+     * Get answered requests by page
+     */
     fetchAnsweredRequestsData: function fetchAnsweredRequestsData() {
       var _arguments = arguments,
           _this2 = this;
@@ -344,6 +358,10 @@ function User(_ref2) {
         }, _callee2);
       }))();
     },
+
+    /**
+     * Rollback the selected answered request
+     */
     rollback: function rollback(request) {
       var _this3 = this;
 
@@ -391,6 +409,10 @@ function User(_ref2) {
         }, _callee3);
       }))();
     },
+
+    /**
+     * Go back one page
+     */
     goBack: function goBack() {
       this.$router.push({
         name: "GottenRequests"
@@ -418,7 +440,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-3d09d69c] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.card-header[data-v-3d09d69c] {\r\n  border: none;\r\n  padding-top: .75rem;\r\n  padding-left: 1.25rem;\r\n  padding-right: 1.25rem;\r\n  padding-bottom:0;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card[data-v-3d09d69c] {\r\n  min-height: 200px;\r\n  border: 0;\r\n  box-shadow: 0 10px 20px 0 rgb(0 0 0 / 20%);\n}\n.card-header[data-v-3d09d69c] {\r\n  border: none;\r\n  padding-top: 0.75rem;\r\n  padding-left: 1.25rem;\r\n  padding-right: 1.25rem;\r\n  padding-bottom: 0;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -384,6 +384,9 @@ export default {
     this.read();
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function (value) {
       if (!value) return "";
       value = value.toString();
@@ -394,6 +397,9 @@ export default {
     ...mapActions("worktime", []),
 
     async read() {
+      /**
+       * Get users that the user is in the teams with
+       */
       await axios
         .get(process.env.MIX_API_URL + "users")
         .then((response) => {
@@ -412,6 +418,9 @@ export default {
           this.projectsUsers[this.user.id] = this.user;
         });
 
+      /**
+       * Get task statuses
+       */
       await axios
         .get(process.env.MIX_API_URL + "taskStatuses")
         .then((response) => {
@@ -426,6 +435,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get task priorities
+       */
       await axios
         .get(process.env.MIX_API_URL + "taskPriorities")
         .then((response) => {
@@ -440,6 +452,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get teams that the user is in
+       */
       await axios
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
@@ -481,6 +496,9 @@ export default {
           }
         });
 
+      /**
+       * Get created projects
+       */
       await axios
         .get(
           process.env.MIX_API_URL + "users/" + this.user.id + "/teamProjects"
@@ -497,19 +515,15 @@ export default {
                 this.projects[project.id].tasks = [];
               });
             }
-            console.log(this.projects);
-            //User might have rights to add tasks to the project if he is admin of the project
-            // if (response.data.teamProjects != null) {
-            //   response.data.teamProjects.forEach((project) => {
-            //     this.teamProjects.push(project);
-            //   });
-            // }
           }
         })
         .catch((error) => {
           console.log(error);
         });
 
+      /**
+       * Get created tasks data
+       */
       await axios
         .get(process.env.MIX_API_URL + "createdTasks")
         .then((response) => {
@@ -533,8 +547,7 @@ export default {
             this.loaded = true;
           }
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((error) => {;
           if (error.response.status == 404) {
             this.projects[0] = new Project({
               id: 0,
@@ -551,6 +564,9 @@ export default {
         });
     },
 
+    /**
+     * Update the selected task
+     */
     async update() {
       if (this.form.project_id == 0) {
         this.form.project_id = null;
@@ -602,6 +618,9 @@ export default {
         });
     },
 
+    /**
+     * Create new task
+     */
     async create() {
       if (this.form.project_id == 0) {
         this.form.project_id = null;
@@ -643,6 +662,9 @@ export default {
         });
     },
 
+    /**
+     * Delete the selected task
+     */
     async delete(task) {
       await axios
         .delete(process.env.MIX_API_URL + "tasks/" + task.id)
@@ -688,6 +710,9 @@ export default {
         });
     },
 
+    /**
+     * Start creation of a new task
+     */
     startCreate(project) {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -707,6 +732,9 @@ export default {
       this.form.assignee_id = this.teams[this.selectedProjectTeam].users[0].id;
     },
 
+    /**
+     * Start editing of the selected task
+     */
     startEdit(task, projectTeamId) {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -733,6 +761,9 @@ export default {
       this.form.assignee_id = task.assignee_id;
     },
 
+    /**
+     * Start deletion of the selected task
+     */
     startDelete(task) {
       this.$store.commit("setErrors", {});
       this.$confirm("Are You sure?", "Confirm Delete", "error")
@@ -742,17 +773,26 @@ export default {
         .catch();
     },
 
+    /**
+     * Close modal window
+     */
     closeModal() {
       this.modal = false;
       this.editTask = null;
     },
 
+    /**
+     * Load selected project component
+     */
     goToProject(name, id) {
       if (id > 0) {
         this.$router.push({ name: name, params: { projectId: id } });
       }
     },
 
+    /**
+     * Load selected team component
+     */
     goToTeam(name, id) {
       if (id > 0) {
         this.$router.push({ name: name, params: { teamId: id } });

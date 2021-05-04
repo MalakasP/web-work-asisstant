@@ -32,6 +32,7 @@ class WorktimeService
 
         $hours = floor(abs($createdAt - $endedAt) / WorktimeService::HOURS_TO_SECONDS);
         $minutes = floor(abs($createdAt - $endedAt) / WorktimeService::HOURS_TO_MIN);
+
         if ($hours >= Worktime::MAX_HOURS) {
             return gmdate("H:i", Worktime::MAX_HOURS * WorktimeService::HOURS_TO_SECONDS);
         } else if ($minutes < Worktime::MIN_MINUTES) {

@@ -515,12 +515,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.read();
   },
   filters: {
+    /**
+     * Filter user admin rights to readable format
+     */
     isAdmin: function isAdmin(value) {
       if (!value) return "No";
       return "Yes";
     }
   },
   methods: {
+    /**
+     * Check if user is admin 
+     */
     isUserAdmin: function isUserAdmin() {
       var _this = this;
 
@@ -530,6 +536,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.isAdmin = true;
       }
     },
+
+    /**
+     * Get team data
+     */
     read: function read() {
       var _this2 = this;
 
@@ -566,6 +576,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee);
       }))();
     },
+
+    /**
+     * Add new user to the team
+     */
     create: function create() {
       var _this3 = this;
 
@@ -622,6 +636,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee2);
       }))();
     },
+
+    /**
+     * Remove user from the team
+     */
     remove: function remove(userId) {
       var _this4 = this;
 
@@ -666,6 +684,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee3);
       }))();
     },
+
+    /**
+     * Update team user information
+     */
     update: function update() {
       var _this5 = this;
 
@@ -725,6 +747,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee4);
       }))();
     },
+
+    /**
+     * Delete team and load teams component
+     */
     "delete": function _delete() {
       var _this6 = this;
 
@@ -769,6 +795,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee5);
       }))();
     },
+
+    /**
+     * Update team information
+     */
     updateTeam: function updateTeam() {
       var _this7 = this;
 
@@ -822,6 +852,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee6);
       }))();
     },
+
+    /**
+     * Start addition of the user to the team
+     */
     startCreate: function startCreate() {
       this.createForm = true;
       this.form.email = null;
@@ -829,10 +863,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.form.is_admin = false;
       this.$store.commit("setErrors", {});
     },
+
+    /**
+     * Close user addition form
+     */
     endCreate: function endCreate() {
       this.createForm = false;
       this.$store.commit("setErrors", {});
     },
+
+    /**
+     * Start editing of the selected user
+     */
     startEdit: function startEdit(user) {
       this.dynamicTitle = "Edit User";
       this.editUser = user;
@@ -847,6 +889,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.$store.commit("setErrors", {});
     },
+
+    /**
+     * Start removing of the user from the team
+     */
     startRemove: function startRemove(user) {
       var _this8 = this;
 
@@ -856,6 +902,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         console.log(error);
       });
     },
+
+    /**
+     * Start deletion of the team
+     */
     startDelete: function startDelete() {
       var _this9 = this;
 
@@ -865,6 +915,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         console.log(error);
       });
     },
+
+    /**
+     * Start editing of the team
+     */
     startEditTeam: function startEditTeam() {
       this.dynamicTitle = "Edit Team";
       this.modal = true;
@@ -872,6 +926,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.editTeamForm.description = this.team.description;
       this.$store.commit("setErrors", {});
     },
+
+    /**
+     * Load teams component
+     */
     goBack: function goBack() {
       this.$router.push({
         name: "Teams"

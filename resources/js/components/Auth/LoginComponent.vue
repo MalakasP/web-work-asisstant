@@ -82,7 +82,7 @@ export default {
     /**
      * Attempt to log in user to the application.
      */
-    login: function () {
+    login() {
       this.sendLoginRequest(this.details)
         .then(() => {
           this.createWorktime(this.user);

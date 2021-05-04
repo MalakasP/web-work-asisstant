@@ -448,12 +448,18 @@ export default {
     this.read();
   },
   filters: {
+    /**
+     * Filter user admin rights to readable format
+     */
     isAdmin: function (value) {
       if (!value) return "No";
       return "Yes";
     },
   },
   methods: {
+    /**
+     * Check if user is admin 
+     */
     isUserAdmin() {
       if (
         this.team.users.find((user) => user.id == this.user.id).pivot.is_admin
@@ -462,6 +468,9 @@ export default {
       }
     },
 
+    /**
+     * Get team data
+     */
     async read() {
       await axios({
         url: process.env.MIX_API_URL + "teams/" + this.$route.params.teamId,
@@ -483,6 +492,9 @@ export default {
         });
     },
 
+    /**
+     * Add new user to the team
+     */
     async create() {
       await axios({
         method: "post",
@@ -526,6 +538,9 @@ export default {
         });
     },
 
+    /**
+     * Remove user from the team
+     */
     async remove(userId) {
       await axios({
         method: "delete",
@@ -559,7 +574,10 @@ export default {
           }
         });
     },
-
+    
+    /**
+     * Update team user information
+     */
     async update() {
       this.$store.commit("setErrors", {});
       await axios({
@@ -608,6 +626,9 @@ export default {
         });
     },
 
+    /**
+     * Delete team and load teams component
+     */
     async delete() {
       await axios({
         method: "delete",
@@ -635,6 +656,9 @@ export default {
         });
     },
 
+    /**
+     * Update team information
+     */
     async updateTeam() {
       this.$store.commit("setErrors", {});
       await axios({
@@ -671,6 +695,9 @@ export default {
         });
     },
 
+    /**
+     * Start addition of the user to the team
+     */
     startCreate() {
       this.createForm = true;
       this.form.email = null;
@@ -679,11 +706,17 @@ export default {
       this.$store.commit("setErrors", {});
     },
 
+    /**
+     * Close user addition form
+     */
     endCreate() {
       this.createForm = false;
       this.$store.commit("setErrors", {});
     },
 
+    /**
+     * Start editing of the selected user
+     */
     startEdit(user) {
       this.dynamicTitle = "Edit User";
       this.editUser = user;
@@ -697,6 +730,9 @@ export default {
       this.$store.commit("setErrors", {});
     },
 
+    /**
+     * Start removing of the user from the team
+     */
     startRemove(user) {
       this.$confirm("Are You sure?", "Confirm Remove", "error")
         .then(() => {
@@ -707,6 +743,9 @@ export default {
         });
     },
 
+    /**
+     * Start deletion of the team
+     */
     startDelete() {
       this.$confirm("Are You sure?", "Confirm Delete", "error")
         .then(() => {
@@ -717,6 +756,9 @@ export default {
         });
     },
 
+    /**
+     * Start editing of the team
+     */
     startEditTeam() {
       this.dynamicTitle = "Edit Team";
       this.modal = true;
@@ -725,6 +767,9 @@ export default {
       this.$store.commit("setErrors", {});
     },
 
+    /**
+     * Load teams component
+     */
     goBack() {
       this.$router.push({ name: "Teams" });
     },

@@ -42,8 +42,8 @@ class Team extends Model
     /**
      * Check if user by given user_id is admin of the team.
      * 
-     * @param Integer $user_id
-     * @return Boolean
+     * @param int $user_id
+     * @return bool
      */
     public function isUserAdmin($user_id)
     {
@@ -52,11 +52,11 @@ class Team extends Model
             : false;
     }
 
-     /**
+    /**
      * Check if user by given user_id is in the team.
      * 
-     * @param Integer $user_id
-     * @return Boolean
+     * @param int $user_id
+     * @return bool
      */
     public function isTeamMember($user_id)
     {

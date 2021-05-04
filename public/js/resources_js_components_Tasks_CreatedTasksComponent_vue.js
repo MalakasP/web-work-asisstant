@@ -427,6 +427,9 @@ function Team(_ref2) {
     this.read();
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function monthDay(value) {
       if (!value) return "";
       value = value.toString();
@@ -540,13 +543,6 @@ function Team(_ref2) {
                         _this.projects[project.id].tasks = [];
                       });
                     }
-
-                    console.log(_this.projects); //User might have rights to add tasks to the project if he is admin of the project
-                    // if (response.data.teamProjects != null) {
-                    //   response.data.teamProjects.forEach((project) => {
-                    //     this.teamProjects.push(project);
-                    //   });
-                    // }
                   }
                 })["catch"](function (error) {
                   console.log(error);
@@ -575,7 +571,7 @@ function Team(_ref2) {
                     _this.loaded = true;
                   }
                 })["catch"](function (error) {
-                  console.log(error);
+                  ;
 
                   if (error.response.status == 404) {
                     _this.projects[0] = new Project({
@@ -601,6 +597,10 @@ function Team(_ref2) {
         }, _callee);
       }))();
     },
+
+    /**
+     * Update the selected task
+     */
     update: function update() {
       var _this2 = this;
 
@@ -668,6 +668,10 @@ function Team(_ref2) {
         }, _callee2);
       }))();
     },
+
+    /**
+     * Create new task
+     */
     create: function create() {
       var _this3 = this;
 
@@ -724,6 +728,10 @@ function Team(_ref2) {
         }, _callee3);
       }))();
     },
+
+    /**
+     * Delete the selected task
+     */
     "delete": function _delete(task) {
       var _this4 = this;
 
@@ -776,6 +784,10 @@ function Team(_ref2) {
         }, _callee4);
       }))();
     },
+
+    /**
+     * Start creation of a new task
+     */
     startCreate: function startCreate(project) {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -796,6 +808,10 @@ function Team(_ref2) {
       this.form.reporter_id = this.user.id;
       this.form.assignee_id = this.teams[this.selectedProjectTeam].users[0].id;
     },
+
+    /**
+     * Start editing of the selected task
+     */
     startEdit: function startEdit(task, projectTeamId) {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -822,6 +838,10 @@ function Team(_ref2) {
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;
     },
+
+    /**
+     * Start deletion of the selected task
+     */
     startDelete: function startDelete(task) {
       var _this5 = this;
 
@@ -830,10 +850,18 @@ function Team(_ref2) {
         _this5["delete"](task);
       })["catch"]();
     },
+
+    /**
+     * Close modal window
+     */
     closeModal: function closeModal() {
       this.modal = false;
       this.editTask = null;
     },
+
+    /**
+     * Load selected project component
+     */
     goToProject: function goToProject(name, id) {
       if (id > 0) {
         this.$router.push({
@@ -844,6 +872,10 @@ function Team(_ref2) {
         });
       }
     },
+
+    /**
+     * Load selected team component
+     */
     goToTeam: function goToTeam(name, id) {
       if (id > 0) {
         this.$router.push({

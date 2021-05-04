@@ -105,6 +105,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.$store.commit("setErrors", {});
   },
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)("auth", ["sendRegisterRequest"])), {}, {
+    /**
+     * Send register request to server side
+     */
     register: function register() {
       var _this = this;
 

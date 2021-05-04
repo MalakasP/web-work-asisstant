@@ -219,6 +219,9 @@ export default {
     this.read();
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function (value) {
       if (!value) return "";
       value = value.toString();
@@ -226,7 +229,13 @@ export default {
     },
   },
   methods: {
+    /**
+     * Get context data for assigned tasks component
+     */
     async read() {
+      /**
+       * Get task statuses
+       */
       await axios
         .get(process.env.MIX_API_URL + "taskStatuses")
         .then((response) => {
@@ -241,6 +250,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get task priorities
+       */
       await axios
         .get(process.env.MIX_API_URL + "taskPriorities")
         .then((response) => {
@@ -255,6 +267,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get teams that the user is in
+       */
       await axios
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
@@ -293,6 +308,9 @@ export default {
           }
         });
 
+      /**
+       * Get assigned tasks data
+       */
       await axios
         .get(process.env.MIX_API_URL + "assignedTasks")
         .then((response) => {
@@ -332,6 +350,9 @@ export default {
         });
     },
 
+    /**
+     * Update selected task data
+     */
     async update() {
       await axios
         .put(process.env.MIX_API_URL + "tasks/" + this.edit.id, this.form)
@@ -376,6 +397,9 @@ export default {
         });
     },
 
+    /**
+     * Start editing of the selected task
+     */
     startEdit(task) {
       this.$store.commit("setErrors", {});
       this.dynamicTitle = "Edit task";

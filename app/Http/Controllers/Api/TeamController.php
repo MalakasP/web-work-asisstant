@@ -23,13 +23,13 @@ class TeamController extends Controller
                 'message' => 'No teams found!'
             ], 404);
         }
-        
+
         return response()->json([
             'teams' => $teams->load('users')
         ]);
     }
 
-     /**
+    /**
      * Display the specified team.
      *
      * @param  \App\Models\Team  $team
@@ -37,10 +37,10 @@ class TeamController extends Controller
      */
     public function show(Team $team)
     {
-        if(!$team->users()->where('user_id', Auth::id())->exists()) {
+        if (!$team->users()->where('user_id', Auth::id())->exists()) {
             return response()->json([
                 'message' => 'You do not have permission!'
-            ],403);
+            ], 403);
         }
 
         return response()->json([
@@ -58,7 +58,7 @@ class TeamController extends Controller
     {
         $team = Team::create($request->validated());
 
-        $team->users()->attach(Auth::user()->id, ['is_admin' => 1 , 'name_in_team' => 'admin']);
+        $team->users()->attach(Auth::id(), ['is_admin' => 1, 'name_in_team' => 'admin']);
 
         return response()->json([
             'team' => $team->load('users'),
@@ -75,12 +75,12 @@ class TeamController extends Controller
      */
     public function update(CreateTeamRequest $request, Team $team)
     {
-        if (!$team->isUserAdmin(Auth::user()->id)) {
+        if (!$team->isUserAdmin(Auth::id())) {
             return response()->json([
                 'message' => 'You do not have rights to do this!'
             ], 403);
         }
-        
+
         $team->update($request->validated());
 
         return response()->json([
@@ -97,7 +97,7 @@ class TeamController extends Controller
      */
     public function destroy(Team $team)
     {
-        if (!$team->isUserAdmin(Auth::user()->id)) {
+        if (!$team->isUserAdmin(Auth::id())) {
             return response()->json([
                 'message' => 'You do not have rights to do this!'
             ], 403);

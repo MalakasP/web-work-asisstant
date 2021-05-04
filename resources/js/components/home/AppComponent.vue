@@ -167,9 +167,6 @@ export default {
 
   created() {
     if (this.isAuthenticated) {
-      //check if there is today's timer started for this user and assign it if it's not over 8 hours
-      // this.counter.timer = timer;
-
       if (!this.isTimerStopped) {
         let todaysDate = moment().startOf("day");
         let savedDate = moment(this.worktime.created_at).startOf("day");
@@ -185,13 +182,10 @@ export default {
 
         this.counter.ticker = setInterval(() => {
           const time = this.readableTimeFromSeconds(++this.counter.seconds);
-          // console.log(this.counter.seconds);
-          // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
           if (this.counter.seconds % 60 == 0) {
             this.setTimer(this.counter.seconds);
           }
-
           this.loadingStatus = true;
         }, 1000);
       } else {
@@ -280,6 +274,9 @@ export default {
         });
     },
 
+    /**
+     * Start time after login
+     */
     initiateTimerAfterLogin() {
       if (this.isAuthenticated && !this.isTimerStopped) {
         this.loadingStatus = true;
@@ -289,12 +286,9 @@ export default {
 
         this.counter.ticker = setInterval(() => {
           const time = this.readableTimeFromSeconds(++this.counter.seconds);
-          // console.log(this.counter.seconds);
-          // check if 8 hours is reached
           this.activeTimerString = `${time.hours}:${time.minutes}`;
           if (this.counter.seconds % 60 == 0) {
             this.setTimer(this.counter.seconds);
-            // this.duration(this.counter.seconds);
           }
         }, 1000);
       }

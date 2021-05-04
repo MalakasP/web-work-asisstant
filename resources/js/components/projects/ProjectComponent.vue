@@ -488,9 +488,12 @@ export default {
   },
   created() {
     this.read();
-    this.fetchProjectTaksByStatus();
+    this.fetchProjectTasksByStatus();
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function (value) {
       if (!value) return "";
       value = value.toString();
@@ -498,7 +501,13 @@ export default {
     },
   },
   methods: {
+    /**
+     * Get context data for project component
+     */
     async read() {
+      /**
+       * Get project data
+       */
       await axios({
         url:
           process.env.MIX_API_URL + "projects/" + this.$route.params.projectId,
@@ -517,6 +526,9 @@ export default {
           }
         });
 
+      /**
+       * Get team data
+       */
       await axios({
         url: process.env.MIX_API_URL + "teams/" + this.project.team_id,
         baseURL: "/",
@@ -556,6 +568,9 @@ export default {
           }
         });
 
+      /**
+       * Get task priorities
+       */
       await axios({
         url: process.env.MIX_API_URL + "taskPriorities",
         baseURL: "/",
@@ -572,6 +587,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get task statuses
+       */
       await axios({
         url: process.env.MIX_API_URL + "taskStatuses",
         baseURL: "/",
@@ -589,7 +607,10 @@ export default {
         });
     },
 
-    async fetchProjectTaksByStatus() {
+    /**
+     * Get project tasks grouped by status
+     */
+    async fetchProjectTasksByStatus() {
       await axios({
         url:
           process.env.MIX_API_URL +
@@ -616,6 +637,9 @@ export default {
         });
     },
 
+    /**
+     * Create task for the project
+     */
     async create() {
       await axios({
         method: "post",
@@ -657,6 +681,9 @@ export default {
         });
     },
 
+    /**
+     * Delete selected task of the project
+     */
     async deleteTask(task) {
       await axios({
         method: "delete",
@@ -699,6 +726,9 @@ export default {
         });
     },
 
+    /**
+     * Update selected task of the project
+     */
     async updateTask() {
       await axios({
         method: "put",
@@ -748,6 +778,9 @@ export default {
         });
     },
 
+    /**
+     * Delete the project
+     */
     async deleteProject() {
       await axios({
         method: "delete",
@@ -782,6 +815,9 @@ export default {
         });
     },
 
+    /**
+     * Update project information
+     */
     async updateProject() {
       await axios({
         method: "put",
@@ -819,6 +855,9 @@ export default {
         });
     },
 
+    /**
+     * Start creation of the task
+     */
     startCreate() {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -837,6 +876,9 @@ export default {
       }
     },
 
+    /**
+     * Start editing of the task
+     */
     startEdit(task) {
       this.$store.commit("setErrors", {});
       this.$store.commit("setErrors", {});
@@ -859,6 +901,9 @@ export default {
       this.form.assignee_id = task.assignee_id;
     },
 
+    /**
+     * Start deletion of the task
+     */
     startDeleteTask(task) {
       this.$confirm("Are You sure?", "Confirm Delete", "error")
         .then(() => {
@@ -869,6 +914,9 @@ export default {
         });
     },
 
+    /**
+     * Start deletion of the project
+     */
     startDeleteProject() {
       this.$confirm("Are You sure?", "Confirm Delete", "error")
         .then(() => {
@@ -879,6 +927,9 @@ export default {
         });
     },
 
+    /**
+     * Start edition of the project information
+     */
     startEditProject() {
       this.$store.commit("setErrors", {});
       this.dynamicTitle = "Edit Project";
@@ -888,10 +939,16 @@ export default {
       this.editProjectForm.description = this.project.description;
     },
 
+    /**
+     * Go back one page
+     */
     goBack() {
       this.$router.go(-1);
     },
 
+    /**
+     * Close modal window
+     */
     closeModal() {
       this.modal = false;
       this.editTask = null;

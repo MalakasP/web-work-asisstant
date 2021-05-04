@@ -565,9 +565,12 @@ function Team(_ref) {
   },
   created: function created() {
     this.read();
-    this.fetchProjectTaksByStatus();
+    this.fetchProjectTasksByStatus();
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function monthDay(value) {
       if (!value) return "";
       value = value.toString();
@@ -575,6 +578,9 @@ function Team(_ref) {
     }
   },
   methods: {
+    /**
+     * Get context data for project component
+     */
     read: function read() {
       var _this = this;
 
@@ -678,7 +684,11 @@ function Team(_ref) {
         }, _callee);
       }))();
     },
-    fetchProjectTaksByStatus: function fetchProjectTaksByStatus() {
+
+    /**
+     * Get project tasks grouped by status
+     */
+    fetchProjectTasksByStatus: function fetchProjectTasksByStatus() {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
@@ -716,6 +726,10 @@ function Team(_ref) {
         }, _callee2);
       }))();
     },
+
+    /**
+     * Create task for the project
+     */
     create: function create() {
       var _this3 = this;
 
@@ -776,6 +790,10 @@ function Team(_ref) {
         }, _callee3);
       }))();
     },
+
+    /**
+     * Delete selected task of the project
+     */
     deleteTask: function deleteTask(task) {
       var _this4 = this;
 
@@ -826,6 +844,10 @@ function Team(_ref) {
         }, _callee4);
       }))();
     },
+
+    /**
+     * Update selected task of the project
+     */
     updateTask: function updateTask() {
       var _this5 = this;
 
@@ -891,6 +913,10 @@ function Team(_ref) {
         }, _callee5);
       }))();
     },
+
+    /**
+     * Delete the project
+     */
     deleteProject: function deleteProject() {
       var _this6 = this;
 
@@ -936,6 +962,10 @@ function Team(_ref) {
         }, _callee6);
       }))();
     },
+
+    /**
+     * Update project information
+     */
     updateProject: function updateProject() {
       var _this7 = this;
 
@@ -992,6 +1022,10 @@ function Team(_ref) {
         }, _callee7);
       }))();
     },
+
+    /**
+     * Start creation of the task
+     */
     startCreate: function startCreate() {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -1010,6 +1044,10 @@ function Team(_ref) {
         this.form.assignee_id = this.user.id;
       }
     },
+
+    /**
+     * Start editing of the task
+     */
     startEdit: function startEdit(task) {
       this.$store.commit("setErrors", {});
       this.$store.commit("setErrors", {});
@@ -1031,6 +1069,10 @@ function Team(_ref) {
       this.form.reporter_id = task.reporter_id;
       this.form.assignee_id = task.assignee_id;
     },
+
+    /**
+     * Start deletion of the task
+     */
     startDeleteTask: function startDeleteTask(task) {
       var _this8 = this;
 
@@ -1040,6 +1082,10 @@ function Team(_ref) {
         console.log(error);
       });
     },
+
+    /**
+     * Start deletion of the project
+     */
     startDeleteProject: function startDeleteProject() {
       var _this9 = this;
 
@@ -1049,6 +1095,10 @@ function Team(_ref) {
         console.log(error);
       });
     },
+
+    /**
+     * Start edition of the project information
+     */
     startEditProject: function startEditProject() {
       this.$store.commit("setErrors", {});
       this.dynamicTitle = "Edit Project";
@@ -1057,9 +1107,17 @@ function Team(_ref) {
       this.editProjectForm.title = this.project.title;
       this.editProjectForm.description = this.project.description;
     },
+
+    /**
+     * Go back one page
+     */
     goBack: function goBack() {
       this.$router.go(-1);
     },
+
+    /**
+     * Close modal window
+     */
     closeModal: function closeModal() {
       this.modal = false;
       this.editTask = null;

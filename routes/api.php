@@ -129,6 +129,5 @@ Route::group(['as' => 'api.'], function () {
         Route::get('teams/{team}/worktimes', [AdminController::class, 'getTeamUsersWorktimes'])->name('admin.getTeamUsersWorktimes');
 
         Route::get('project/{project}/tasks', [AdminController::class, 'getProjectTaskByStatus'])->name('admin.getProjectTaskByStatus');
-
     });
 });

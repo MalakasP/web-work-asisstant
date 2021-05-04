@@ -267,6 +267,9 @@ export default {
     Pagination,
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function (value) {
       if (!value) return "";
       value = value.toString();
@@ -274,7 +277,13 @@ export default {
     },
   },
   methods: {
+    /**
+     * Get context data for gotten requests component
+     */
     async fetchContextData() {
+      /**
+       * Get users that the user is in the teams with
+       */
       await axios
         .get(process.env.MIX_API_URL + "users")
         .then((response) => {
@@ -291,6 +300,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get teams that the user is in
+       */
       await axios
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
@@ -318,6 +330,9 @@ export default {
         });
     },
 
+    /**
+     * Get gotten request by page
+     */
     async fetchRequestsData(page = 1) {
       await axios
         .get(process.env.MIX_API_URL + "getNotAnsweredRequests?page=" + page)
@@ -332,6 +347,9 @@ export default {
         });
     },
 
+    /**
+     * Get answered requests by page
+     */
     async fetchAnsweredRequestsData(page = 1) {
       await axios
         .get(process.env.MIX_API_URL + "getAnsweredRequests?page=" + page)
@@ -353,6 +371,9 @@ export default {
         });
     },
 
+    /**
+     * Confirm gotten request
+     */
     async confirm(request) {
       let data = {
         is_confirmed: true,
@@ -388,6 +409,9 @@ export default {
         });
     },
 
+    /**
+     * Reject gotten request
+     */
     async reject(request) {
       let data = {
         is_confirmed: false,
@@ -423,6 +447,9 @@ export default {
         });
     },
 
+    /**
+     * Load answered requests component
+     */
     async history() {
       this.$router.push({ name: "AnsweredRequests" });
     },

@@ -89,6 +89,10 @@ export default {
   },
   methods: {
     ...mapActions("auth", ["sendRegisterRequest"]),
+
+    /**
+     * Send register request to server side
+     */
     register: function() {
       this.sendRegisterRequest(this.details).then(() => {
         this.$router.push({ name: "Login" });

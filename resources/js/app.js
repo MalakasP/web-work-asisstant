@@ -8,13 +8,27 @@ import VCalendar from 'v-calendar';
 
 require('./bootstrap');
 
+/**
+ * Registering VueSimpleAlert component to Vue
+ */
 Vue.use(VueSimpleAlert);
+
+/**
+ * Registering Notifications component to Vue
+ */
 Vue.use(Notifications);
+
+/**
+ * Registering VCalendar component to Vue
+ */
 Vue.use(VCalendar);
 
 
 Vue.config.productionTip = false;
 
+/**
+ * Intercepts all error responses of axios and saves them to state
+ */
 axios.interceptors.response.use(
   response => response,
   error => {
@@ -30,6 +44,9 @@ axios.interceptors.response.use(
   }
 );
 
+/**
+ * Intercepts all axios request and adds token in request header for authorization 
+ */
 axios.interceptors.request.use( function(config) {
   config.headers.common = {
     Authorization: `Bearer ${store.getters["auth/token"]}`,
@@ -40,6 +57,9 @@ axios.interceptors.request.use( function(config) {
   return config;
 });
 
+/**
+ * Tooltip initialization for Vue
+ */
 Vue.directive('tooltip', function(el, binding){
   $(el).tooltip({
            title: binding.value,
@@ -48,6 +68,9 @@ Vue.directive('tooltip', function(el, binding){
        })
 })
 
+/**
+ * Vue app creation
+ */
 const app = new Vue({
     el: '#app',
     components: {

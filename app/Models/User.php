@@ -81,6 +81,8 @@ class User extends Authenticatable
 
     /**
      * Get all the projects user is envolved with.
+     * 
+     * @return Illuminate\Support\Collection $projects
      */
     public function projects()
     {
@@ -98,6 +100,8 @@ class User extends Authenticatable
 
     /**
      * Get all the assigned tasks that user has.
+     * 
+     * @return Illuminate\Support\Collection $projects
      */
     public function assignedTasksByProject()
     {
@@ -122,6 +126,8 @@ class User extends Authenticatable
 
     /**
      * Get all the created tasks that user.
+     * 
+     * @return Illuminate\Support\Collection $projects
      */
     public function createdTasksByProject()
     {
@@ -180,6 +186,8 @@ class User extends Authenticatable
 
     /**
      * Get users of all the teams the user is in.
+     * 
+     * @return Illuminate\Support\Collection $users
      */
     public function teamsUsers()
     {
@@ -197,7 +205,7 @@ class User extends Authenticatable
     /**
      * Check if the second user is in the same team.
      * 
-     * @param Integer $user_id
+     * @param int $user_id
      * @return Boolean 
      */
     public function usersInTeam($user_id)

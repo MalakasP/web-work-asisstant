@@ -447,6 +447,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 
 
@@ -499,6 +502,9 @@ function User(_ref2) {
     };
   },
   computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])), {}, {
+    /**
+     * Filter admin of the teams
+     */
     teamsAdmin: function teamsAdmin() {
       var adminTeams = Object.entries(this.teams).filter(function (_ref3) {
         var _ref4 = _slicedToArray(_ref3, 2),
@@ -521,6 +527,9 @@ function User(_ref2) {
     this.read();
   },
   methods: {
+    /**
+     * Get context data for projects component
+     */
     read: function read() {
       var _this = this;
 
@@ -605,6 +614,10 @@ function User(_ref2) {
         }, _callee);
       }))();
     },
+
+    /**
+     * Update the selected project
+     */
     update: function update() {
       var _this2 = this;
 
@@ -662,6 +675,10 @@ function User(_ref2) {
         }, _callee2);
       }))();
     },
+
+    /**
+     * Create new project
+     */
     create: function create() {
       var _this3 = this;
 
@@ -720,6 +737,10 @@ function User(_ref2) {
         }, _callee3);
       }))();
     },
+
+    /**
+     * Delete the selected project
+     */
     "delete": function _delete(id) {
       var _this4 = this;
 
@@ -758,6 +779,10 @@ function User(_ref2) {
         }, _callee4);
       }))();
     },
+
+    /**
+     * Start deletion of the selected project
+     */
     startDelete: function startDelete(project) {
       var _this5 = this;
 
@@ -765,6 +790,10 @@ function User(_ref2) {
         _this5["delete"](project.id);
       });
     },
+
+    /**
+     * Start editing of the selected project
+     */
     startEdit: function startEdit(project) {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -781,6 +810,10 @@ function User(_ref2) {
       this.form.description = project.description;
       this.form.author = project.author_id;
     },
+
+    /**
+     * Start new project creation
+     */
     startCreate: function startCreate() {
       this.$store.commit("setErrors", {});
       this.createForm = true;
@@ -788,6 +821,10 @@ function User(_ref2) {
       this.form.description = null;
       this.form.team_id = 0;
     },
+
+    /**
+     * Start new project creation with modal form
+     */
     startProject: function startProject() {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -796,6 +833,10 @@ function User(_ref2) {
       this.form.description = null;
       this.form.team_id = 0;
     },
+
+    /**
+     * Close project creation form
+     */
     endCreate: function endCreate() {
       this.createForm = false;
       this.$store.commit("setErrors", {});

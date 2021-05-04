@@ -143,10 +143,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
 
 
 function Team(_ref) {
@@ -158,19 +154,6 @@ function Team(_ref) {
   this.id = id;
   this.name = name;
   this.description = description;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
-
-function User(_ref2) {
-  var id = _ref2.id,
-      name = _ref2.name,
-      email = _ref2.email,
-      created_at = _ref2.created_at,
-      updated_at = _ref2.updated_at;
-  this.id = id;
-  this.name = name;
-  this.email = email;
   this.created_at = created_at;
   this.updated_at = updated_at;
 }
@@ -198,6 +181,9 @@ function User(_ref2) {
     this.read();
   },
   methods: {
+    /**
+     * Get teams that the user is in
+     */
     read: function read() {
       var _this = this;
 
@@ -231,6 +217,10 @@ function User(_ref2) {
         }, _callee);
       }))();
     },
+
+    /**
+     * Create a new team
+     */
     create: function create() {
       var _this2 = this;
 
@@ -289,6 +279,10 @@ function User(_ref2) {
         }, _callee2);
       }))();
     },
+
+    /**
+     * Load selected team component
+     */
     goRouter: function goRouter(team) {
       this.$router.push({
         name: "Team",
@@ -297,6 +291,10 @@ function User(_ref2) {
         }
       });
     },
+
+    /**
+     * Start creation of a new team
+     */
     startCreate: function startCreate() {
       this.dynamicTitle = "Create Team";
       this.modal = true;

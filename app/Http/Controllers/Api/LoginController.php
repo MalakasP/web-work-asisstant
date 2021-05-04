@@ -21,8 +21,13 @@ class LoginController extends Controller
     */
 
     use AuthenticatesUsers;
-    
 
+    /**
+     * Send login response of the request
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     protected function sendLoginResponse(Request $request)
     {
         $this->clearLoginAttempts($request);
@@ -63,7 +68,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $this->validateLogin($request);
-        
+
         if (
             method_exists($this, 'hasTooManyLoginAttempts') &&
             $this->hasTooManyLoginAttempts($request)
@@ -72,14 +77,13 @@ class LoginController extends Controller
 
             return $this->sendLockoutResponse($request);
         }
-        
+
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }
-        
+
         $this->incrementLoginAttempts($request);
-        
+
         return $this->sendFailedLoginResponse($request);
     }
-
 }

@@ -459,17 +459,27 @@ function User(_ref2) {
     Pagination: (vue_pagination_2__WEBPACK_IMPORTED_MODULE_2___default())
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function monthDay(value) {
       if (!value) return "";
       value = value.toString().replace("T", " ");
       return value.substring(16, 5);
     },
+
+    /**
+     * Filter status to readable format
+     */
     statusReadable: function statusReadable(value) {
       if (!value) return "Rejected";
       return "Confirmed";
     }
   },
   methods: {
+    /**
+     * Get context data for created requests component
+     */
     fetchContextData: function fetchContextData() {
       var _this2 = this;
 
@@ -523,6 +533,10 @@ function User(_ref2) {
         }, _callee);
       }))();
     },
+
+    /**
+     * Get created requests by page
+     */
     fetchRequestsData: function fetchRequestsData() {
       var _arguments = arguments,
           _this3 = this;
@@ -561,6 +575,10 @@ function User(_ref2) {
         }, _callee2);
       }))();
     },
+
+    /**
+     * Update the selected request
+     */
     update: function update() {
       var _this4 = this;
 
@@ -612,6 +630,10 @@ function User(_ref2) {
         }, _callee3);
       }))();
     },
+
+    /**
+     * Create new request
+     */
     create: function create() {
       var _this5 = this;
 
@@ -663,6 +685,10 @@ function User(_ref2) {
         }, _callee4);
       }))();
     },
+
+    /**
+     * Delete selected request
+     */
     "delete": function _delete(requestId) {
       var _this6 = this;
 
@@ -707,6 +733,10 @@ function User(_ref2) {
         }, _callee5);
       }))();
     },
+
+    /**
+     * Start of creation of the request
+     */
     startCreate: function startCreate() {
       this.$store.commit("setErrors", {});
       this.dynamicTitle = "Create Request";
@@ -720,9 +750,17 @@ function User(_ref2) {
       this.form.team_id = Object.values(this.teamsAdmin)[0].id;
       this.loadAdmins();
     },
+
+    /**
+     * Load admins for request creation form
+     */
     loadAdmins: function loadAdmins() {
       this.form.responser_id = this.adminOfTeams[this.form.team_id][0].id;
     },
+
+    /**
+     * Start editing of the selected created request
+     */
     startEdit: function startEdit(request) {
       this.$store.commit("setErrors", {});
       this.dynamicTitle = "Edit Request";
@@ -735,6 +773,10 @@ function User(_ref2) {
       this.form.responser_id = request.responser_id;
       this.form.team_id = request.team_id;
     },
+
+    /**
+     * Start deletion of the selected created request
+     */
     startDelete: function startDelete(request) {
       var _this7 = this;
 
@@ -745,13 +787,10 @@ function User(_ref2) {
         console.log(error);
       });
     },
-    findUserFromTeams: function findUserFromTeams(userId) {
-      var userArray = Object.values(this.users);
-      return userArray.find(function (user) {
-        if (user.id == userId) return true;
-        return false;
-      });
-    },
+
+    /**
+     * Find user by userId and teamId
+     */
     responser: function responser(userId, teamId) {
       var user = this.users.find(function (user) {
         if (user.id == userId && user.pivot.team_id == teamId) {

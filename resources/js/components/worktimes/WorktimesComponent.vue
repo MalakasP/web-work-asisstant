@@ -133,6 +133,9 @@ export default {
     ...mapGetters(["errors"]),
     ...mapGetters("auth", ["user"]),
 
+    /**
+     * Filter admin of the teams
+     */
     teamsAdmin: function () {
       const teamsAdmin = Object.entries(this.teams).filter(function ([
         key,
@@ -154,6 +157,9 @@ export default {
     this.fetchContextData();
   },
   filters: {
+    /**
+     * Filter zero time values to show in h:m format
+     */
     zeroTime(value) {
       if (value != 0 && value != null && value !== undefined) {
         return value;
@@ -164,6 +170,9 @@ export default {
   },
   components: {},
   methods: {
+    /**
+     * Get teams with users that the user is in
+     */
     async fetchContextData() {
       await axios
         .get(process.env.MIX_API_URL + "teams")
@@ -208,6 +217,9 @@ export default {
         });
     },
 
+    /**
+     * Get user or selected team users worktimes in the date range
+     */
     async fetchUserWorktimesData() {
       let format_to = "YYYY-MM-DD HH:mm:ss";
       let from = moment(this.range.start).format(format_to);
@@ -262,6 +274,9 @@ export default {
       }
     },
 
+    /**
+     * Calculate duration of worktimes by day
+     */
     calculateDurationOfWorktimes(userId, day, worktimes) {
       let result = 0;
 
@@ -280,12 +295,13 @@ export default {
           );
           calendarDay.worktime = this.readableTimeFromSeconds(result);
           return;
-        } 
-
+        }
       });
-
     },
 
+    /**
+     * Get selected days and create Date object for each of them
+     */
     getDays() {
       this.loadedWorktimes = false;
       this.teams[this.selectedTeamId].users.forEach((user) => {

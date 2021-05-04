@@ -9,11 +9,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h4 class="modal-title">{{ dynamicTitle }}</h4>
-                  <button
-                    type="button"
-                    class="close"
-                    @click="(modal = false)"
-                  >
+                  <button type="button" class="close" @click="modal = false">
                     <span aria-hidden="true">&times; </span>
                   </button>
                 </div>
@@ -119,14 +115,6 @@ function Team({ id, name, description, created_at, updated_at }) {
   this.updated_at = updated_at;
 }
 
-function User({ id, name, email, created_at, updated_at }) {
-  this.id = id;
-  this.name = name;
-  this.email = email;
-  this.created_at = created_at;
-  this.updated_at = updated_at;
-}
-
 export default {
   data: function () {
     return {
@@ -154,6 +142,9 @@ export default {
   },
 
   methods: {
+    /**
+     * Get teams that the user is in
+     */
     async read() {
       await axios
         .get(process.env.MIX_API_URL + "teams")
@@ -173,10 +164,11 @@ export default {
           console.log(error);
           this.loaded = true;
         });
-
-        //get projects and show in team card (atleast a few)
     },
 
+    /**
+     * Create a new team
+     */
     async create() {
       await axios({
         method: "post",
@@ -218,10 +210,16 @@ export default {
         });
     },
 
+    /**
+     * Load selected team component
+     */
     goRouter(team) {
       this.$router.push({ name: "Team", params: { teamId: team.id } });
     },
 
+    /**
+     * Start creation of a new team
+     */
     startCreate() {
       this.dynamicTitle = "Create Team";
       this.modal = true;
@@ -229,7 +227,6 @@ export default {
       this.form.description = null;
       this.$store.commit("setErrors", {});
     },
-
   },
 };
 </script>

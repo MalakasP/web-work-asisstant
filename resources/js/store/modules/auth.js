@@ -25,6 +25,9 @@ export default {
      */
     actions: {
 
+        /**
+         * Get user data from server side
+         */
         getUserData({ commit }) {
             axios
                 .get(process.env.MIX_API_URL + "users/" + state.userData.id)
@@ -35,6 +38,9 @@ export default {
                 });
         },
 
+        /**
+         * Send login request with user credentials
+         */
         sendLoginRequest({ commit }, data) {
             commit("setErrors", {}, { root: true });
             return axios
@@ -42,10 +48,12 @@ export default {
                 .then(response => {
                     commit("setUserData", response.data.user);
                     commit("setAuthToken", response.data.token);
-                    localStorage.setItem("authToken", response.data.token);
                 })
         },
 
+        /**
+         * Send register request with new user data
+         */
         sendRegisterRequest({ commit }, data) {
             commit("setErrors", {}, { root: true });
             return axios
@@ -67,7 +75,6 @@ export default {
                 sessionStorage.clear();
             });
         },
-
     },
 
     /**
@@ -75,15 +82,19 @@ export default {
      */
     mutations: {
 
+        /**
+         * Save user data to state
+         */
         setUserData(state, user) {
             state.userData = user;
         },
 
+        /**
+         * Save auth token data to state
+         */
         setAuthToken(state, token) {
             state.token = token;
         },
-
     }
-
 }
 

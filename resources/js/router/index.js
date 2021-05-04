@@ -2,8 +2,14 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from "../store";
 
+/**
+ * Registering VueRouter component to Vue
+ */
 Vue.use(VueRouter);
 
+/**
+ * Guard for not authorized routes
+ */
 const guest = (to, from, next) => {
     if (!store.getters["auth/token"]) {
         return next();
@@ -11,6 +17,10 @@ const guest = (to, from, next) => {
         return next("/");
     }
 };
+
+/**
+ * Guard for authorized routes
+ */
 const auth = (to, from, next) => {
     if (store.getters["auth/token"]) {
         return next();
@@ -19,6 +29,9 @@ const auth = (to, from, next) => {
     }
 };
 
+/**
+ * Registering routes used by VueRouter
+ */
 const routes = [
     {
         path: "/",
@@ -117,6 +130,9 @@ const routes = [
     }
 ]
 
+/**
+ * Creating VueRouter
+ */
 const router = new VueRouter({
     mode: "history",
     linkActiveClass: 'font-semibold',

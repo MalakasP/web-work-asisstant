@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 export default {
     namespaced: true,
 
@@ -28,19 +26,31 @@ export default {
      */
     actions: {
 
+        /**
+         * Action to call setDuration mutation
+         */
         setDuration({ commit }, duration) {
             commit("setDuration", duration);
         },
 
+        /**
+         * Action to call setTimerStopped mutation
+         */
         setTimerStopped({ commit }, status) {
             commit("setTimerStopped", status);
         },
 
+        /**
+         * Action to call setWorktime mutation
+         */
         setWorktime({ commit }, worktime) {
             commit("setWorktime", worktime);
         },
 
-        setTimer({commit}, timer) {
+        /**
+         * Action to call setTimer mutation
+         */
+        setTimer({ commit }, timer) {
             commit("setTimer", timer);
         },
 
@@ -63,18 +73,30 @@ export default {
      */
     mutations: {
 
+        /**
+         * Change worktime state with mutation
+         */
         setWorktime(state, worktime) {
             state.worktime = worktime;
         },
 
+        /**
+         * Change duration state with mutation
+         */
         setDuration(state, duration) {
             state.duration = duration;
         },
 
+        /**
+         * Change timerStopped state with mutation
+         */
         setTimerStopped(state, status) {
             state.timerStopped = status;
         },
 
+        /**
+         * Change timer state with mutation
+         */
         setTimer(state, timer) {
             state.timer = timer;
         }

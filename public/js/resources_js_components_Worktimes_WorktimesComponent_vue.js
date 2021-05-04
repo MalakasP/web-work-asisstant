@@ -193,6 +193,9 @@ function Team(_ref2) {
     };
   },
   computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["errors"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)("auth", ["user"])), {}, {
+    /**
+     * Filter admin of the teams
+     */
     teamsAdmin: function teamsAdmin() {
       var teamsAdmin = Object.entries(this.teams).filter(function (_ref3) {
         var _ref4 = _slicedToArray(_ref3, 2),
@@ -215,6 +218,9 @@ function Team(_ref2) {
     this.fetchContextData();
   },
   filters: {
+    /**
+     * Filter zero time values to show in h:m format
+     */
     zeroTime: function zeroTime(value) {
       if (value != 0 && value != null && value !== undefined) {
         return value;
@@ -225,6 +231,9 @@ function Team(_ref2) {
   },
   components: {},
   methods: {
+    /**
+     * Get teams with users that the user is in
+     */
     fetchContextData: function fetchContextData() {
       var _this = this;
 
@@ -284,6 +293,10 @@ function Team(_ref2) {
         }, _callee);
       }))();
     },
+
+    /**
+     * Get user or selected team users worktimes in the date range
+     */
     fetchUserWorktimesData: function fetchUserWorktimesData() {
       var _this2 = this;
 
@@ -369,6 +382,10 @@ function Team(_ref2) {
         }, _callee2);
       }))();
     },
+
+    /**
+     * Calculate duration of worktimes by day
+     */
     calculateDurationOfWorktimes: function calculateDurationOfWorktimes(userId, day, worktimes) {
       var _this3 = this;
 
@@ -388,6 +405,10 @@ function Team(_ref2) {
         }
       });
     },
+
+    /**
+     * Get selected days and create Date object for each of them
+     */
     getDays: function getDays() {
       var _this4 = this;
 

@@ -262,6 +262,9 @@ function Team(_ref2) {
     this.read();
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function monthDay(value) {
       if (!value) return "";
       value = value.toString();
@@ -269,6 +272,9 @@ function Team(_ref2) {
     }
   },
   methods: {
+    /**
+     * Get context data for assigned tasks component
+     */
     read: function read() {
       var _this = this;
 
@@ -384,6 +390,10 @@ function Team(_ref2) {
         }, _callee);
       }))();
     },
+
+    /**
+     * Update selected task data
+     */
     update: function update() {
       var _this2 = this;
 
@@ -443,6 +453,10 @@ function Team(_ref2) {
         }, _callee2);
       }))();
     },
+
+    /**
+     * Start editing of the selected task
+     */
     startEdit: function startEdit(task) {
       this.$store.commit("setErrors", {});
       this.dynamicTitle = "Edit task";

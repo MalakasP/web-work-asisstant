@@ -25,7 +25,7 @@
                     <input
                       type="text"
                       class="form-control"
-                      :class="{ 'is-invalid' : errors.title}"
+                      :class="{ 'is-invalid': errors.title }"
                       v-model="form.title"
                     />
                     <div class="invalid-feedback" v-if="errors.title">
@@ -126,14 +126,17 @@
                     {{ project.description }}
                   </td>
                   <td style="width: 40%" v-else>-</td>
-                  <td style="width: 25%" v-if="project.team_id != null && project.team_id > 0"
-                      class="link"
-                      @click="
-                        $router.push({
-                          name: 'Team',
-                          params: { teamId: project.team_id },
-                        })
-                      ">
+                  <td
+                    style="width: 25%"
+                    v-if="project.team_id != null && project.team_id > 0"
+                    class="link"
+                    @click="
+                      $router.push({
+                        name: 'Team',
+                        params: { teamId: project.team_id },
+                      })
+                    "
+                  >
                     {{ teams[project.team_id].name }}
                   </td>
                   <td style="width: 25%" v-else>No Team</td>
@@ -439,6 +442,9 @@ export default {
     ...mapGetters(["errors"]),
     ...mapGetters("auth", ["user"]),
 
+    /**
+     * Filter admin of the teams
+     */
     teamsAdmin: function () {
       const adminTeams = Object.entries(this.teams).filter(function ([
         key,
@@ -460,7 +466,13 @@ export default {
     this.read();
   },
   methods: {
+    /**
+     * Get context data for projects component
+     */
     async read() {
+      /**
+       * Get users that the user is in the teams with
+       */
       await axios
         .get(process.env.MIX_API_URL + "users")
         .then((response) => {
@@ -477,6 +489,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get teams that the user is in
+       */
       await axios
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
@@ -503,6 +518,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get user created projects and team projects
+       */
       await axios
         .get(
           process.env.MIX_API_URL + "users/" + this.user.id + "/teamProjects"
@@ -534,6 +552,9 @@ export default {
         });
     },
 
+    /**
+     * Update the selected project
+     */
     async update() {
       if (this.form.team_id == 0) {
         this.form.team_id = null;
@@ -572,6 +593,9 @@ export default {
         });
     },
 
+    /**
+     * Create new project
+     */
     async create() {
       this.form.author_id = this.user.id;
       if (this.form.team_id == 0) {
@@ -611,6 +635,9 @@ export default {
         });
     },
 
+    /**
+     * Delete the selected project
+     */
     async delete(id) {
       await axios
         .delete(process.env.MIX_API_URL + "projects/" + id)
@@ -635,12 +662,18 @@ export default {
         });
     },
 
+    /**
+     * Start deletion of the selected project
+     */
     startDelete(project) {
       this.$confirm("Are You sure?", "Confirm Delete", "error").then(() => {
         this.delete(project.id);
       });
     },
 
+    /**
+     * Start editing of the selected project
+     */
     startEdit(project) {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -656,6 +689,9 @@ export default {
       this.form.author = project.author_id;
     },
 
+    /**
+     * Start new project creation
+     */
     startCreate() {
       this.$store.commit("setErrors", {});
       this.createForm = true;
@@ -664,6 +700,9 @@ export default {
       this.form.team_id = 0;
     },
 
+    /**
+     * Start new project creation with modal form
+     */
     startProject() {
       this.$store.commit("setErrors", {});
       this.modal = true;
@@ -673,6 +712,9 @@ export default {
       this.form.team_id = 0;
     },
 
+    /**
+     * Close project creation form
+     */
     endCreate() {
       this.createForm = false;
       this.$store.commit("setErrors", {});

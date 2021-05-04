@@ -14,6 +14,7 @@ class ProjectController extends Controller
 {
     /**
      * Get created and teams projects.
+     * 
      * @param \App\Models\User $user
      * @return \Illuminate\Http\Response
      */
@@ -58,6 +59,8 @@ class ProjectController extends Controller
 
     /**
      * Get all projects user is envolved with.
+     * 
+     * @return \Illuminate\Http\Response
      */
     public function getUserProjects()
     {
@@ -82,10 +85,9 @@ class ProjectController extends Controller
      */
     public function store(CreateProjectRequest $request)
     {
-        //check if user is admin in team or team_id is null
         $request->validated();
 
-        if ($request->validated()['author_id'] == Auth::user()->id) {
+        if ($request->validated()['author_id'] == Auth::id()) {
             if (
                 $request->has('team_id') && $request->validated()['team_id'] != null
                 && Team::findOrFail($request->team_id)->isUserAdmin(Auth::id())
@@ -122,7 +124,7 @@ class ProjectController extends Controller
         } else if ($project->author_id != null) {
             $isAuthor = $project->author_id == Auth::id();
             $isAdmin = false;
-        }  else {
+        } else {
             $isAdmin = false;
             $isAuthor = false;
         }
@@ -150,7 +152,7 @@ class ProjectController extends Controller
         if (
             $request->has('team_id') && $request->validated()['team_id'] != null
             && Team::findOrFail($request->team_id)->isUserAdmin(Auth::id())
-            || ((!$request->has('team_id') || $request->validated()['team_id'] == null) && $project->author_id == Auth::user()->id)
+            || ((!$request->has('team_id') || $request->validated()['team_id'] == null) && $project->author_id == Auth::id())
         ) {
             $project->update($request->validated());
 
@@ -174,7 +176,7 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         if (
-            $project->author_id != Auth::user()->id
+            $project->author_id != Auth::id()
             && ($project->team != null && $project->team->isUserAdmin(Auth::id()))
         ) {
             return response()->json([

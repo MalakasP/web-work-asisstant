@@ -318,6 +318,9 @@ function User(_ref2) {
     Pagination: (vue_pagination_2__WEBPACK_IMPORTED_MODULE_2___default())
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function monthDay(value) {
       if (!value) return "";
       value = value.toString();
@@ -325,6 +328,9 @@ function User(_ref2) {
     }
   },
   methods: {
+    /**
+     * Get context data for gotten requests component
+     */
     fetchContextData: function fetchContextData() {
       var _this = this;
 
@@ -383,6 +389,10 @@ function User(_ref2) {
         }, _callee);
       }))();
     },
+
+    /**
+     * Get gotten request by page
+     */
     fetchRequestsData: function fetchRequestsData() {
       var _arguments = arguments,
           _this2 = this;
@@ -412,6 +422,10 @@ function User(_ref2) {
         }, _callee2);
       }))();
     },
+
+    /**
+     * Get answered requests by page
+     */
     fetchAnsweredRequestsData: function fetchAnsweredRequestsData() {
       var _arguments2 = arguments,
           _this3 = this;
@@ -448,6 +462,10 @@ function User(_ref2) {
         }, _callee3);
       }))();
     },
+
+    /**
+     * Confirm gotten request
+     */
     confirm: function confirm(request) {
       var _this4 = this;
 
@@ -495,6 +513,10 @@ function User(_ref2) {
         }, _callee4);
       }))();
     },
+
+    /**
+     * Reject gotten request
+     */
     reject: function reject(request) {
       var _this5 = this;
 
@@ -543,6 +565,10 @@ function User(_ref2) {
         }, _callee5);
       }))();
     },
+
+    /**
+     * Load answered requests component
+     */
     history: function history() {
       var _this6 = this;
 

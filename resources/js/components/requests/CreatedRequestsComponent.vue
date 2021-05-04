@@ -410,18 +410,30 @@ export default {
     Pagination,
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function (value) {
       if (!value) return "";
       value = value.toString().replace("T", " ");
       return value.substring(16, 5);
     },
+    /**
+     * Filter status to readable format
+     */
     statusReadable: function (value) {
       if (!value) return "Rejected";
       return "Confirmed";
     },
   },
   methods: {
+    /**
+     * Get context data for created requests component
+     */
     async fetchContextData() {
+      /**
+       * Get users that the user is in the teams with
+       */
       await axios
         .get(process.env.MIX_API_URL + "users")
         .then((response) => {
@@ -438,6 +450,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get teams that the user is in
+       */
       await axios
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
@@ -461,6 +476,9 @@ export default {
         });
     },
 
+    /**
+     * Get created requests by page
+     */
     async fetchRequestsData(page = 1) {
       await axios
         .get(process.env.MIX_API_URL + "createdRequests?page=" + page)
@@ -484,6 +502,9 @@ export default {
         });
     },
 
+    /**
+     * Update the selected request
+     */
     async update() {
       this.form.requester_id = this.user.id;
       this.form.date_from = this.range.start;
@@ -519,6 +540,9 @@ export default {
         });
     },
 
+    /**
+     * Create new request
+     */
     async create() {
       this.form.requester_id = this.user.id;
       this.form.date_from = this.range.start;
@@ -555,6 +579,9 @@ export default {
         });
     },
 
+    /**
+     * Delete selected request
+     */
     async delete(requestId) {
       await axios
         .delete(process.env.MIX_API_URL + "requests/" + requestId)
@@ -583,6 +610,9 @@ export default {
         });
     },
 
+    /**
+     * Start of creation of the request
+     */
     startCreate() {
       this.$store.commit("setErrors", {});
       this.dynamicTitle = "Create Request";
@@ -599,10 +629,16 @@ export default {
       this.loadAdmins();
     },
 
+    /**
+     * Load admins for request creation form
+     */
     loadAdmins() {
       this.form.responser_id = this.adminOfTeams[this.form.team_id][0].id;
     },
 
+    /**
+     * Start editing of the selected created request
+     */
     startEdit(request) {
       this.$store.commit("setErrors", {});
       this.dynamicTitle = "Edit Request";
@@ -617,6 +653,9 @@ export default {
       this.form.team_id = request.team_id;
     },
 
+    /**
+     * Start deletion of the selected created request
+     */
     startDelete(request) {
       this.$store.commit("setErrors", {});
       this.$confirm("Are You sure?", "Confirm Remove", "error")
@@ -628,14 +667,9 @@ export default {
         });
     },
 
-    findUserFromTeams(userId) {
-      let userArray = Object.values(this.users);
-      return userArray.find(function (user) {
-        if (user.id == userId) return true;
-        return false;
-      });
-    },
-
+    /**
+     * Find user by userId and teamId
+     */
     responser(userId, teamId) {
       let user = this.users.find((user) => {
         if (user.id == userId && user.pivot.team_id == teamId) {

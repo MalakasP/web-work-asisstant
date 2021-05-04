@@ -190,18 +190,30 @@ export default {
     Pagination,
   },
   filters: {
+    /**
+     * Filter date to show only month and day
+     */
     monthDay: function (value) {
       if (!value) return "";
       value = value.toString();
       return value.substring(16, 5);
     },
+    /**
+     * Filter status to readable format
+     */
     statusReadable: function (value) {
       if (!value) return "Rejected";
       return "Confirmed";
     },
   },
   methods: {
+    /**
+     * Get context data for answered requests component
+     */
     async fetchContextData() {
+      /**
+       * Get users that the user is in the teams with
+       */
       await axios
         .get(process.env.MIX_API_URL + "users")
         .then((response) => {
@@ -218,6 +230,9 @@ export default {
           console.log(error);
         });
 
+      /**
+       * Get teams that the user is in
+       */
       await axios
         .get(process.env.MIX_API_URL + "teams")
         .then((response) => {
@@ -246,6 +261,9 @@ export default {
         });
     },
 
+    /**
+     * Get answered requests by page
+     */
     async fetchAnsweredRequestsData(page = 1) {
       await axios
         .get(process.env.MIX_API_URL + "getAnsweredRequests?page=" + page)
@@ -267,12 +285,15 @@ export default {
         });
     },
 
+    /**
+     * Rollback the selected answered request
+     */
     async rollback(request) {
       let data = {
         is_confirmed: false,
         confirmed_at: null,
       };
-
+      
       await axios
         .put(process.env.MIX_API_URL + "requests/" + request.id, data)
         .then((response) => {
@@ -301,7 +322,10 @@ export default {
           }
         });
     },
-
+    
+    /**
+     * Go back one page
+     */
     goBack() {
       this.$router.push({ name: "GottenRequests" });
     },
@@ -319,9 +343,9 @@ export default {
 
 .card-header {
   border: none;
-  padding-top: .75rem;
+  padding-top: 0.75rem;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
-  padding-bottom:0;
+  padding-bottom: 0;
 }
 </style>
