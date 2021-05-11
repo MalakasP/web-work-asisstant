@@ -124,9 +124,6 @@ class ProjectController extends Controller
         } else if ($project->author_id != null) {
             $isAuthor = $project->author_id == Auth::id();
             $isAdmin = false;
-        } else {
-            $isAdmin = false;
-            $isAuthor = false;
         }
 
         if ($isAdmin || $isAuthor) {

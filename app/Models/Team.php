@@ -60,7 +60,7 @@ class Team extends Model
      */
     public function isTeamMember($user_id)
     {
-        return $this->users()->where('user_id', '=', $user_id)
+        return $this->users()->where('user_id', '=', $user_id)->first()
             ? true
             : false;
     }

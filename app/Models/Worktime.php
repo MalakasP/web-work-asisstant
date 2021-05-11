@@ -12,7 +12,7 @@ class Worktime extends Model
     /**
      * Constant for maximum amount of hours for one worktime.
      */
-    public const  MAX_HOURS = 5;
+    public const  MAX_HOURS = 8;
 
     /**
      * Constant for minimum amount of minutes for one worktime.
