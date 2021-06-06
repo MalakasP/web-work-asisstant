@@ -354,6 +354,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 
@@ -2439,44 +2440,51 @@ var render = function() {
                           ]),
                           _vm._v(" "),
                           _c("td", { staticStyle: { width: "5%" } }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary",
-                                staticStyle: { margin: "1px" },
-                                attrs: { type: "button" },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.startEdit(request)
-                                  }
-                                }
-                              },
-                              [
-                                _c("span", { staticClass: "icon is-small" }, [
-                                  _c(
-                                    "svg",
-                                    {
-                                      staticClass: "bi bi-three-dots",
-                                      attrs: {
-                                        xmlns: "http://www.w3.org/2000/svg",
-                                        width: "16",
-                                        height: "16",
-                                        fill: "currentColor",
-                                        viewBox: "0 0 16 16"
+                            !request.is_confirmed
+                              ? _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-primary",
+                                    staticStyle: { margin: "1px" },
+                                    attrs: { type: "button" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.startEdit(request)
                                       }
-                                    },
-                                    [
-                                      _c("path", {
-                                        attrs: {
-                                          d:
-                                            "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                                        }
-                                      })
-                                    ]
-                                  )
-                                ])
-                              ]
-                            )
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "span",
+                                      { staticClass: "icon is-small" },
+                                      [
+                                        _c(
+                                          "svg",
+                                          {
+                                            staticClass: "bi bi-three-dots",
+                                            attrs: {
+                                              xmlns:
+                                                "http://www.w3.org/2000/svg",
+                                              width: "16",
+                                              height: "16",
+                                              fill: "currentColor",
+                                              viewBox: "0 0 16 16"
+                                            }
+                                          },
+                                          [
+                                            _c("path", {
+                                              attrs: {
+                                                d:
+                                                  "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
+                                              }
+                                            })
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              : _vm._e()
                           ]),
                           _vm._v(" "),
                           _c("td", { staticStyle: { width: "5%" } }, [

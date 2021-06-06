@@ -51,7 +51,7 @@
                     {{ users[request.requester_id].name }}
                   </td>
                   <td style="width: 15%">
-                    {{ request.status | statusReadable }}
+                    {{ request.is_confirmed | statusReadable }}
                   </td>
                   <td style="width: 15%">
                     {{ request.date_from | monthDay }}

@@ -189,6 +189,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 
 
@@ -408,17 +411,20 @@ function Team(_ref2) {
                     _this2.modal = false;
 
                     if (_this2.edit.project_id != null) {
-                      var taskIndex = _this2.projects[_this2.edit.project_id].tasks.findIndex(function (task) {
-                        return task.id == _this2.edit.id;
+                      _this2.projects.forEach(function (project) {
+                        if (project.id === _this2.edit.project_id) {
+                          var taskIndex = project.tasks.findIndex(function (task) {
+                            return task.id == _this2.edit.id;
+                          });
+                          project.tasks.splice(taskIndex, 1, response.data.task);
+                        }
                       });
-
-                      _this2.projects[_this2.edit.project_id].tasks.splice(taskIndex, 1, response.data.task);
                     } else {
-                      var _taskIndex = _this2.projects[0].tasks.findIndex(function (task) {
+                      var taskIndex = _this2.projects[0].tasks.findIndex(function (task) {
                         return task.id == _this2.edit.id;
                       });
 
-                      _this2.projects[0].tasks.splice(_taskIndex, 1, response.data.task);
+                      _this2.projects[0].tasks.splice(taskIndex, 1, response.data.task);
                     }
 
                     _this2.edit = null;
@@ -1574,142 +1580,159 @@ var render = function() {
         )
       : _vm._e(),
     _vm._v(" "),
-    _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "card p-3 m-b-3" }, [
-        !this.noTasks
-          ? _c(
-              "div",
-              _vm._l(_vm.projects, function(project) {
-                return _c("div", { key: project.id }, [
-                  _c("div", { staticClass: "card p-3 mt-3" }, [
-                    _c(
-                      "div",
-                      {
-                        staticClass:
-                          "card-header bg-white justify-content-start"
-                      },
-                      [
-                        _c("div", { staticClass: "row" }, [
-                          _c("div", { staticClass: "col-2" }, [
-                            _c("h5", [_vm._v(_vm._s(project.title))])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-2" }, [
-                            _c("h6", [
-                              _vm._v(_vm._s(_vm.teams[project.team_id].name))
+    this.loaded
+      ? _c("div", { staticClass: "container" }, [
+          _c("div", { staticClass: "card p-3 m-b-3" }, [
+            !this.noTasks
+              ? _c(
+                  "div",
+                  _vm._l(_vm.projects, function(project) {
+                    return _c("div", { key: project.id }, [
+                      _c("div", { staticClass: "card p-3 mt-3" }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "card-header bg-white justify-content-start"
+                          },
+                          [
+                            _c("div", { staticClass: "row" }, [
+                              _c("div", { staticClass: "col-2" }, [
+                                _c("h5", [_vm._v(_vm._s(project.title))])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-2" }, [
+                                _c("h6", [
+                                  _vm._v(
+                                    _vm._s(_vm.teams[project.team_id].name)
+                                  )
+                                ])
+                              ])
                             ])
-                          ])
-                        ])
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "table",
-                      { staticClass: "table-striped w-100 d-block d-md-table" },
-                      [
-                        _vm._m(0, true),
+                          ]
+                        ),
                         _vm._v(" "),
                         _c(
-                          "tbody",
-                          _vm._l(project.tasks, function(task) {
-                            return _c("tr", { key: task.id }, [
-                              _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(_vm._s(task.title))
-                              ]),
-                              _vm._v(" "),
-                              _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(
-                                      _vm._f("monthDay")(task.date_till_done)
-                                    ) +
-                                    "\n                  "
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(_vm.statuses[task.status_id].name) +
-                                    "\n                  "
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("td", { staticStyle: { width: "20%" } }, [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(
-                                      _vm.priorities[task.priority_id].name
-                                    ) +
-                                    "\n                  "
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("td", { staticStyle: { width: "10%" } }, [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-primary",
-                                    staticStyle: { margin: "1px" },
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.startEdit(task)
-                                      }
-                                    }
-                                  },
-                                  [
+                          "table",
+                          {
+                            staticClass:
+                              "table-striped w-100 d-block d-md-table"
+                          },
+                          [
+                            _vm._m(0, true),
+                            _vm._v(" "),
+                            _c(
+                              "tbody",
+                              _vm._l(project.tasks, function(task) {
+                                return _c("tr", { key: task.id }, [
+                                  _c("td", { staticStyle: { width: "20%" } }, [
+                                    _vm._v(_vm._s(task.title))
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "20%" } }, [
+                                    _vm._v(
+                                      "\n                    " +
+                                        _vm._s(
+                                          _vm._f("monthDay")(
+                                            task.date_till_done
+                                          )
+                                        ) +
+                                        "\n                  "
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "20%" } }, [
+                                    _vm._v(
+                                      "\n                    " +
+                                        _vm._s(
+                                          _vm.statuses[task.status_id].name
+                                        ) +
+                                        "\n                  "
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "20%" } }, [
+                                    _vm._v(
+                                      "\n                    " +
+                                        _vm._s(
+                                          _vm.priorities[task.priority_id].name
+                                        ) +
+                                        "\n                  "
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticStyle: { width: "10%" } }, [
                                     _c(
-                                      "span",
-                                      { staticClass: "icon is-small" },
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-primary",
+                                        staticStyle: { margin: "1px" },
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.startEdit(task)
+                                          }
+                                        }
+                                      },
                                       [
                                         _c(
-                                          "svg",
-                                          {
-                                            staticClass: "bi bi-three-dots",
-                                            attrs: {
-                                              xmlns:
-                                                "http://www.w3.org/2000/svg",
-                                              width: "16",
-                                              height: "16",
-                                              fill: "currentColor",
-                                              viewBox: "0 0 16 16"
-                                            }
-                                          },
+                                          "span",
+                                          { staticClass: "icon is-small" },
                                           [
-                                            _c("path", {
-                                              attrs: {
-                                                d:
-                                                  "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                                              }
-                                            })
+                                            _c(
+                                              "svg",
+                                              {
+                                                staticClass: "bi bi-three-dots",
+                                                attrs: {
+                                                  xmlns:
+                                                    "http://www.w3.org/2000/svg",
+                                                  width: "16",
+                                                  height: "16",
+                                                  fill: "currentColor",
+                                                  viewBox: "0 0 16 16"
+                                                }
+                                              },
+                                              [
+                                                _c("path", {
+                                                  attrs: {
+                                                    d:
+                                                      "M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
+                                                  }
+                                                })
+                                              ]
+                                            )
                                           ]
                                         )
                                       ]
                                     )
-                                  ]
-                                )
-                              ])
-                            ])
-                          }),
-                          0
+                                  ])
+                                ])
+                              }),
+                              0
+                            )
+                          ]
                         )
-                      ]
-                    )
+                      ])
+                    ])
+                  }),
+                  0
+                )
+              : this.loaded
+              ? _c("div", [
+                  _c("h4", { staticClass: "p-3 text-center" }, [
+                    _vm._v("You have no assigned tasks.")
                   ])
                 ])
-              }),
-              0
-            )
-          : this.loaded
-          ? _c("div", [
-              _c("h4", { staticClass: "p-3 text-center" }, [
-                _vm._v("You have no assigned tasks.")
-              ])
-            ])
-          : _vm._e()
-      ])
-    ])
+              : _vm._e()
+          ])
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    !this.loaded
+      ? _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "loader mt-3" })
+        ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = [

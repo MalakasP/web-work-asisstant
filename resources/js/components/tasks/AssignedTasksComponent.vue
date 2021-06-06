@@ -74,7 +74,7 @@
         </div>
       </transition>
     </div>
-    <div class="container">
+    <div class="container" v-if="this.loaded">
       <div class="card p-3 m-b-3">
         <div v-if="!this.noTasks">
           <div v-for="project in projects" :key="project.id">
@@ -144,6 +144,9 @@
           <h4 class="p-3 text-center">You have no assigned tasks.</h4>
         </div>
       </div>
+    </div>
+    <div v-if="!this.loaded" class="row justify-content-center">
+      <div class="loader mt-3"></div>
     </div>
   </div>
 </template>
@@ -360,14 +363,14 @@ export default {
           if (response.data != null) {
             this.modal = false;
             if (this.edit.project_id != null) {
-              let taskIndex = this.projects[
-                this.edit.project_id
-              ].tasks.findIndex((task) => task.id == this.edit.id);
-              this.projects[this.edit.project_id].tasks.splice(
-                taskIndex,
-                1,
-                response.data.task
-              );
+              this.projects.forEach((project) => {
+                if (project.id === this.edit.project_id) {
+                  let taskIndex = project.tasks.findIndex(
+                    (task) => task.id == this.edit.id
+                  );
+                  project.tasks.splice(taskIndex, 1, response.data.task);
+                }
+              });
             } else {
               let taskIndex = this.projects[0].tasks.findIndex(
                 (task) => task.id == this.edit.id

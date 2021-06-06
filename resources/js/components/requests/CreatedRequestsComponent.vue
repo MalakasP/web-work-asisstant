@@ -210,6 +210,7 @@
                   </td>
                   <td style="width: 5%">
                     <button
+                      v-if="!request.is_confirmed"
                       type="button"
                       class="btn btn-primary"
                       style="margin: 1px"

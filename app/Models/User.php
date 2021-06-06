@@ -163,7 +163,7 @@ class User extends Authenticatable
      */
     public function createdRequests()
     {
-        return $this->hasMany(Request::class, 'requester_id')->orderBy('created_at');
+        return $this->hasMany(Request::class, 'requester_id')->orderByDesc('created_at');
     }
 
     /**

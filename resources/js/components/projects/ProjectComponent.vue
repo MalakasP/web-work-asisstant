@@ -294,14 +294,14 @@
                 v-for="status in statuses"
                 :key="status.id"
               >
-                <h5 class="p-3" v-if="project.tasks[status.name].length > 0">
+                <h5 class="p-3" v-if="project.tasks.hasOwnProperty(status.name) && project.tasks[status.name].length > 0">
                   {{ status.name }}
                 </h5>
                 <div class="col-12">
                   <div class="table-responsive">
                     <table
                       class="table-striped w-100 d-block d-md-table"
-                      v-if="project.tasks[status.name].length > 0"
+                      v-if="project.tasks.hasOwnProperty(status.name) && project.tasks[status.name].length > 0"
                     >
                       <thead>
                         <tr>
@@ -313,7 +313,7 @@
                           <th style="width: 5%"></th>
                         </tr>
                       </thead>
-                      <tbody v-if="project.tasks[status.name].length > 0">
+                      <tbody v-if="project.tasks.hasOwnProperty(status.name) && project.tasks[status.name].length > 0">
                         <tr
                           v-for="task in project.tasks[status.name]"
                           :key="task.id"
@@ -652,7 +652,8 @@ export default {
             this.modal = false;
             Object.values(this.statuses).forEach((status) => {
               if (status.id == this.form.status_id) {
-                if (this.project.tasks[status.name].length < 1) {
+                console.log(this.project.tasks.hasOwnProperty(status.name));
+                if (!this.project.tasks.hasOwnProperty(status.name)) {
                   this.project.tasks[status.name] = [];
                 }
                 this.project.tasks[status.name].push(response.data.task);

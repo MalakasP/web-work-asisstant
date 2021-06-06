@@ -1610,7 +1610,7 @@ var render = function() {
                             _vm._v(
                               "\n                  " +
                                 _vm._s(
-                                  _vm._f("statusReadable")(request.status)
+                                  _vm._f("statusReadable")(request.is_confirmed)
                                 ) +
                                 "\n                "
                             )

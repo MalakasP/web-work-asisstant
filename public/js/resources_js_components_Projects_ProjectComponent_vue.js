@@ -749,7 +749,9 @@ function Team(_ref) {
                     _this3.modal = false;
                     Object.values(_this3.statuses).forEach(function (status) {
                       if (status.id == _this3.form.status_id) {
-                        if (_this3.project.tasks[status.name].length < 1) {
+                        console.log(_this3.project.tasks.hasOwnProperty(status.name));
+
+                        if (!_this3.project.tasks.hasOwnProperty(status.name)) {
                           _this3.project.tasks[status.name] = [];
                         }
 
@@ -3011,6 +3013,7 @@ var render = function() {
                             staticClass: "row justify-content-center"
                           },
                           [
+                            _vm.project.tasks.hasOwnProperty(status.name) &&
                             _vm.project.tasks[status.name].length > 0
                               ? _c("h5", { staticClass: "p-3" }, [
                                   _vm._v(
@@ -3023,6 +3026,7 @@ var render = function() {
                             _vm._v(" "),
                             _c("div", { staticClass: "col-12" }, [
                               _c("div", { staticClass: "table-responsive" }, [
+                                _vm.project.tasks.hasOwnProperty(status.name) &&
                                 _vm.project.tasks[status.name].length > 0
                                   ? _c(
                                       "table",
@@ -3033,8 +3037,11 @@ var render = function() {
                                       [
                                         _vm._m(0, true),
                                         _vm._v(" "),
+                                        _vm.project.tasks.hasOwnProperty(
+                                          status.name
+                                        ) &&
                                         _vm.project.tasks[status.name].length >
-                                        0
+                                          0
                                           ? _c(
                                               "tbody",
                                               _vm._l(
