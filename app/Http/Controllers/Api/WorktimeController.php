@@ -121,7 +121,7 @@ class WorktimeController extends Controller
 
         if (strtotime($duration) - strtotime('TODAY') == 0) {
             return response()->json([
-                'message' => 'You have worked less than 15 minutes after You started working.'
+                'message' => 'You have worked less than ' . Worktime::MIN_MINUTES . ' minutes after You started working.'
             ], 406);
         }
 

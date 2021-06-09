@@ -17,7 +17,7 @@ class Worktime extends Model
     /**
      * Constant for minimum amount of minutes for one worktime.
      */
-    public const MIN_MINUTES = 10;
+    public const MIN_MINUTES = 15;
 
     /**
      * The attributes that are mass assignable.
